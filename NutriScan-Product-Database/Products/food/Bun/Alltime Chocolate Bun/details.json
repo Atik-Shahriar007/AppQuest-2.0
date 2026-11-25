@@ -1,0 +1,20 @@
+{
+  "product_name": "Alltime Chocolate Bun",
+  "brand": "All Time",
+  "category": "Bakery",
+  "net_weight": "Unknown",
+  "barcode": "846656006115",
+  "halal_status": "suitable_with_caution",
+  "child_suitability": "limited",
+  "ingredients": "Wheat Flour, Sugar, Water, Partially Hydrogenated Fat (Palm), Non-Hydrogenated Vegetable Oil (Palm), Egg, Milk Powder, Humectant (INS 422), Corn Starch, Cocoa Powder, Yeast, Salt, Soya Flour, Emulsifier (INS 481), Stabilizer (INS 170), Flour Treatment Agent (INS 300), Preservative (INS 282), Permitted Artificial Flavor (Chocolate), Permitted Artificial Food Color (INS 102, INS 110, INS 122, INS 124).",
+  "nutrition_per_100g": {
+    "total_fat_g": 11,
+    "saturated_fat_g": 2,
+    "trans_fat_g": "<0.003",
+    "cholesterol_mg": 0,
+    "sodium_mg": 160,
+    "total_carbohydrate_g": 59,
+    "total_sugar_g": 12,
+    "protein_g": 8
+  }
+}

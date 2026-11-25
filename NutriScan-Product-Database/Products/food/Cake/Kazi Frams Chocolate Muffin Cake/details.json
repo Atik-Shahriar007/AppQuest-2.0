@@ -1,0 +1,20 @@
+{
+  "product_name": "Kazi Frams Chocolate Muffin Cake",
+  "brand": "Kazi Farms Kitchen",
+  "category": "Bakery",
+  "net_weight": "Unknown",
+  "barcode": "8 889779 150015",
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+  "ingredients": "Wheat Flour, Skimmed Milk Powder, Cocoa Powder, Refined Sugar, Edible Vegetable Oil, Egg, Leavening Agent (E500), Emulsifier (E471, E475), Citric Acid (E330), Invert Syrup, Xanthan Gum (E415), Antioxidant (E319), Humectants, Starch, Salt, Treated Water and Permitted Artificial Flavour.",
+  "nutrition_per_100g": {
+    "total_fat_g": 23.2,
+    "saturated_fat_g": 0.23,
+    "trans_fat_g": "0.0",
+    "cholesterol_mg": 0.0,
+    "sodium_mg": 207.63,
+    "total_carbohydrate_g": 51.33,
+    "total_sugar_g": 22.2,
+    "protein_g": 6.25
+  }
+}

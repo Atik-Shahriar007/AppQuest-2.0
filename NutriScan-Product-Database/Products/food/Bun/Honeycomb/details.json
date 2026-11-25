@@ -1,0 +1,20 @@
+{
+  "product_name": "Honeycomb",
+  "brand": "All Time",
+  "category": "Bakery",
+  "net_weight": "28g",
+  "barcode": "841165152407",
+  "halal_status": "not_specified",
+  "child_suitability": "limited",
+  "ingredients": "Wheat Flour, Sugar, Hydrogenated Vegetable Fat (Dalda), Yeast, Salt, Pastry Margarine and Calcium Propionate (INS 282).",
+  "nutrition_per_100g": {
+    "total_fat_g": 18,
+    "saturated_fat_g": 8,
+    "trans_fat_g": "0",
+    "cholesterol_mg": 0,
+    "sodium_mg": 4,
+    "total_carbohydrate_g": 64,
+    "total_sugar_g": 24,
+    "protein_g": 4
+  }
+}

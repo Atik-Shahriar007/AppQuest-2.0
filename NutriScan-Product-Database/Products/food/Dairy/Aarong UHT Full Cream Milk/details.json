@@ -1,0 +1,20 @@
+{
+  "product_name": "UHT Full Cream Milk",
+  "brand": "Aarong Dairy",
+  "category": "Dairy",
+  "net_weight": "500 ml",
+  "barcode": "8941101010289",
+  "halal_status": "halal",
+  "child_suitability": "suitable",
+  "ingredients": "Cow's Milk",
+  "nutrition_per_100g": {
+    "total_fat_g": 3.5,
+    "saturated_fat_g": 0,
+    "trans_fat_g": "0",
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 4.6,
+    "total_sugar_g": 4.6,
+    "protein_g": 3.4
+  }
+}

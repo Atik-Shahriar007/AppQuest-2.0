@@ -1,0 +1,20 @@
+{
+  "product_name": "Fantastic Sliced Fruit Cake",
+  "brand": "Pran Bakers",
+  "category": "Bakery",
+  "net_weight": "Unknown",
+  "barcode": "8941153055535",
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+  "ingredients": "Wheat Flour, Edible Vegetable Oil (Palm Oil), Refined Sugar, Corn Starch, Emulsifier (E322, E471, E435), Salt, Raising Agents (E500(ii), E541, E503(ii)), Preservatives (E200, E202), Humectant (E420), Acidity Regulator (E330), Antioxidant (E319), Food Colours (E102, E110).",
+  "nutrition_per_100g": {
+    "total_fat_g": 18.7,
+    "saturated_fat_g": 9.7,
+    "trans_fat_g": "<0.3",
+    "cholesterol_mg": "<3.0",
+    "sodium_mg": 335,
+    "total_carbohydrate_g": 58.6,
+    "total_sugar_g": 27.6,
+    "protein_g": 4.2
+  }
+}

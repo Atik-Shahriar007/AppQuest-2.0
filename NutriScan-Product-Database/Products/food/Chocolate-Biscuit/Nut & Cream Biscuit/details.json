@@ -1,0 +1,23 @@
+{
+  "product_name": "Nut & Cream Biscuit",
+  "brand": "Olympic",
+  "category": "Bakery / Biscuit",
+  "net_weight": "100g",
+  "barcode": "0745114131386",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Sugar, Edible Vegetable Oils & Fats, Invert Sugar, Liquid Glucose, Cocoa Powder, Peanut, Corn Starch, Skimmed Milk Powder, Whey Powder, Soya Lecithin (E-322), Salt, Leavening Agents [Sodium Bicarbonate: E-500(ii) & Ammonium Bicarbonate: E-503(ii)], Acidity Regulator (E-450), Dough Conditioner (E-223), Antioxidant (E-319), Food Grade Wax (E-903), Polyglycerol Polyricinoleate (E-476), Permitted Artificial Flavour and Colour (E-155).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 21,
+    "saturated_fat_g": 10,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 140,
+    "total_carbohydrate_g": 66,
+    "total_sugar_g": 26,
+    "protein_g": 7
+  }
+}

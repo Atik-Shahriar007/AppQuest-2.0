@@ -1,0 +1,20 @@
+{
+  "product_name": "East Baker Slice Bread",
+  "brand": "East Baker",
+  "category": "Bakery",
+  "net_weight": "Unknown",
+  "barcode": "8941160188198",
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+  "ingredients": "Wheat Flour, Water, Sugar, Margarine, Humectant (Sorbitol, Glycerin), [Alpha-Amylase, Lipase], Corn Starch, Peptone Mono, Compound Emulsifier Powder [Emulsifiers (INS 1442, INS 415, INS 473)], Mint Jam Filling [Soyabean Oil, Water, Malt Syrup, Sugar, Egg, Emulsifiers (INS 1442, INS 415, INS 473), Acidity Regulator (Citric Acid), Preservatives (Calcium Propionate, Sorbic Acid)] and Added Milk Flavour.",
+  "nutrition_per_100g": {
+    "total_fat_g": 16.43,
+    "saturated_fat_g": 3.53,
+    "trans_fat_g": "0",
+    "cholesterol_mg": 0,
+    "sodium_mg": 488,
+    "total_carbohydrate_g": 47.61,
+    "total_sugar_g": 8.15,
+    "protein_g": 8.26
+  }
+}

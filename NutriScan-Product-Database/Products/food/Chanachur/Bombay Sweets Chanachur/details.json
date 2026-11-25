@@ -1,0 +1,20 @@
+{
+  "product_name": "Bombay Sweets Chanachur",
+  "brand": "Bombay Sweets",
+  "category": "Snacks",
+  "net_weight": "36g",
+  "barcode": "unknown",
+  "halal_status": "not_specified",
+  "child_suitability": "not_suitable",
+  "ingredients": "Chickpea Flour, Peanuts, Lentils, Rice Flakes, Vegetable Oil (Palm Olein), Spices, Salt, Citric Acid (E330), Red Chilli Powder and Turmeric Powder.",
+  "nutrition_per_100g": {
+    "total_fat_g": 46.67,
+    "saturated_fat_g": 3.33,
+    "trans_fat_g": "0",
+    "cholesterol_mg": 0,
+    "sodium_mg": 2666.67,
+    "total_carbohydrate_g": 55.56,
+    "total_sugar_g": 1.67,
+    "protein_g": 20
+  }
+}
