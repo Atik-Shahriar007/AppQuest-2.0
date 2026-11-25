@@ -1,0 +1,23 @@
+{
+  "product_name": "Mr. Noodles Egg Noodles Masala Flavor",
+  "brand": "Mr. Noodles (Pran)",
+  "category": "Instant Noodles",
+  "net_weight": "75g",
+  "barcode": "840205715343",
+
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Salt, Sodium Bicarbonate, Thickener (CMC) and Water. Tastemaker: Salt, Mixed Spices (Cumin, Coriander, Turmeric, Chilli & Cardamom), Sugar, Hydrolyzed Soy Protein, Vegetable Oil, Anticaking Agent (Silicon Dioxide: E-551), Corn Starch, Monosodium Glutamate (E-621), Food Acid (E-330), Yeast Extract, Paprika Oleoresin and Flavor.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 8.973,
+    "saturated_fat_g": 3.536,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 766.96,
+    "total_carbohydrate_g": 67.486,
+    "total_sugar_g": 3.168,
+    "protein_g": 10.92
+  }
+}

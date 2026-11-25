@@ -1,0 +1,23 @@
+{
+  "product_name": "Pran Cheera Mix ",
+  "brand": "Pran",
+  "category": "Snacks",
+  "net_weight": "not_specified",
+  "barcode": "846656016763",
+
+  "halal_status": "not_specified",
+  "child_suitability": "not_recommended_for_infants_below_12_months",
+
+  "ingredients": "Flattened Rice, Edible Vegetable Oil (Palm), Peanuts, Sugar, Salt, Spice Powders (Turmeric, Cinnamon, Ginger, Cumin Seed, Red Chili, Bay Leaf), Taste Enhancer (Monosodium Glutamate: E-621), Monosodium Sulphate, Citric Acid (E-330) and Contains Added Flavor (Wasabi).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 30,
+    "saturated_fat_g": 1.5,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 481,
+    "total_carbohydrate_g": 49,
+    "total_sugar_g": 0,
+    "protein_g": 13
+  }
+}

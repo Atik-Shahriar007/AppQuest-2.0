@@ -1,0 +1,23 @@
+{
+  "product_name": "Lay's Spanish Tomato Tango",
+  "brand": "Lay's",
+  "category": "Snacks / Potato Chips",
+  "net_weight": "17g",
+  "barcode": "0721688299516",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Potato, Edible Vegetable Oil, Sugar, Flavour (Natural and Nature Identical Flavoring Substances), Iodised Salt, Maltodextrin, Spices & Condiments (Pepper powder, garlic powder, ginger powder, clove powder, cinnamon powder), Hydrolysed Vegetable Protein, Tomato Powder, Dextrose, Wheat Fiber, Silicon dioxide (551), Potassium Chloride (508), Disodium 5'-guanylate (627), Disodium 5'-inosinate (631).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 32.8,
+    "saturated_fat_g": 4.2,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 568,
+    "total_carbohydrate_g": 52.9,
+    "total_sugar_g": 2.6,
+    "protein_g": 6.6
+  }
+}

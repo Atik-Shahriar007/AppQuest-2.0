@@ -1,0 +1,23 @@
+{
+  "product_name": "Kurkure Spicy Chicken flavour",
+  "brand": "Kurkure",
+  "category": "Snacks",
+  "net_weight": "13g",
+  "barcode": "0788792870949",
+
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Rice Meal, Edible Vegetable Oil, Corn Meal, Gram Meal, Natural & Nature Identical Flavours, Sugar, Iodised Salt, Spices and Condiments (Onion, Garlic, Pepper), Monosodium Glutamate (621), Chicken Meat Powder (0.07%), Potassium Chloride (508), Disodium 5'-Guanylate (627), Disodium 5'-Inosinate (631), Gum Arabic (414), Starch Sodium Octenyl Succinate (1450).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 32,
+    "saturated_fat_g": 14,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 560,
+    "total_carbohydrate_g": 54,
+    "total_sugar_g": 4,
+    "protein_g": 7
+  }
+}

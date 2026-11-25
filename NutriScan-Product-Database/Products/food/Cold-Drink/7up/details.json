@@ -1,0 +1,23 @@
+{
+  "product_name": "7up",
+  "brand": "Transcom Beverages Ltd.",
+  "category": "Beverage / Carbonated Drink",
+  "net_weight": "250ml (200ml + 50ml Extra)",
+  "barcode": "894110031846",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Carbonated Water, Natural Flavour, Citric Acid (330), Malic Acid (296), Sodium Citrate (331), Aspartame (951), Sodium Benzoate (211), Acesulfame Potassium (950). (Note: Contains Non-Nutritive Sweeteners. Not for Phenylketonurics.)",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 27,
+    "total_carbohydrate_g": 0,
+    "total_sugar_g": 0,
+    "protein_g": 0
+  }
+}

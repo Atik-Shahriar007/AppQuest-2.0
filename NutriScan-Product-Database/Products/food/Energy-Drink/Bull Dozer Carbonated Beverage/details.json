@@ -1,0 +1,23 @@
+{
+  "product_name": "Bull Dozer Carbonated Beverage",
+  "brand": "Bull Dozer (Pran)",
+  "category": "Beverage / Carbonated Drink",
+  "net_weight": "250ml",
+  "barcode": "8411651148255",
+
+  "halal_status": "not_specified",
+  "child_suitability": "not_recommended",
+
+  "ingredients": "Carbonated Water, Sugar, Citric Acid (E-330), Sodium Citrate (E-331), Caffeine, Vitamins, Preservative: Sodium Benzoate (E-211), PERMITTED FOOD COLOR (E-110) and ADDED Permitted Food Grade Flavor. Allergen Warning: May contain Sulphite.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 14,
+    "total_sugar_g": 14,
+    "protein_g": 0
+  }
+}

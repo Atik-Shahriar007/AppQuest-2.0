@@ -1,0 +1,23 @@
+{
+  "product_name": "Sun Chips Potato Chips Tomato Tango",
+  "brand": "Sun Chips (Quasem)",
+  "category": "Snacks / Potato Chips",
+  "net_weight": "25g",
+  "barcode": "8941160000306",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Potato, Edible Oil, Sugar, Maltodextrin, Salt, Spices (Onion, Garlic), Textured Vegetable Protein, Textured Soy Protein, Flavour Enhancers (E-621, E-627, E-631), Acidity Regulator (E-330), Paprika Extract, Artificial Sweetener (Aspartame E-951), Barley Malt Vinegar.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 31.00,
+    "saturated_fat_g": 13.26,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 52.66,
+    "total_sugar_g": 5.12,
+    "protein_g": 6.52
+  }
+}

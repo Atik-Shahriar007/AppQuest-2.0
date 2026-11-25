@@ -1,0 +1,23 @@
+{
+  "product_name": "Mr. Noodles Easy Instant Noodles (Magic Masala)",
+  "brand": "Mr. Noodles (Pran)",
+  "category": "Instant Noodles",
+  "net_weight": "140g (4 x 35g servings)",
+  "barcode": "466560100511",
+
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Noodle Cake: Wheat Flour, Potato Starch, Vegetable Oil (Palm), Salt, Raising Agent (Sodium Bicarbonate), Thickener (Guar Gum), Sodium Tripolyphosphate, Vitamin B, Water. Taste Maker: Salt, Spices & Herbs (Coriander, Garlic, Chilli, Turmeric, Cumin, Pepper, Cardamom, Cinnamon, Nutmeg, Ginger), Sugar, Hydrolyzed Soy Protein, Vegetable Oil, Anticaking Agent (Silicon Dioxide E-551), Monosodium Glutamate (MSG), Flavor, Color (Caramel E-150d, Ammonia Caramel E-150c), Yeast Extract, Mineral & Vitamin Mixture.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 17,
+    "saturated_fat_g": 8,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 750,
+    "total_carbohydrate_g": 66,
+    "total_sugar_g": 2,
+    "protein_g": 10
+  }
+}

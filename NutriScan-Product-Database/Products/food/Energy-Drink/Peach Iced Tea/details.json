@@ -1,0 +1,23 @@
+{
+  "product_name": "Peach Iced Tea",
+  "brand": "Partex Beverage",
+  "category": "Beverage / Iced Tea",
+  "net_weight": "250ml",
+  "barcode": "880196272795",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "পরিশোধিত দানাদার চিনি, সাইট্রিক এসিড, সোডিয়াম সাইট্রেট, প্রিমিক্স পাউডার, সোডিয়াম বেনজয়েট (সংরক্ষণকারী হিসাবে), ক্যাফেইন, পিচ ফ্লেভার, মিক্সফ্রুট ফ্লেভার, ব্ল্যাক টি ফ্লেভার এবং কার্বনেটেড ওয়াটার। (Refined crystal sugar, Citric acid, Sodium citrate, Premix powder, Sodium benzoate (as preservative), Caffeine, Peach flavor, Mix fruit flavor, Black tea flavor and Carbonated water).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 18.5,
+    "total_sugar_g": 0,
+    "protein_g": 0
+  }
+}

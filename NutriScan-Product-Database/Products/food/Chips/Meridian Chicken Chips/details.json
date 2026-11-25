@@ -1,0 +1,23 @@
+{
+  "product_name": "Real Thai Chicken Chips",
+  "brand": "Meridian",
+  "category": "Snacks / Chips",
+  "net_weight": "14g",
+  "barcode": "8850155021045",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Chicken, Tapioca Flour, Garlic, Pepper, Salt, Monosodium & Edible Oil.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 33.2,
+    "saturated_fat_g": 14.2,
+    "trans_fat_g": 0.03,
+    "cholesterol_mg": 18.1,
+    "sodium_mg": 945,
+    "total_carbohydrate_g": 55.8,
+    "total_sugar_g": 6.22,
+    "protein_g": 5.88
+  }
+}

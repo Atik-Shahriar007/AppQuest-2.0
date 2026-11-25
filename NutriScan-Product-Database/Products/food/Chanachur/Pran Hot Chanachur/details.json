@@ -1,0 +1,23 @@
+{
+  "product_name": "Pran Hot Chanachur",
+  "brand": "Pran",
+  "category": "Snacks",
+  "net_weight": "100g",
+  "barcode": "831730003739",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Chickpeas, Chickpeas Flour, Split Chickpeas, Wheat Flour, Corn Flour, Peanut, Flattened Rice, Edible Vegetable Oil (Palm Oil), Sodium Chloride (Salt), Taste Enhancers: Citric Acid: E-330, Monosodium Sulphate) and Spice Powders (Red Chilli, Clove, Black Pepper, Black Cumin Seed, Cinnamon, Turmeric, Ginger, Cardamom, Ajowain, Paprika Extract, Sesame, Hing).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 32,
+    "saturated_fat_g": 2.8,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 434,
+    "total_carbohydrate_g": 48,
+    "total_sugar_g": 0,
+    "protein_g": 17
+  }
+}

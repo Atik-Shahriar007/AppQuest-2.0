@@ -1,0 +1,23 @@
+{
+  "product_name": "Braver Malt Beverage",
+  "brand": "PRAN",
+  "category": "Beverage / Malt Beverage",
+  "net_weight": "250ml",
+  "barcode": "84656019689",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Carbonated Water, Sugar, Stabiliser: Quillaia Extract (E-999), Corn Syrup, Hopped Barley Malt Extract, Sodium Chloride, Citric Acid (E-330), Lactic Acid (E-270), Ascorbic Acid (E-300), Preservative: Sodium Benzoate (E-211), Potassium Sorbate (E-202), Permitted Food Color: Caramel (E-150d) and ADDED FLAVORS (LEMON and MALT).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 11,
+    "total_sugar_g": 10,
+    "protein_g": 0
+  }
+}

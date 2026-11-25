@@ -1,0 +1,23 @@
+{
+  "product_name": "PranMango Fruit Drink",
+  "brand": "PRAN",
+  "category": "Beverage / Fruit Drink",
+  "net_weight": "200ml",
+  "barcode": "not_specified",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Water, Mango Pulp, Sugar, Stabiliser: Xanthan Gum (E-415), Citric Acid (E-330), Ascorbic Acid (E-300), Sodium Chloride (Salt), Permitted Food Color: Beta-carotene (E-160a) and Added Mango Flavor.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 12,
+    "total_carbohydrate_g": 14,
+    "total_sugar_g": 13,
+    "protein_g": 0
+  }
+}

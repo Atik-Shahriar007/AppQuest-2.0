@@ -1,0 +1,23 @@
+{
+  "product_name": "NACHOZ Raw Mango & Tangy Tamarind",
+  "brand": "Bombay Sweets",
+  "category": "Snacks / Nachos",
+  "net_weight": "25g",
+  "barcode": "8941154036281",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Corn, Rice, Vegetable Oil (Palm Olein), Potato Granules, Gram Grits and Seasoning.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 13.2,
+    "saturated_fat_g": 0.8,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 12,
+    "total_carbohydrate_g": 68,
+    "total_sugar_g": 0,
+    "protein_g": 13.2
+  }
+}

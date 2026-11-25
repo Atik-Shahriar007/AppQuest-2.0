@@ -1,0 +1,23 @@
+{
+  "product_name": "Orange Drink with Basil Seed",
+  "brand": "PRAN",
+  "category": "Beverage / Fruit Drink",
+  "net_weight": "250ml",
+  "barcode": "841165145072",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Water, Sugar, Orange Juice from Concentrate (Equivalent to 12% Juice), Basil Seeds (1%), Acidity Regulators [330, 327, 331(iii)], Salt, Stabiliser (466, 418), Preservatives (202, 211), Artificial Orange Flavour, Permitted Food Colours (110, 129).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 8,
+    "total_carbohydrate_g": 14,
+    "total_sugar_g": 13.6,
+    "protein_g": 0
+  }
+}

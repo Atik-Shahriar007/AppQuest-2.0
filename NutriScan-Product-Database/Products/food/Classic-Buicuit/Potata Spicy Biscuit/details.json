@@ -1,0 +1,23 @@
+{
+  "product_name": "Potata Spicy Biscuit",
+  "brand": "Pran",
+  "category": "Snacks / Biscuit",
+  "net_weight": "not_specified",
+  "barcode": "8411651147502",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Sugar, Emulsifier (INS 471), Non-Hydrogenated Vegetable Oil [Palm (containing TBHQ)], Potato Paste, Seasoning [Onion Powder, Garlic Powder, Acidity Regulator (INS 330), Skimmed Milk Powder, Potato Flakes, Raising Agents (INS 500(ii), INS 503(ii)), Tapioca Starch, Hydrolyzed Vegetable Protein, Salt, Mixed Spices, Flavor Enhancer (INS 621) and Permitted Artificial Flavors (Potato, Vanillin)].",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 15,
+    "saturated_fat_g": 6,
+    "trans_fat_g": 1,
+    "cholesterol_mg": 0,
+    "sodium_mg": 978,
+    "total_carbohydrate_g": 73,
+    "total_sugar_g": 22,
+    "protein_g": 8
+  }
+}

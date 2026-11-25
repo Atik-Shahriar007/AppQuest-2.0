@@ -1,0 +1,23 @@
+{
+  "product_name": "Speed Classic",
+  "brand": " Akij Ventures Ltd.",
+  "category": "Beverage / Energy Drink",
+  "net_weight": "250ml",
+  "barcode": "8941189600266",
+
+  "halal_status": "not_specified",
+  "child_suitability": "not_recommended",
+
+  "ingredients": "Carbonated Water, Refined Sugar, Citric Acid (E-330), Tri-sodium Citrate (Acidity Regulator E-331), Sodium Benzoate (Preservative E-211), Vitamin Premix (Contains Caffeine & Vitamin-B), Permitted Natural and Synthetic Food Colors (E-102 and E-110) and Permitted Natural Flavour.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 12.50,
+    "total_carbohydrate_g": 15,
+    "total_sugar_g": 15,
+    "protein_g": 0
+  }
+}

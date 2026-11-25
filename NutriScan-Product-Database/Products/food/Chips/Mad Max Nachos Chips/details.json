@@ -1,0 +1,23 @@
+{
+  "product_name": "Mad Max Nachos (Achar Flavor)",
+  "brand": "Pran",
+  "category": "Snacks / Nachos",
+  "net_weight": "not_specified",
+  "barcode": "840205791835",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Corn Grit, Corn Flour, Non-hydrogenated Edible Oil (Palm), Salt, Citric acid (E-330), Sodium bicarbonate (E-500), Spices powder: Pepper, Garlic, Ginger, Onion, Sugar, and added Achari Masti seasoning.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 32,
+    "saturated_fat_g": 1.5,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 130,
+    "total_carbohydrate_g": 58,
+    "total_sugar_g": 0,
+    "protein_g": 20
+  }
+}

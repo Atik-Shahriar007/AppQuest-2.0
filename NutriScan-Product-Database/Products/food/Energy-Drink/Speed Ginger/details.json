@@ -1,0 +1,23 @@
+{
+  "product_name": "Speed Ginger",
+  "brand": "Speed (Akij Food & Beverage)",
+  "category": "Beverage / Carbonated Drink",
+  "net_weight": "250 ml",
+  "barcode": "8941189600716",
+
+  "halal_status": "not_specified",
+  "child_suitability": "not_recommended",
+
+  "ingredients": "Carbonated Water, Refined Sugar, Acidity Regulator (Citric Acid: E-330), Acidity Regulator (Tri-Sodium Citrate: E-331), Preservative (Sodium Benzoate: E-211), Permitted Natural Identical Food Colors (E-110 & E-150a), Cloudifier & Permitted Natural Identical Ginger Flavor.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 12.5,
+    "total_carbohydrate_g": 16,
+    "total_sugar_g": 16,
+    "protein_g": 0
+  }
+}

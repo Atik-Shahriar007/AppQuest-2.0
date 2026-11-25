@@ -1,0 +1,23 @@
+{
+  "product_name": "Pran Barbeque Chanachur",
+  "brand": "Pran",
+  "category": "Snacks",
+  "net_weight": "150g",
+  "barcode": "841165108251",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Chickpea Flour, Peanut, Split chickpeas, Flattened Rice, Palm Oil, Salt, Sugar, Flavour Enhancer (Citric Acid: E-330, Malic acid: E-296), Spice Powder (Turmeric, Cinnamon, Onion, Garlic, Cumin Seed, Red Chilli, Paprika), Contains Added Artificial flavour (Bar-B-Que).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 32,
+    "saturated_fat_g": 2.8,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 434,
+    "total_carbohydrate_g": 48,
+    "total_sugar_g": 2,
+    "protein_g": 17
+  }
+}

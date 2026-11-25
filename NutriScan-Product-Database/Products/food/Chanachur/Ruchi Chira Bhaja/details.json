@@ -1,0 +1,23 @@
+{
+  "product_name": "Ruchi Chira Bhaja",
+  "brand": "Ruchi",
+  "category": "Snacks",
+  "net_weight": "22g",
+  "barcode": "8941100514054",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Flattened Rice (Chira), Edible Vegetable Oil (Palm Oil), Peanuts, Peas, Black Salt, Salt, Black Pepper, Cardamom, Turmeric, Chilli, Carom Seed. (Contains: Peanuts).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 34,
+    "saturated_fat_g": 12,
+    "trans_fat_g": 0.04,
+    "cholesterol_mg": 0,
+    "sodium_mg": 800,
+    "total_carbohydrate_g": 53,
+    "total_sugar_g": 0,
+    "protein_g": 9
+  }
+}

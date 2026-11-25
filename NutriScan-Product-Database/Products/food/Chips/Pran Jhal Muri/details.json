@@ -1,0 +1,23 @@
+{
+  "product_name": "Jhal Muri (Puffed Rice mixed with Spices and Peanut)",
+  "brand": "Pran",
+  "category": "Snacks",
+  "net_weight": "not_specified",
+  "barcode": "4665600012400",
+
+  "halal_status": "halal",
+  "child_suitability": "not_suitable_for_infants",
+
+  "ingredients": "Puffed Rice, Chickpeas Flour, Peanut, Mustard Oil, Red Chilli Powder, Sodium Chloride, Monosodium Glutamate (E-621), Cinnamon Powder, Turmeric Powder, Sodium Sulphate and Added Wasabi Seasoning.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 8.25,
+    "saturated_fat_g": 6.6,
+    "trans_fat_g": "0",
+    "cholesterol_mg": 0,
+    "sodium_mg": 82.5,
+    "total_carbohydrate_g": 82.5,
+    "total_sugar_g": 0,
+    "protein_g": 6.6
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "product_name": "Ruchi Baeeque Chanachur",
+  "brand": "Ruchi",
+  "category": "Snacks",
+  "net_weight": "22g",
+  "barcode": "8941100513569",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Lentils (Bengal Gram, Mung Dal), Wheat Flour, Sugar, Salt, Edible Vegetable Oil (Palm), Spices (Chilli, Garlic, Onion, Cinnamon, Cardamom, Clove, Black Pepper, Bay Leaf), Taste Enhancer (Disodium Inosinate E-631, Disodium Guanylate E-627), Citric Acid (E-330), Starch (E-1422), Tomato Powder, Onion Powder, Garlic Powder, Soy Sauce Powder, Bar-B-Que Flavor (Permitted Artificial Flavor).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 17,
+    "saturated_fat_g": 7,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 730,
+    "total_carbohydrate_g": 64,
+    "total_sugar_g": 7,
+    "protein_g": 7
+  }
+}

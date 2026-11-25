@@ -1,0 +1,23 @@
+{
+  "product_name": "POPPERS Corn-Coconut Puffs",
+  "brand": "New Zealand Dairy",
+  "category": "Snacks / Puffs",
+  "net_weight": "not_specified",
+  "barcode": "9415007976486",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Corn granules, Milk powder, Coconut powder, Butter oil, Food Emulsifier (E-322), Sugar, Salt.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 10.80,
+    "saturated_fat_g": 7.09,
+    "trans_fat_g": "<0.003",
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 78.13,
+    "total_sugar_g": 14.88,
+    "protein_g": 7.28
+  }
+}

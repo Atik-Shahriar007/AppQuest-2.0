@@ -1,0 +1,23 @@
+{
+  "product_name": "DrinkoLitchi Fruit Drink",
+  "brand": "PRAN",
+  "category": "Beverage / Fruit Drink",
+  "net_weight": "250ml",
+  "barcode": "841165145355",
+
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Water, Nata de Coco, Sugar, Fruit Juice from concentrate, Stabilizers: Gellan Gum (E-418) and Carboxy Methyl Cellulose (E-466), Citric Acid (E-330), Sodium Citrate (E-331), Calcium Lactate, Preservatives: Sodium Benzoate (E-211) and Potassium Sorbate (E-202), Added Litchi Flavor.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 14,
+    "total_sugar_g": 13,
+    "protein_g": 0
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "product_name": "Mr. Noodles Cup Noodles",
+  "brand": "Mr. Noodles (Pran)",
+  "category": "Instant Noodles",
+  "net_weight": "80g",
+  "barcode": "841165118335",
+
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Noodle Cake: Wheat Flour, Potato Starch, Vegetable Oil, Salt, Anticaking Agent (Sodium Carbonate, Potassium Carbonate), Thickener, Sodium Tripolyphosphate, Water, Vitamin B2. Tastemaker: Salt, Spices & Herbs (Coriander, Garlic, Onion, Turmeric, Cumin, Chilli, Cardamom, Cinnamon, Nutmeg, Ginger), Sugar, Hydrolyzed Soy Protein, Vegetable Oil, Anticaking Agent (Silicon Dioxide E-551), Monosodium Glutamate (MSG), Flavor, Paprika Oleoresin, Yeast Extract, Mineral & Vitamin Mix (Calcium Carbonate, Ferric Pyrophosphate, Potassium Iodide, Vitamin B2). Dried Vegetables: Textured Soy Protein and Dehydrated Vegetables.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 26.4,
+    "saturated_fat_g": 10.74,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 1637,
+    "total_carbohydrate_g": 57.2,
+    "total_sugar_g": 2.7,
+    "protein_g": 9.2
+  }
+}

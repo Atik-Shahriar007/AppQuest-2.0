@@ -1,0 +1,23 @@
+{
+  "product_name": "Dal",
+  "brand": "Pran",
+  "category": "Snacks",
+  "net_weight": "not_specified",
+  "barcode": "831730003623",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Pulse (Mung Dal), Edible Vegetable Oil (Palm Oil), Monosodium Glutamate (E-621), Monosodium Sulphate, Spices: Turmeric, Red Chilli and Cinnamon.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 25,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 145,
+    "total_carbohydrate_g": 48,
+    "total_sugar_g": 0,
+    "protein_g": 16
+  }
+}

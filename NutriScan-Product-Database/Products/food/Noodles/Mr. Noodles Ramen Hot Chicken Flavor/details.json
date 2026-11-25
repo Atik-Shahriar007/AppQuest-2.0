@@ -1,0 +1,23 @@
+{
+  "product_name": "Mr. Noodles Ramen Hot Chicken Flavor",
+  "brand": "Mr. Noodles (Pran)",
+  "category": "Instant Noodles",
+  "net_weight": "85g",
+  "barcode": "840205744336",
+
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Noodle Cake: Wheat Flour, Potato Starch, Vegetable Oil (Palm), Salt, Acidity Regulator (Sodium Carbonate, Potassium Carbonate), Thickener (Guar Gum), Sodium Tripolyphosphate, Vitamin B2, Water. Soup: Water, Soybean Oil, Sugar, Soy Flavor Paste, Spice Mix (Chilli, Garlic, Onion, Turmeric), Yeast Extract, Salt, Caramel (Sulphite Ammonia Caramel E-150d, Paprika Oleoresin E-160c), Food Acid (Citric Acid E-330), Chilli Flavour, Modified Potato Starch (E-1420), Preservatives (Sodium Benzoate E-211, Sodium Metabisulfite E-223, Potassium Sorbate E-202), Chilli Extract, Artificial Chicken Flavor. Flakes: Roasted Sesame.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 14.89,
+    "saturated_fat_g": 5.61,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 1560,
+    "total_carbohydrate_g": 65.22,
+    "total_sugar_g": 3.59,
+    "protein_g": 10.11
+  }
+}

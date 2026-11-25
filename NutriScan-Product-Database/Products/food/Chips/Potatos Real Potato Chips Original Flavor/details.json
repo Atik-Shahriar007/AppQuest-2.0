@@ -1,0 +1,23 @@
+{
+  "product_name": "Potatos Real Potato Chips Original Flavor",
+  "brand": "Pran",
+  "category": "Snacks / Potato Chips",
+  "net_weight": "not_specified",
+  "barcode": "840547605791",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Potatoes, Edible Vegetable Oil (Palm), Sugar, Sodium Chloride (Salt), Monosodium Glutamate (E-621), Citric Acid (E-330), Spices and Condiments (Pepper, Garlic, Ginger, Onion) and Added Flavors (Natural, Nature-Identical Flavoring Substances).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 32,
+    "saturated_fat_g": 3,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 576,
+    "total_carbohydrate_g": 59,
+    "total_sugar_g": 1,
+    "protein_g": 7
+  }
+}
