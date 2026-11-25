@@ -1,0 +1,23 @@
+{
+  "product_name": "Choco Little Cookies Biscuit",
+  "brand": "BelleAme",
+  "category": "Bakery / Biscuit",
+  "net_weight": "45g",
+  "barcode": "8941192300115",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Sugar, Fortified Palm Olein, Salt, Food Emulsifier (E-322), Leavening Agents (E-500 (ii), E-503 (ii)), Antioxidant (E-319), Cocoa Powder, Liquid Glucose, Skim Milk Powder, Vanillin Powder, Liquid Chocolate, Artificial Food Grade Flavour (Chocolate), Invert Syrup, Finamul.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 20.80,
+    "saturated_fat_g": 8.69,
+    "trans_fat_g": "0",
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 65.99,
+    "total_sugar_g": 29.79,
+    "protein_g": 9.80
+  }
+}

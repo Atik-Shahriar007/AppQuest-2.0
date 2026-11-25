@@ -1,0 +1,23 @@
+{
+  "product_name": "Digestive Biscuit",
+  "brand": "Bakeman's",
+  "category": "Bakery / Biscuit",
+  "net_weight": "100g",
+  "barcode": "8941153051490",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Whole Meal Flour, Wheat Bran, Refined Sugar, Brown Sugar, Edible Vegetable Oil (Palm Oil), Iodized Salt, Liquid Glucose, Malt Extract, Full Cream Milk Powder, Corn Starch, Leavening Agents [Ammonium Bi Carbonate: E-503(ii), Sodium Bi Carbonate: E-500 (ii)], Acidity Regulator: Citric Acid (E-330), Vanillin Powder and Antioxidant (E-319).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 15,
+    "saturated_fat_g": 9.5,
+    "trans_fat_g": "<0.1",
+    "cholesterol_mg": 0,
+    "sodium_mg": 261,
+    "total_carbohydrate_g": 66,
+    "total_sugar_g": 14,
+    "protein_g": 7
+  }
+}

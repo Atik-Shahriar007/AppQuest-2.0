@@ -1,0 +1,23 @@
+{
+  "product_name": "Lexus Vegetable Crackers",
+  "brand": "Lexus (Pran)",
+  "category": "Bakery / Crackers",
+  "net_weight": "16g",
+  "barcode": "840205788743",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Non-Hydrogenated Vegetable Oil (Palm), Sugar, Raising Agents (INS 503i, INS 500i, INS 450i), Liquid Glucose, Salt, Dried Chives, Skimmed Milk Powder, Ghee, Onion Powder, Emulsifier (INS 322), Cheese Powder, Gluten Conditioner (INS 223), Permitted Artificial Flavors (Onion, Cheese, Butter, Milk), Flavor Enhancer (INS 621) and Acidity Regulator (INS 330).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 24,
+    "saturated_fat_g": 10,
+    "trans_fat_g": "<0.1",
+    "cholesterol_mg": 0,
+    "sodium_mg": 321,
+    "total_carbohydrate_g": 61,
+    "total_sugar_g": 4,
+    "protein_g": 9
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "product_name": "Haque Digestive Biscuit",
+  "brand": "Haque",
+  "category": "Bakery / Biscuit",
+  "net_weight": "240g",
+  "barcode": "8941194003816",
+
+  "halal_status": "not_specified",
+  "child_suitability": "not_assessed",
+
+  "ingredients": "Wheat Flour, Sugar, Refined Palm Oil, Invert Sugar, Raising Agents (Ammonium Bicarbonate, Sodium Bicarbonate, E 503), Salt, Leavening (E 322), Milk Solid, Butter. Contains Added Flavour (Nature Identical Flavour).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 14.5,
+    "saturated_fat_g": 6.5,
+    "trans_fat_g": "0",
+    "cholesterol_mg": 0,
+    "sodium_mg": 340,
+    "total_carbohydrate_g": 68.5,
+    "total_sugar_g": 19.0,
+    "protein_g": 8.5
+  }
+}

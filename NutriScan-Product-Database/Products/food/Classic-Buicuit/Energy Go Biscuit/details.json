@@ -1,0 +1,23 @@
+{
+  "product_name": "Energy Go Biscuit",
+  "brand": "BelleAme",
+  "category": "Bakery / Biscuit",
+  "net_weight": "62g",
+  "barcode": "8941160034226",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Wheat Flour, Fortified Palm Olein, Sugar, Glucose Syrup, Invert Syrup, Milk Powder, Salt, Food Emulsifier (E-322), Antioxidant (E-320, E-321), Leavening Agents (E-500 (ii), E-503 (ii) & E-450 (i)), Corn Starch, Sodium Metabisulphite (E-223) and Artificial Food Grade Flavor.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 12.43,
+    "saturated_fat_g": 8.71,
+    "trans_fat_g": 0.04,
+    "cholesterol_mg": 0,
+    "sodium_mg": 191,
+    "total_carbohydrate_g": 73.05,
+    "total_sugar_g": 12.17,
+    "protein_g": 8.19
+  }
+}
