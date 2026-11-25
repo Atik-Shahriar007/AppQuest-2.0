@@ -1,0 +1,134 @@
+{
+  "product_name": "Dove Deeply Nourishing Body Wash",
+  "brand": "Dove",
+  "category": "Personal Care",
+  "description": "Body wash for daily skin cleansing, formulated with NutriumMoisture™ technology to moisturise and nourish dry skin[reference:0].",
+  "quantity": "250ml",
+
+  "ingredients": [
+    {
+      "name": "Water (Aqua)",
+      "purpose": "Solvent"
+    },
+    {
+      "name": "Cocamidopropyl Betaine",
+      "purpose": "Mild surfactant / Cleansing agent"
+    },
+    {
+      "name": "Sodium Hydroxypropyl Starch Phosphate",
+      "purpose": "Skin conditioning / Texture modifier"
+    },
+    {
+      "name": "Lauric Acid",
+      "purpose": "Cleansing agent / Surfactant"
+    },
+    {
+      "name": "Sodium Lauroyl Glycinate",
+      "purpose": "Mild anionic surfactant"
+    },
+    {
+      "name": "Sodium Lauroyl Isethionate",
+      "purpose": "Mild surfactant"
+    },
+    {
+      "name": "Sodium Chloride",
+      "purpose": "Thickening agent / Viscosity controller"
+    },
+    {
+      "name": "Glycerin",
+      "purpose": "Humectant / Moisturising agent"
+    },
+    {
+      "name": "Hydrogenated Soybean Oil",
+      "purpose": "Emollient / Skin conditioning"
+    },
+    {
+      "name": "Parfum (Fragrance)",
+      "purpose": "Fragrance"
+    },
+    {
+      "name": "Helianthus Annuus (Sunflower) Seed Oil",
+      "purpose": "Emollient / Skin conditioning"
+    },
+    {
+      "name": "Sodium Benzoate",
+      "purpose": "Preservative"
+    },
+    {
+      "name": "Caprylyl Glycol",
+      "purpose": "Skin conditioning / Preservative booster"
+    },
+    {
+      "name": "Sodium Hydroxide",
+      "purpose": "pH adjuster"
+    },
+    {
+      "name": "Citric Acid",
+      "purpose": "pH adjuster"
+    },
+    {
+      "name": "Stearic Acid",
+      "purpose": "Emulsifier / Thickener"
+    },
+    {
+      "name": "Palmitic Acid",
+      "purpose": "Emulsifier / Cleansing agent"
+    },
+    {
+      "name": "Benzyl Alcohol",
+      "purpose": "Preservative / Fragrance component"
+    },
+    {
+      "name": "Citronellol",
+      "purpose": "Fragrance allergen"
+    },
+    {
+      "name": "Hexyl Cinnamal",
+      "purpose": "Fragrance allergen"
+    },
+    {
+      "name": "Limonene",
+      "purpose": "Fragrance allergen"
+    },
+    {
+      "name": "Linalool",
+      "purpose": "Fragrance allergen"
+    }
+  ],
+
+  "product_information": {
+    "skin_type": ["Normal", "Dry", "Sensitive (patch test recommended)"],
+    "fragrance": "Fresh, caring fragrance[reference:1]",
+    "is_fragrance_free": false,
+    "sulfate_free": true,
+    "paraben_free": true
+  },
+
+  "safety_information": {
+    "hazard_level": "Low (cosmetic use; minimal eye irritant)",
+    "allergens": [
+      "Citronellol",
+      "Hexyl Cinnamal",
+      "Limonene",
+      "Linalool",
+      "Benzyl Alcohol"
+    ],
+    "irritants": [
+      "Fragrance (Parfum) – may irritate very sensitive skin"
+    ],
+    "usage_warnings": [
+      "Avoid direct contact with eyes. If contact occurs, rinse thoroughly with water[reference:2].",
+      "Discontinue use if skin irritation or rash develops[reference:3].",
+      "For external use only."
+    ],
+    "usage_instructions": "Squeeze body wash into palms or onto a shower puff. Massage over wet skin, concentrating on drier areas, then rinse thoroughly[reference:4]."
+  },
+
+  "manufacturer": "Unilever (brand owner). Local distribution in Bangladesh is handled by Unilever Bangladesh Limited; the finished product is typically imported from Unilever manufacturing sites in the U.A.E. or the U.K. depending on the batch[reference:5].",
+  "country_of_origin": "United Kingdom / U.A.E. (varies by import batch; not manufactured in Bangladesh)[reference:6][reference:7]",
+
+  "source": {
+    "type": "official Dove product page + safety data + retailer listings",
+    "verified": true
+  }
+}

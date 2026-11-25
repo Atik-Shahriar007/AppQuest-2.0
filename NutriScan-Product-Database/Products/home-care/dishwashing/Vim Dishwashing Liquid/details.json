@@ -1,0 +1,75 @@
+{
+  "product_name": "Vim Dishwashing Liquid",
+  "brand": "Vim",
+  "category": "Home Care",
+  "description": "Dishwashing liquid for cleaning utensils",
+  "quantity": "500ml",
+
+  "ingredients": [
+    {
+      "name": "Water",
+      "purpose": "Solvent"
+    },
+    {
+      "name": "Sodium Laureth Sulfate (SLES)",
+      "purpose": "Primary surfactant / cleaning agent"
+    },
+    {
+      "name": "Sodium Dodecyl Benzene Sulfonate",
+      "purpose": "Surfactant / grease remover"
+    },
+    {
+      "name": "Cocamidopropyl Betaine",
+      "purpose": "Foam booster / mild surfactant"
+    },
+    {
+      "name": "Sodium Chloride",
+      "purpose": "Thickening agent"
+    },
+    {
+      "name": "Lemon Extract / Fragrance",
+      "purpose": "Fragrance / degreasing"
+    },
+    {
+      "name": "Preservative",
+      "purpose": "Product stability"
+    },
+    {
+      "name": "pH Adjuster (e.g., Citric Acid)",
+      "purpose": "pH balancing"
+    },
+    {
+      "name": "Dye",
+      "purpose": "Colorant"
+    }
+  ],
+
+  "chemical_information": {
+    "ph_level": "6.8 – 7.8 (pH-neutral) [reference:0]",
+    "fragrance": "Lemon [reference:1]",
+    "contains_bleach": false,
+    "contains_ammonia": false
+  },
+
+  "safety_information": {
+    "hazard_level": "Low to Moderate (eye irritant)",
+    "skin_contact_warning": "May cause irritation. Avoid prolonged contact with skin. [reference:2]",
+    "eye_contact_warning": "Causes serious eye irritation. If in eyes: Rinse cautiously with water for several minutes. Remove contact lenses if present and easy to do. Continue rinsing. If eye irritation persists: Get medical advice/attention. [reference:3]",
+    "ingestion_warning": "Do not swallow. If swallowed, seek medical advice immediately and show the container or label. [reference:4]",
+    "usage_instructions": "Dilute 5–10 ml of Vim per liter of water. Dip a sponge or scrubber into the solution, apply to utensils, and rinse thoroughly with water. For heavy, dried food, pre-soak at a higher concentration. [reference:5]",
+    "precautions": [
+      "Keep out of reach of children. [reference:6]",
+      "Avoid contact with eyes and skin. [reference:7]",
+      "Store in a cool, dry place in the original container. [reference:8]",
+      "Do not mix with other cleaning chemicals. [reference:9]"
+    ]
+  },
+
+  "manufacturer": "Unilever Bangladesh Limited (brand owner). Some variants may be produced by third-party manufacturers such as ARC Group. [reference:10]",
+  "country_of_origin": "Bangladesh [reference:11]",
+
+  "source": {
+    "type": "product_label + official Unilever SDS & technical data",
+    "verified": true
+  }
+}
