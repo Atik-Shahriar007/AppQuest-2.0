@@ -1,0 +1,20 @@
+{
+  "product_name": "Muffin Cake",
+  "brand": "Pran",
+  "category": "Bakery",
+  "net_weight": "16g",
+  "barcode": "8402057253800",
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+  "ingredients": "Egg, Sugar, Non-Hydrogenated Vegetable Oil (Palm), Wheat Flour, Water, Humectant (INS 420), Cocoa Powder, Full Cream Milk Powder, Corn Starch, Emulsifiers (INS 471, INS 475, INS 477, INS 470a, INS 472e), Raising Agents (INS 450i, INS 500ii), Permitted Nature Identical Flavor (Caramel), Acidity Regulator (INS 330), Preservatives (INS 202, INS 281), Thickening Agent (INS 415) and Salt.",
+  "nutrition_per_100g": {
+    "total_fat_g": 23,
+    "saturated_fat_g": 6,
+    "trans_fat_g": "<0.1",
+    "cholesterol_mg": 0,
+    "sodium_mg": 370,
+    "total_carbohydrate_g": 46,
+    "total_sugar_g": 21,
+    "protein_g": 4
+  }
+}
