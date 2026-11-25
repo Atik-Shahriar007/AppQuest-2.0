@@ -1,0 +1,23 @@
+{
+  "product_name": "Khir Milk Shake",
+  "brand": "Akij Dairy",
+  "category": "Beverage / Flavored Milk",
+  "net_weight": "250 ml",
+  "barcode": "8941189604561",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Liquid Milk, Treated Water, Refined Sugar, Full Cream Milk Powder (FCMP), Skimmed Milk Powder (SMP), Stabilizer (E-407, E-412, E-415), Permitted Synthetic Food Grade Color (E-102), Natural Identical & Artificial Flavor (Kheer & Cream Powder).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 4.0,
+    "saturated_fat_g": 1.96,
+    "trans_fat_g": 0.0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 16.96,
+    "total_sugar_g": 14.21,
+    "protein_g": 3.50
+  }
+}

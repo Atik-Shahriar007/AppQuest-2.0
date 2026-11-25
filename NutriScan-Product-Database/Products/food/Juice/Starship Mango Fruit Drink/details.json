@@ -1,0 +1,23 @@
+{
+  "product_name": "Starship Mango Fruit Drink",
+  "brand": "Abul Khair Beverage",
+  "category": "Beverage / Fruit Drink",
+  "net_weight": "200 ml",
+  "barcode": "0725765165008",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Natural Mango Pulp, Purified Water, Refined Sugar, Vitamin C, Bota-carotene (Vitamin A), Food Grade Colour & Mango Flavour.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 3.6,
+    "total_carbohydrate_g": 13.5,
+    "total_sugar_g": 12,
+    "protein_g": 0.0984
+  }
+}

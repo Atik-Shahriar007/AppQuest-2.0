@@ -1,0 +1,23 @@
+{
+  "product_name": "Fresh mojito",
+  "brand": "e-fresh",
+  "category": "Beverage / Carbonated Drink",
+  "net_weight": "250 ml",
+  "barcode": "8941161110165",
+
+  "halal_status": "not_specified",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Carbonated Water, Refined Sugar, Citric Acid Anhydrous (E330), Sodium Benzoate (E211), Ascorbic Acid (E300), Permitted Nature Identical Flavors.",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 0,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0.02,
+    "total_carbohydrate_g": 9.5,
+    "total_sugar_g": 9.5,
+    "protein_g": 0
+  }
+}

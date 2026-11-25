@@ -1,0 +1,23 @@
+{
+  "product_name": "Aarong Laban",
+  "brand": "Aarong Dairy",
+  "category": "Beverage / Dairy Drink",
+  "net_weight": "200 ml",
+  "barcode": "8941101010067",
+
+  "halal_status": "halal",
+  "child_suitability": "suitable_with_caution",
+
+  "ingredients": "Yoghurt, Potable water, Sugar, Common salt, Black salt, Stabilizer (E-415). Composition: Milk Fat 1% (min), Protein 2.7% (min).",
+
+  "nutrition_per_100g": {
+    "total_fat_g": 1.33,
+    "saturated_fat_g": 0,
+    "trans_fat_g": 0,
+    "cholesterol_mg": 0,
+    "sodium_mg": 0,
+    "total_carbohydrate_g": 7.56,
+    "total_sugar_g": 0,
+    "protein_g": 2.70
+  }
+}
