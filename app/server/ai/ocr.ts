@@ -3,11 +3,10 @@
  * corrects every value before anything is saved, and the score is computed by our engine.
  * OCR output is never authoritative (methodology section 7.8).
  */
-import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 import type { Db } from "../db/client";
 import { buildProduct } from "../../shared/catalog/build";
-import { anthropic, assertBudget, MODELS, recordUsage } from "./client";
+import { AiUnavailableError, assertBudget, complete, recordUsage } from "./client";
 
 /** Values are strings exactly as printed ("12", "<0.1", "0.5") or null when not on the label. */
 const Value = z.string().nullable();
@@ -44,24 +43,38 @@ Rules:
 - List any field you are unsure about in uncertainFields (e.g. a smudged decimal point).
 - Labels may be in English and/or Bangla. Report text fields in English where printed, otherwise as printed.`;
 
+const labelJsonSchema = (() => {
+  const schema = z.toJSONSchema(LabelSchema) as Record<string, unknown>;
+  delete schema.$schema;
+  return { ...schema, additionalProperties: false };
+})();
+
 export async function readLabel(db: Db, userId: string, image: { base64: string; mediaType: "image/jpeg" | "image/png" | "image/webp" }) {
   await assertBudget(db);
-  const res = await anthropic().messages.parse({
-    model: MODELS.deep,
-    max_tokens: 3000,
-    output_config: { effort: "low", format: zodOutputFormat(LabelSchema) },
+  const res = await complete("vision", {
+    max_tokens: 1500,
+    temperature: 0,
+    response_format: { type: "json_schema", json_schema: { name: "nutrition_label", strict: true, schema: labelJsonSchema } },
     messages: [
       {
         role: "user",
         content: [
-          { type: "image", source: { type: "base64", media_type: image.mediaType, data: image.base64 } },
+          { type: "image_url", image_url: { url: `data:${image.mediaType};base64,${image.base64}` } },
           { type: "text", text: PROMPT },
         ],
       },
     ],
   });
-  await recordUsage(db, userId, "ocr", MODELS.deep, res.usage);
-  return res.parsed_output ?? null;
+  await recordUsage(db, userId, "ocr", res);
+  // Some providers treat the schema as a hint: validate before anything reaches the user.
+  const text = (res.choices[0].message.content ?? "").replace(/^```(?:json)?\s*|\s*```$/g, "");
+  try {
+    const parsed = LabelSchema.safeParse(JSON.parse(text));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    if (!text) throw new AiUnavailableError("upstream");
+    return null;
+  }
 }
 
 /** Score preview from values the user reviewed, using the same engine as the catalog. */

@@ -31,7 +31,7 @@ TEST_DATABASE_URL=postgres://postgres:nutriscan@127.0.0.1:54329/nutriscan_test p
 | `data/catalog-overrides.json` | Team corrections by barcode (become `corrected` values) |
 | `server/premium/` | Trial, passes, entitlements, CaaS charge ledger, subscription |
 | `server/applink/` | AppLink client (from the official skill template), callbacks, USSD |
-| `server/ai/` | Claude: Nouri tool loop, label OCR, cost tracking and monthly cap |
+| `server/ai/` | OpenRouter: Nouri tool loop, label OCR, cost tracking and monthly cap |
 | `server/alerts.ts` | Verified recall alerts: two-person approval, in-app, push, opt-in SMS |
 
 ## Rules that must not be broken

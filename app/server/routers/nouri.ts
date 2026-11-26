@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, gte } from "drizzle-orm";
 import { z } from "zod";
-import { AiUnavailableError, MODELS } from "../ai/client";
+import { AiUnavailableError } from "../ai/client";
 import { chat } from "../ai/nouri";
 import { previewScore, readLabel } from "../ai/ocr";
 import { aiUsage, nouriConversations, nouriMessages, userMemories } from "../db/schema";
@@ -13,7 +13,8 @@ const OCR_PER_DAY = 10;
 
 function aiError(err: unknown): never {
   if (err instanceof AiUnavailableError) {
-    throw new TRPCError({ code: "SERVICE_UNAVAILABLE", message: err.reason === "budget" ? "ai_budget" : "ai_unavailable" });
+    const message = { budget: "ai_budget", no_key: "ai_unavailable", rate_limited: "ai_busy", upstream: "ai_unavailable" }[err.reason];
+    throw new TRPCError({ code: err.reason === "rate_limited" ? "TOO_MANY_REQUESTS" : "SERVICE_UNAVAILABLE", message });
   }
   throw err;
 }
@@ -47,7 +48,7 @@ export const nouriRouter = router({
       if (input.deep) {
         const access = await getAccess(ctx.db, ctx.user.id);
         if (!access.premium) throw new TRPCError({ code: "FORBIDDEN", message: "premium_required" });
-        if ((await usedToday(ctx, "nouri_message", MODELS.deep)) >= DEEP_PER_DAY) {
+        if ((await usedToday(ctx, "nouri_message", "deep")) >= DEEP_PER_DAY) {
           throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "deep_limit" });
         }
       }

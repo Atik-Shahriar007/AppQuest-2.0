@@ -6,7 +6,7 @@
  */
 import { randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { startFakeApplink } from "./helpers/fake-applink";
 
 const TEST_DB = process.env.TEST_DATABASE_URL;
@@ -35,6 +35,7 @@ suite("AppLink flows (integration)", () => {
     Object.assign(process.env, {
       NODE_ENV: "test",
       DATABASE_URL: TEST_DB,
+      OPENROUTER_API_KEY: "test-key",
       APPLINK_APP_ID: "APP_000001",
       APPLINK_PASSWORD: "test-password",
       APPLINK_CAAS_DEBIT_URL: fake.url("/caas/direct/debit"),
@@ -323,11 +324,76 @@ suite("AppLink flows (integration)", () => {
     expect(mems[0].status).toBe("proposed");
   });
 
-  it("AI cost is priced from usage", async () => {
-    const { costUsd } = await import("../server/ai/client");
-    const usage = { input_tokens: 1_000_000, output_tokens: 1_000_000, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } as never;
-    expect(costUsd("claude-haiku-5-5", usage)).toBeCloseTo(0.6);
-    expect(costUsd("claude-opus-5-5", usage)).toBeCloseTo(24);
+  it("AI usage records OpenRouter's reported cost and enforces the monthly cap", async () => {
+    const ai = await import("../server/ai/client");
+    const u = user();
+    await ai.recordUsage(m.db, u, "nouri", { model: "deepseek/deepseek-v4.1-flash", usage: { prompt_tokens: 1000, completion_tokens: 100, cost: 0.00007 } });
+    await ai.recordUsage(m.db, u, "nouri", { model: "google/gemma-4-31b-it:free", usage: { prompt_tokens: 1000, completion_tokens: 100 } });
+    const rows = await m.db.select().from(m.schema.aiUsage);
+    expect(rows.map((r) => Number(r.costUsd)).sort()).toEqual([0, 0.00007]);
+  });
+
+  it("Nouri runs the tool loop over OpenRouter and stores the exchange", async () => {
+    const { chat } = await import("../server/ai/nouri");
+    const bodies: Record<string, unknown>[] = [];
+    const replies = [
+      {
+        id: "1",
+        model: "google/gemma-4-31b-it:free",
+        choices: [
+          {
+            finish_reason: "tool_calls",
+            message: { role: "assistant", content: null, tool_calls: [{ id: "c1", type: "function", function: { name: "search_products", arguments: '{"query":"noodles"}' } }] },
+          },
+        ],
+        usage: { prompt_tokens: 900, completion_tokens: 20, cost: 0 },
+      },
+      {
+        id: "2",
+        model: "google/gemma-4-31b-it:free",
+        choices: [{ finish_reason: "stop", message: { role: "assistant", content: "Mr. Noodles Egg Noodles scores highest." } }],
+        usage: { prompt_tokens: 1500, completion_tokens: 30, cost: 0 },
+      },
+    ];
+    const fetchMock = vi.fn(async (url: string, init: { body: string }) => {
+      bodies.push(JSON.parse(init.body));
+      return new Response(JSON.stringify(replies.shift()), { status: 200, headers: { "content-type": "application/json" } });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const u = user();
+      const r = await chat(m.db, u, { message: "Which noodles are best?", deep: false });
+      expect(r.text).toContain("Mr. Noodles");
+      expect(bodies).toHaveLength(2);
+      expect(bodies[0]).toMatchObject({ provider: { data_collection: "deny", require_parameters: true } });
+      expect((bodies[0].models as string[])[0]).toMatch(/:free$/);
+      const toolMsg = (bodies[1].messages as { role: string; content: string }[]).find((x) => x.role === "tool")!;
+      expect(JSON.parse(toolMsg.content).length).toBeGreaterThan(0);
+      expect(await m.db.select().from(m.schema.nouriMessages)).toHaveLength(2);
+      expect((await m.access.getAccess(m.db, u)).nouriUsedToday).toBe(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("OCR validates the model's JSON before returning it", async () => {
+    const { readLabel } = await import("../server/ai/ocr");
+    const good = {
+      readable: true, productName: "Test Chips", brand: null, basis: "per_100g", servingSize: "30 g",
+      energyKcal: "520", energyKj: null, totalFatG: "30", saturatedFatG: "12", transFatG: "<0.1", cholesterolMg: null,
+      sodiumMg: "700", saltG: null, totalCarbohydrateG: "55", totalSugarG: "3", addedSugarG: null, fibreG: null, proteinG: "6",
+      ingredients: "Potato, Palm oil, Salt", uncertainFields: [],
+    };
+    const respond = (content: string) =>
+      vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ id: "x", model: "m", choices: [{ finish_reason: "stop", message: { role: "assistant", content } }], usage: {} }))));
+    try {
+      respond("```json\n" + JSON.stringify(good) + "\n```");
+      expect((await readLabel(m.db, user(), { base64: "AAAA", mediaType: "image/jpeg" }))?.sodiumMg).toBe("700");
+      respond(JSON.stringify({ ...good, basis: "per_bag" }));
+      expect(await readLabel(m.db, user(), { base64: "AAAA", mediaType: "image/jpeg" })).toBeNull();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
 

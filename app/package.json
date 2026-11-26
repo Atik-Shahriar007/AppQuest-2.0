@@ -21,7 +21,6 @@
     "db:migrate": "tsx server/db/migrate.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.14.0",
     "@expo-google-fonts/noto-sans-bengali": "^0.4.4",
     "@expo/metro-runtime": "~57.0.16",
     "@expo/vector-icons": "^15.0.2",

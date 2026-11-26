@@ -6,14 +6,13 @@
  *   summaries of past conversations (searched with Postgres full-text search).
  * - New preferences are only PROPOSED; the app asks the user to confirm before they are kept.
  */
-import type Anthropic from "@anthropic-ai/sdk";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import type { Db } from "../db/client";
 import { aiUsage, nouriConversations, nouriMessages, profiles, userMemories } from "../db/schema";
 import { betterAlternatives, getProduct, passesModes, searchProducts, type Modes } from "../catalog";
 import type { CatalogProduct } from "../../shared/catalog/types";
-import { anthropic, assertBudget, MODELS, recordUsage, type ModelId } from "./client";
+import { assertBudget, complete, recordUsage, type ChatMessage, type ToolDef } from "./client";
 
 const MAX_TOOL_ROUNDS = 5;
 const HISTORY_MESSAGES = 12;
@@ -33,7 +32,7 @@ How you work:
 - If the user states a lasting preference or restriction (for example "I avoid palm oil" or "I am vegetarian"), call propose_preference once so the app can ask them to confirm it. Do not say it is saved; say you can remember it if they confirm.
 - When earlier conversations might help ("like last time"), use search_past_conversations.`;
 
-const tools: Anthropic.Tool[] = [
+const toolSpecs = [
   {
     name: "search_products",
     description:
@@ -76,6 +75,11 @@ const tools: Anthropic.Tool[] = [
     input_schema: { type: "object", properties: { text: { type: "string", maxLength: 120 } }, required: ["text"] },
   },
 ];
+
+const tools: ToolDef[] = toolSpecs.map((t) => ({
+  type: "function",
+  function: { name: t.name, description: t.description, parameters: t.input_schema },
+}));
 
 function brief(p: CatalogProduct) {
   return {
@@ -198,7 +202,7 @@ export type NouriReply = {
   conversationId: string;
   text: string;
   proposedPreferences: string[];
-  model: ModelId;
+  model: string;
 };
 
 export async function chat(
@@ -207,7 +211,7 @@ export async function chat(
   input: { conversationId?: string; message: string; deep: boolean; productId?: string },
 ): Promise<NouriReply> {
   await assertBudget(db);
-  const model: ModelId = input.deep ? MODELS.deep : MODELS.fast;
+  const tier = input.deep ? "deep" : "chat";
 
   let conversationId = input.conversationId;
   if (conversationId) {
@@ -225,45 +229,53 @@ export async function chat(
     .where(eq(nouriMessages.conversationId, conversationId))
     .orderBy(desc(nouriMessages.id))
     .limit(HISTORY_MESSAGES);
-  const history: Anthropic.MessageParam[] = previous.reverse().map((m) => ({ role: m.role as "user" | "assistant", content: m.text }));
-  // The API requires the first message to be from the user.
+  const history: ChatMessage[] = previous
+    .reverse()
+    .map((m) => (m.role === "user" ? { role: "user" as const, content: m.text } : { role: "assistant" as const, content: m.text }));
   while (history.length && history[0].role !== "user") history.shift();
 
   const { context, modes } = await userContext(db, userId);
   const productHint = input.productId && getProduct(input.productId) ? `\n\n(The user is looking at product id "${input.productId}".)` : "";
-  const messages: Anthropic.MessageParam[] = [...history, { role: "user", content: input.message + productHint }];
+  const messages: ChatMessage[] = [
+    // Stable instructions first so providers that cache prefixes can reuse them.
+    { role: "system", content: `${SYSTEM}\n\nAbout this user:\n${context}` },
+    ...history,
+    { role: "user", content: input.message + productHint },
+  ];
 
   const ctx: ToolCtx = { db, userId, modes, proposed: [] };
   let finalText = "";
+  let model = "";
 
   for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
-    const response = await anthropic().messages.create({
-      model,
-      max_tokens: input.deep ? 4000 : 1500,
-      output_config: { effort: input.deep ? "medium" : "low" },
-      system: [
-        { type: "text", text: SYSTEM, cache_control: { type: "ephemeral" } },
-        { type: "text", text: `About this user:\n${context}` },
-      ],
-      tools,
+    // On the last round, withhold tools so the model must answer in text.
+    const response = await complete(tier, {
       messages,
+      tools: round < MAX_TOOL_ROUNDS ? tools : undefined,
+      max_tokens: input.deep ? 2500 : 1200,
+      temperature: 0.3,
     });
-    await recordUsage(db, userId, "nouri", model, response.usage);
+    await recordUsage(db, userId, "nouri", response);
+    model = response.model;
+    const choice = response.choices[0];
+    const msg = choice.message;
+    const calls = msg.tool_calls ?? [];
 
-    const text = response.content.filter((b): b is Anthropic.TextBlock => b.type === "text").map((b) => b.text).join("\n").trim();
-    const toolUses = response.content.filter((b): b is Anthropic.ToolUseBlock => b.type === "tool_use");
-
-    if (response.stop_reason !== "tool_use" || toolUses.length === 0 || round === MAX_TOOL_ROUNDS) {
-      finalText = text || "Sorry, I could not answer that. Please try asking another way.";
-      if (response.stop_reason === "refusal") finalText = "I can't help with that. Please ask me about foods and nutrition.";
+    if (calls.length === 0) {
+      finalText = (msg.content ?? "").trim() || "Sorry, I could not answer that. Please try asking another way.";
       break;
     }
-    messages.push({ role: "assistant", content: response.content });
-    const results: Anthropic.ToolResultBlockParam[] = [];
-    for (const t of toolUses) {
-      results.push({ type: "tool_result", tool_use_id: t.id, content: await runTool(ctx, t.name, t.input) });
+    messages.push({ role: "assistant", content: msg.content ?? null, tool_calls: calls });
+    for (const call of calls) {
+      let args: unknown = {};
+      try {
+        args = JSON.parse(call.function.arguments || "{}");
+      } catch {
+        messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify({ error: "Arguments were not valid JSON." }) });
+        continue;
+      }
+      messages.push({ role: "tool", tool_call_id: call.id, content: await runTool(ctx, call.function.name, args) });
     }
-    messages.push({ role: "user", content: results });
   }
 
   await db.insert(nouriMessages).values([
@@ -272,9 +284,9 @@ export async function chat(
   ]);
   await db.update(nouriConversations).set({ updatedAt: new Date() }).where(eq(nouriConversations.id, conversationId));
   // One row per user message: this is what the daily limit counts.
-  await db.insert(aiUsage).values({ userId, feature: "nouri_message", model, costUsd: "0" });
+  await db.insert(aiUsage).values({ userId, feature: "nouri_message", model: tier, costUsd: "0" });
 
-  // Refresh the conversation summary every 3 exchanges, in the background, on the cheap model.
+  // Refresh the conversation summary every 3 exchanges, in the background.
   const count = previous.length + 2;
   if (count % 6 === 0) void summarise(db, userId, conversationId).catch(() => {});
 
@@ -286,15 +298,19 @@ export async function summarise(db: Db, userId: string, conversationId: string) 
   const rows = await db.select().from(nouriMessages).where(eq(nouriMessages.conversationId, conversationId)).orderBy(nouriMessages.id).limit(60);
   if (rows.length < 2) return;
   const transcript = rows.map((r) => `${r.role === "user" ? "User" : "Nouri"}: ${r.text}`).join("\n").slice(-12_000);
-  const res = await anthropic().messages.create({
-    model: MODELS.fast,
-    max_tokens: 300,
-    output_config: { effort: "low" },
-    system:
-      "Summarise this nutrition-assistant conversation in at most 3 short English sentences for later recall: products discussed, the user's concerns, and conclusions. No greetings.",
-    messages: [{ role: "user", content: transcript }],
+  const res = await complete("chat", {
+    max_tokens: 250,
+    temperature: 0,
+    messages: [
+      {
+        role: "system",
+        content:
+          "Summarise this nutrition-assistant conversation in at most 3 short English sentences for later recall: products discussed, the user's concerns, and conclusions. No greetings.",
+      },
+      { role: "user", content: transcript },
+    ],
   });
-  await recordUsage(db, userId, "summary", MODELS.fast, res.usage);
-  const summary = res.content.filter((b): b is Anthropic.TextBlock => b.type === "text").map((b) => b.text).join(" ").trim();
+  await recordUsage(db, userId, "summary", res);
+  const summary = (res.choices[0].message.content ?? "").trim();
   if (summary) await db.update(nouriConversations).set({ summary }).where(eq(nouriConversations.id, conversationId));
 }
