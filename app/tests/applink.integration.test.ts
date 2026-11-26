@@ -74,7 +74,7 @@ suite("AppLink flows (integration)", () => {
   beforeEach(async () => {
     fake.reset();
     await m.rawSql.unsafe(
-      "truncate charges, entitlements, consents, phone_links, subscriptions, otp_requests, applink_events, ussd_sessions, profiles, history, favorites, recalls, alert_sends, notifications, ai_usage restart identity",
+      "truncate charges, entitlements, user_memories, nouri_conversations, nouri_messages, consents, phone_links, subscriptions, otp_requests, applink_events, ussd_sessions, profiles, history, favorites, recalls, alert_sends, notifications, ai_usage restart identity",
     );
   });
 
@@ -291,4 +291,43 @@ suite("AppLink flows (integration)", () => {
 
     expect(await m.alerts.applyIncomingSms(m.db, { sourceAddress: "tel:8801911111111", message: "stop" })).toBe("stopped");
   });
+
+  it("Nouri limits: 5 free messages a day, then Nouri Pass messages, 20 with Premium", async () => {
+    const u = user();
+    const { aiUsage } = m.schema;
+    for (let i = 0; i < 5; i++) await m.db.insert(aiUsage).values({ userId: u, feature: "nouri_message", model: "claude-haiku-5-5" });
+    expect(await m.access.gateNouriMessage(m.db, u)).toMatchObject({ allowed: false, reason: "daily_limit" });
+    await m.access.grantForCharge(m.db, u, "nouri_pass", "np1");
+    expect(await m.access.gateNouriMessage(m.db, u)).toMatchObject({ allowed: true, usedPass: true });
+    expect((await m.access.getAccess(m.db, u)).nouriPassUses).toBe(9);
+    const v = user();
+    await m.access.startTrial(m.db, v);
+    for (let i = 0; i < 19; i++) await m.db.insert(aiUsage).values({ userId: v, feature: "nouri_message", model: "claude-haiku-5-5" });
+    expect(await m.access.gateNouriMessage(m.db, v)).toMatchObject({ allowed: true, usedPass: false });
+  });
+
+  it("Nouri tools answer from the catalog and only propose preferences", async () => {
+    const { runTool } = await import("../server/ai/nouri");
+    const u = user();
+    const ctx = { db: m.db, userId: u, modes: {}, proposed: [] as string[] };
+    const found = JSON.parse(await runTool(ctx, "search_products", { query: "noodles" }));
+    expect(found.length).toBeGreaterThan(0);
+    const detail = JSON.parse(await runTool(ctx, "get_product", { id: found[0].id }));
+    expect(detail.score).toBe(found[0].score);
+    expect(detail.nutrients.energy_kcal).toContain("(estimated)");
+    expect(JSON.parse(await runTool(ctx, "get_product", { id: "nope" })).error).toBeTruthy();
+    expect(JSON.parse(await runTool(ctx, "compare_products", { ids: ["only-one"] })).error).toBe("Invalid input");
+    await runTool(ctx, "propose_preference", { text: "Avoids palm oil" });
+    const mems = await m.db.select().from(m.schema.userMemories);
+    expect(mems).toHaveLength(1);
+    expect(mems[0].status).toBe("proposed");
+  });
+
+  it("AI cost is priced from usage", async () => {
+    const { costUsd } = await import("../server/ai/client");
+    const usage = { input_tokens: 1_000_000, output_tokens: 1_000_000, cache_read_input_tokens: 0, cache_creation_input_tokens: 0 } as never;
+    expect(costUsd("claude-haiku-5-5", usage)).toBeCloseTo(0.6);
+    expect(costUsd("claude-opus-5-5", usage)).toBeCloseTo(24);
+  });
 });
+
