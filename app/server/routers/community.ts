@@ -94,6 +94,17 @@ export const communityRouter = router({
       .where(eq(contributions.userId, ctx.user.id))
       .orderBy(desc(contributions.createdAt)),
   ),
+  /** Points: 10 per approved contribution. Points never change scores or rankings of products. */
+  myPoints: protectedProcedure.query(async ({ ctx }) => {
+    const [row] = await ctx.db
+      .select({
+        approved: sql<number>`count(*) filter (where ${contributions.status} = 'approved')::int`,
+        pending: sql<number>`count(*) filter (where ${contributions.status} in ('submitted','in_review'))::int`,
+      })
+      .from(contributions)
+      .where(eq(contributions.userId, ctx.user.id));
+    return { points: (row?.approved ?? 0) * 10, approved: row?.approved ?? 0, pending: row?.pending ?? 0 };
+  }),
   leaderboard: publicProcedure.query(async ({ ctx }) => {
     const rows = await ctx.db
       .select({
@@ -108,12 +119,14 @@ export const communityRouter = router({
       .orderBy(sql`2 desc, 3 desc`)
       .limit(20);
     // Never expose user ids publicly.
-    return rows.map((r, i) => ({
-      rank: i + 1,
-      name: r.name ?? "NutriScan member",
-      approved: r.approved,
-      total: r.total,
-    }));
+    return rows
+      .filter((r) => r.approved > 0)
+      .map((r, i) => ({
+        rank: i + 1,
+        name: r.name ?? "NutriScan member",
+        approved: r.approved,
+        points: r.approved * 10,
+      }));
   }),
 
   activeRecalls: publicProcedure.query(({ ctx }) =>

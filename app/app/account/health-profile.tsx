@@ -285,8 +285,8 @@ export default function HealthProfileScreen() {
 
       <DemoNotice>
         {language === "en"
-          ? "Stored locally on this device for prototype personalization. Not medical advice."
-          : "প্রোটোটাইপ পার্সোনালাইজেশনের জন্য এই ডিভাইসে সংরক্ষিত। এটি চিকিৎসা পরামর্শ নয়।"}
+          ? "Saved on this device and, when signed in, to your account so Nouri can personalise answers. Not medical advice."
+          : "এই ডিভাইসে এবং সাইন ইন করলে আপনার অ্যাকাউন্টে সংরক্ষিত, যাতে নৌরি উত্তর ব্যক্তিগত করতে পারে। এটি চিকিৎসা পরামর্শ নয়।"}
       </DemoNotice>
 
       <Card style={{ gap: 14 }}>

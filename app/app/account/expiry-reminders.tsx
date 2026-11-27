@@ -397,8 +397,8 @@ export default function ExpiryRemindersScreen() {
 
       <DemoNotice>
         {language === "en"
-          ? "Reminders are stored locally. Push notifications are not connected in this prototype."
-          : "রিমাইন্ডারগুলো ডিভাইসে সংরক্ষিত থাকে। এই প্রোটোটাইপে পুশ নোটিফিকেশন যুক্ত নয়।"}
+          ? "Saved on this device (with a phone notification two days before) and, when signed in, to your account."
+          : "এই ডিভাইসে সংরক্ষিত (দুই দিন আগে ফোনে নোটিফিকেশন) এবং সাইন ইন করলে আপনার অ্যাকাউন্টে।"}
       </DemoNotice>
     </Screen>
   );

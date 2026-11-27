@@ -362,7 +362,7 @@ export default function SettingsScreen() {
               {language === "en" ? "App Version" : "অ্যাপ সংস্করণ"}
             </AppText>
             <AppText weight="semibold" style={{ fontSize: 12 }}>
-              NutriScan Prototype v1.0
+              NutriScan 1.0 (AppQuest 2.0 build)
             </AppText>
           </View>
           <View style={{ height: 1, backgroundColor: palette.line }} />
@@ -374,8 +374,8 @@ export default function SettingsScreen() {
             </AppText>
             <AppText weight="semibold" style={{ fontSize: 12 }}>
               {language === "en"
-                ? "Demo only — not for medical use"
-                : "শুধুই ডেমো — চিকিৎসার জন্য নয়"}
+                ? "Nutrition guide, not medical advice"
+                : "পুষ্টি নির্দেশিকা, চিকিৎসা পরামর্শ নয়"}
             </AppText>
           </View>
           <View style={{ height: 1, backgroundColor: palette.line }} />

@@ -18,8 +18,8 @@ export default function HistoryScreen() {
   };
   return (
     <Screen contentStyle={{ gap: 18 }}>
-      <PageHeader title={t(language, "history")} subtitle={language === "en" ? "Revisit a product and the exact demo record you opened." : "আগে দেখা পণ্য ও সেই ডেমো রেকর্ড আবার খুলুন।"} />
-      <DemoNotice>{language === "en" ? "History is stored on this device for the prototype; it is not synced to an account." : "প্রোটোটাইপে ইতিহাস এই ডিভাইসে সংরক্ষিত; কোনো অ্যাকাউন্টে সিঙ্ক হয় না।"}</DemoNotice>
+      <PageHeader title={t(language, "history")} subtitle={language === "en" ? "Revisit products you scanned or opened." : "আগে স্ক্যান করা বা দেখা পণ্য আবার খুলুন।"} />
+      <DemoNotice>{language === "en" ? "History is kept on this device and, when you are signed in, saved to your account so recall alerts can reach you." : "ইতিহাস এই ডিভাইসে থাকে এবং সাইন ইন করলে আপনার অ্যাকাউন্টে সংরক্ষিত হয়, যাতে প্রত্যাহারের সতর্কতা আপনার কাছে পৌঁছায়।"}</DemoNotice>
       {entries.length > 0 ? (
         <View style={{ gap: 12 }}>
           <SecondaryButton accessibilityLabel={t(language, "clearHistory")} title={t(language, "clearHistory")} icon="delete-outline" onPress={() => setConfirmClear(true)} style={{ alignSelf: "flex-end", minHeight: 44, paddingHorizontal: 12 }} />

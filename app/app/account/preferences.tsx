@@ -145,8 +145,8 @@ export default function PreferencesScreen() {
           title={language === "en" ? "Product & Expiry Alerts" : "পণ্য ও মেয়াদের সতর্কতা"}
           subtitle={
             language === "en"
-              ? "Notifications not connected in this prototype"
-              : "এই প্রোটোটাইপে নোটিফিকেশন যুক্ত নয়"
+              ? "Recall alerts and expiry reminders on this device"
+              : "এই ডিভাইসে প্রত্যাহারের সতর্কতা ও মেয়াদের রিমাইন্ডার"
           }
           value={notificationsEnabled}
           onValueChange={setNotificationsEnabled}

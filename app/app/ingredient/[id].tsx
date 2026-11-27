@@ -410,8 +410,8 @@ export default function IngredientDetailScreen() {
             }
             body={
               language === "en"
-                ? "This ingredient is not in the prototype reference list yet."
-                : "এই উপাদানটি এখনও প্রোটোটাইপ তালিকায় যুক্ত হয়নি।"
+                ? "This ingredient is not in the NutriScan reference list yet. You can ask Nouri about it."
+                : "এই উপাদানটি এখনও নিউট্রিস্ক্যান তালিকায় নেই। নৌরিকে জিজ্ঞেস করতে পারেন।"
             }
             action={{
               label:
@@ -607,7 +607,7 @@ export default function IngredientDetailScreen() {
           <Card>
             <AppText style={{ color: palette.muted, fontSize: 12 }}>
               {language === "en"
-                ? "No matching products found in the current preview catalog."
+                ? "No matching products found in the catalog."
                 : "বর্তমান প্রিভিউ ক্যাটালগে মিল থাকা কোনো পণ্য পাওয়া যায়নি।"}
             </AppText>
           </Card>

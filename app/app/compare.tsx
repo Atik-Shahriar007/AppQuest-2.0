@@ -995,8 +995,8 @@ export default function CompareProductsScreen() {
                     </AppText>
                     <AppText style={{ fontSize: 10, color: palette.green }}>
                       {language === "en"
-                        ? "Nouri prototype insight · based on catalog data"
-                        : "নৌরি প্রোটোটাইপ বিশ্লেষণ · ক্যাটালগের তথ্যের ভিত্তিতে"}
+                        ? "Rule-based summary · from catalog scores and labels"
+                        : "নিয়মভিত্তিক সারাংশ · ক্যাটালগের স্কোর ও লেবেল থেকে"}
                     </AppText>
                   </View>
                 </View>

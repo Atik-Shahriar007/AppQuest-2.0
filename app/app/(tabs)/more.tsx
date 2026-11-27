@@ -60,7 +60,7 @@ export default function MoreScreen() {
           </View>) : <View style={{ alignItems: "center", paddingVertical: 18, gap: 7 }}><MaterialCommunityIcons name={halalMode && favorites.length ? "shield-off-outline" : "star-outline"} size={24} color={palette.muted} /><AppText weight="semibold" style={{ fontSize: 12 }}>{halalMode && favorites.length ? t(language, "halalEmptyTitle") : t(language, "noFavorites")}</AppText><AppText style={{ color: palette.muted, fontSize: 10, textAlign: "center" }}>{halalMode && favorites.length ? t(language, "halalEmptyBody") : t(language, "emptyFavoritesHint")}</AppText>{halalMode && favorites.length ? <SecondaryButton title={t(language, "turnOffHalalMode")} icon="shield-off-outline" onPress={() => setHalalMode(false)} style={{ alignSelf: "stretch", marginTop: 3 }} /> : null}</View>}
         </Card>
       </View>
-      <AppText style={{ color: palette.muted, textAlign: "center", fontSize: 10 }}>{filterProductsByHalal(products, halalMode).length} {t(language, "resultCount")} · {t(language, "demoNote")}</AppText>
+      <AppText style={{ color: palette.muted, textAlign: "center", fontSize: 10 }}>{filterProductsByHalal(products, halalMode).length} {t(language, "resultCount")}</AppText>
     </Screen>
   );
 }

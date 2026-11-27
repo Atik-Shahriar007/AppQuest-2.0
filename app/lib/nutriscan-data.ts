@@ -128,7 +128,7 @@ export const betterAlternatives = (
 const copy = {
   brand: sample("NutriScan", "নিউট্রিস্ক্যান"),
   tagline: sample("Bangladesh label guide", "বাংলাদেশি লেবেল গাইড"),
-  prototypeStatus: sample("Bangladesh · prototype", "বাংলাদেশ · প্রোটোটাইপ"),
+  prototypeStatus: sample("Bangladesh · packaged food guide", "বাংলাদেশ · প্যাকেটজাত খাবারের গাইড"),
   homeTitle: sample("Know What You Eat", "আপনি কী খান, জেনে নিন"),
   homeSubtitle: sample(
     "Scan local products, then explore what the label does—and doesn’t—tell you.",

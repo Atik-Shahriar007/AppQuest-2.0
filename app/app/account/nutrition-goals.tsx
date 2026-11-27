@@ -197,8 +197,8 @@ export default function NutritionGoalsScreen() {
 
       <DemoNotice>
         {language === "en"
-          ? "Goals help tailor your tips and insights in this prototype."
-          : "লক্ষ্যগুলো এই প্রোটোটাইপে আপনার টিপস ও তথ্য সাজাতে সাহায্য করে।"}
+          ? "Goals help Nouri tailor tips and insights for you."
+          : "লক্ষ্যগুলো নৌরিকে আপনার জন্য টিপস ও তথ্য সাজাতে সাহায্য করে।"}
       </DemoNotice>
 
       <SectionHeading

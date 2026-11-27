@@ -467,7 +467,7 @@ export default function ProfileHubScreen() {
           <MenuRow
             icon="information-outline"
             title={language === "en" ? "About" : "সম্পর্কে"}
-            subtitle="NutriScan prototype · v1.0 · Demo only"
+            subtitle="NutriScan 1.0 · Nutrition guide, not medical advice"
             right={<View />}
           />
         </Card>

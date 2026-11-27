@@ -675,8 +675,8 @@ export default function ScanScreen() {
                 accessibilityLabel={t(language, "findProduct")}
                 accessibilityHint={
                   language === "en"
-                    ? "Search the prototype catalog"
-                    : "প্রোটোটাইপ ক্যাটালগে খুঁজুন"
+                    ? "Search the catalog"
+                    : "ক্যাটালগে খুঁজুন"
                 }
                 onPress={() => openCode(barcode)}
                 style={({ pressed }) => ({
@@ -823,8 +823,8 @@ export default function ScanScreen() {
           </View>
           <DemoNotice>
             {language === "en"
-              ? "This scanner matches the prototype catalog only. An unmatched code is not a safety judgment."
-              : "এই স্ক্যানার শুধু প্রোটোটাইপ ক্যাটালগে খোঁজে। কোনো কোড না মিললে তা পণ্যের নিরাপত্তা সম্পর্কে কিছু বলে না।"}
+              ? "This scanner matches the NutriScan catalog. An unmatched code is not a safety judgment: add the product so others can see it."
+              : "এই স্ক্যানার নিউট্রিস্ক্যান ক্যাটালগে খোঁজে। কোড না মিললে তা নিরাপত্তা সম্পর্কে কিছু বলে না: পণ্যটি যোগ করুন যাতে অন্যরা দেখতে পায়।"}
           </DemoNotice>
         </>
       ) : (
