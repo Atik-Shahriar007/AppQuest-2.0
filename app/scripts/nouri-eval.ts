@@ -317,15 +317,15 @@ async function main() {
   for (const c of only.length
     ? cases.filter((x) => only.includes(x.id))
     : cases.slice(0, limit)) {
+    // Free models allow 20 requests a minute; a short pause keeps the run inside it.
+    await new Promise((r) => setTimeout(r, 4000));
     const userId = randomUUID();
-    await db
-      .insert(profiles)
-      .values({
-        userId,
-        language: c.lang ?? "en",
-        health: c.health ?? {},
-        modes: c.modes ?? {},
-      });
+    await db.insert(profiles).values({
+      userId,
+      language: c.lang ?? "en",
+      health: c.health ?? {},
+      modes: c.modes ?? {},
+    });
     const t = Date.now();
     try {
       const r = await chat(db, userId, { message: c.q, deep: false });

@@ -149,6 +149,20 @@ export async function complete(
     }
   }
 
+  // Free models share a rate-limited pool: wait for the reset (at most 8 s) and retry twice.
+  for (let attempt = 0; attempt < 2 && res.status === 429; attempt++) {
+    const reset = Number(res.headers.get("x-ratelimit-reset"));
+    const waitMs =
+      Number.isFinite(reset) && reset > Date.now()
+        ? Math.min(reset - Date.now(), 8000)
+        : 3000 * (attempt + 1);
+    await new Promise((r) => setTimeout(r, waitMs));
+    try {
+      res = await send();
+    } catch {
+      break;
+    }
+  }
   if (res.status === 429) throw new AiUnavailableError("rate_limited");
   if (res.status === 402) throw new AiUnavailableError("budget"); // out of OpenRouter credits
   if (!res.ok) {
