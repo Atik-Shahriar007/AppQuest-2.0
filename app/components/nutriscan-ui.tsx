@@ -16,7 +16,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { categoryLabel, productBrand, productName, t } from "@/lib/nutriscan-data";
+import {
+  categoryLabel,
+  productBrand,
+  productName,
+  t,
+} from "@/lib/nutriscan-data";
 import type { Language, Localized, Product } from "@/lib/nutriscan-data";
 import { useNutriScan } from "@/lib/nutriscan-state";
 
@@ -93,43 +98,191 @@ export function usePalette(): Palette {
   return appearance === "dark" ? darkPalette : lightPalette;
 }
 
-const createStyles = (colors: Palette) => StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.paper },
-  scrollContent: { width: "100%", maxWidth: 520, alignSelf: "center", paddingHorizontal: 20, paddingTop: 10, paddingBottom: 28, gap: 20 },
-  staticContent: { width: "100%", maxWidth: 520, alignSelf: "center", paddingHorizontal: 20, paddingTop: 10, paddingBottom: 28 },
-  header: { gap: 18 },
-  brandRow: { flexDirection: "row", alignItems: "center", gap: 8 },
-  brandMark: { height: 40, width: 40, borderRadius: 13, backgroundColor: colors.brandMark, alignItems: "center", justifyContent: "center", position: "relative" },
-  brandImage: { position: "absolute", width: 40, height: 40, borderRadius: 13 },
-  backButton: { width: 34, height: 34, borderRadius: 12, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center" },
-  leafDot: { height: 7, width: 7, borderRadius: 4, backgroundColor: colors.amber, position: "absolute", right: 7, top: 7, borderWidth: 1, borderColor: colors.card },
-  smallHeaderButton: { width: 34, height: 34, borderRadius: 12, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center" },
-  languageToggle: { minWidth: 38, height: 34, paddingHorizontal: 7, borderRadius: 12, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.line, alignItems: "center", justifyContent: "center" },
-  pageHeading: { gap: 6, marginTop: 4 },
-  pageTitle: { fontSize: 25, lineHeight: 33, letterSpacing: -0.4, color: colors.ink },
-  pageSubtitle: { color: colors.muted, fontSize: 13, lineHeight: 20 },
-  sectionHeading: { flexDirection: "row", alignItems: "center", gap: 12 },
-  card: { borderWidth: 1, borderColor: colors.line, backgroundColor: colors.card, borderRadius: 20, padding: 16, gap: 13 },
-  pill: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", paddingHorizontal: 10, paddingVertical: 6, borderRadius: 100 },
-  primaryButton: { minHeight: 50, borderRadius: 15, backgroundColor: colors.green, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 9, paddingHorizontal: 16 },
-  secondaryButton: { minHeight: 46, borderRadius: 15, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.card, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingHorizontal: 14 },
-  productRow: { flexDirection: "row", alignItems: "center", gap: 12, paddingVertical: 10, borderTopWidth: 1, borderTopColor: colors.line },
-  productPhotoFrame: { width: 62, height: 62, borderRadius: 16, alignItems: "center", justifyContent: "center", overflow: "hidden" },
-  productPhoto: { width: 58, height: 58 },
-  demoNotice: { flexDirection: "row", alignItems: "flex-start", gap: 8, padding: 12, borderRadius: 14, backgroundColor: colors.amberSoft },
-  iconTile: { width: 42, height: 42, borderRadius: 14, alignItems: "center", justifyContent: "center" },
-});
+const createStyles = (colors: Palette) =>
+  StyleSheet.create({
+    safe: { flex: 1, backgroundColor: colors.paper },
+    scrollContent: {
+      width: "100%",
+      maxWidth: 520,
+      alignSelf: "center",
+      paddingHorizontal: 20,
+      paddingTop: 10,
+      paddingBottom: 28,
+      gap: 20,
+    },
+    staticContent: {
+      width: "100%",
+      maxWidth: 520,
+      alignSelf: "center",
+      paddingHorizontal: 20,
+      paddingTop: 10,
+      paddingBottom: 28,
+    },
+    header: { gap: 18 },
+    brandRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+    brandMark: {
+      height: 40,
+      width: 40,
+      borderRadius: 13,
+      backgroundColor: colors.brandMark,
+      alignItems: "center",
+      justifyContent: "center",
+      position: "relative",
+    },
+    brandImage: {
+      position: "absolute",
+      width: 40,
+      height: 40,
+      borderRadius: 13,
+    },
+    backButton: {
+      width: 34,
+      height: 34,
+      borderRadius: 12,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.line,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    leafDot: {
+      height: 7,
+      width: 7,
+      borderRadius: 4,
+      backgroundColor: colors.amber,
+      position: "absolute",
+      right: 7,
+      top: 7,
+      borderWidth: 1,
+      borderColor: colors.card,
+    },
+    smallHeaderButton: {
+      width: 34,
+      height: 34,
+      borderRadius: 12,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.line,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    languageToggle: {
+      minWidth: 38,
+      height: 34,
+      paddingHorizontal: 7,
+      borderRadius: 12,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.line,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    pageHeading: { gap: 6, marginTop: 4 },
+    pageTitle: {
+      fontSize: 25,
+      lineHeight: 33,
+      letterSpacing: -0.4,
+      color: colors.ink,
+    },
+    pageSubtitle: { color: colors.muted, fontSize: 13, lineHeight: 20 },
+    sectionHeading: { flexDirection: "row", alignItems: "center", gap: 12 },
+    card: {
+      borderWidth: 1,
+      borderColor: colors.line,
+      backgroundColor: colors.card,
+      borderRadius: 20,
+      padding: 16,
+      gap: 13,
+    },
+    pill: {
+      alignSelf: "flex-start",
+      flexDirection: "row",
+      alignItems: "center",
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 100,
+    },
+    primaryButton: {
+      minHeight: 50,
+      borderRadius: 15,
+      backgroundColor: colors.green,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 9,
+      paddingHorizontal: 16,
+    },
+    secondaryButton: {
+      minHeight: 46,
+      borderRadius: 15,
+      borderWidth: 1,
+      borderColor: colors.line,
+      backgroundColor: colors.card,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 8,
+      paddingHorizontal: 14,
+    },
+    productRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      paddingVertical: 10,
+      borderTopWidth: 1,
+      borderTopColor: colors.line,
+    },
+    productPhotoFrame: {
+      width: 62,
+      height: 62,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      overflow: "hidden",
+    },
+    productPhoto: { width: 58, height: 58 },
+    demoNotice: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: 8,
+      padding: 12,
+      borderRadius: 14,
+      backgroundColor: colors.amberSoft,
+    },
+    iconTile: {
+      width: 42,
+      height: 42,
+      borderRadius: 14,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+  });
 
 export function useUiStyles() {
   const colors = usePalette();
   return useMemo(() => createStyles(colors), [colors]);
 }
 
-export const fontFamily = (language: Language, weight: "regular" | "medium" | "semibold" | "bold" = "regular") => {
+export const fontFamily = (
+  language: Language,
+  weight: "regular" | "medium" | "semibold" | "bold" = "regular",
+) => {
   if (language === "bn") {
-    return weight === "bold" ? "NotoSansBengali_700Bold" : weight === "semibold" ? "NotoSansBengali_600SemiBold" : weight === "medium" ? "NotoSansBengali_500Medium" : "NotoSansBengali_400Regular";
+    return weight === "bold"
+      ? "NotoSansBengali_700Bold"
+      : weight === "semibold"
+        ? "NotoSansBengali_600SemiBold"
+        : weight === "medium"
+          ? "NotoSansBengali_500Medium"
+          : "NotoSansBengali_400Regular";
   }
-  return weight === "bold" ? "NotoSansBengali_700Bold" : weight === "semibold" ? "NotoSansBengali_600SemiBold" : weight === "medium" ? "NotoSansBengali_500Medium" : "NotoSansBengali_400Regular";
+  return weight === "bold"
+    ? "NotoSansBengali_700Bold"
+    : weight === "semibold"
+      ? "NotoSansBengali_600SemiBold"
+      : weight === "medium"
+        ? "NotoSansBengali_500Medium"
+        : "NotoSansBengali_400Regular";
 };
 
 export function AppText({
@@ -140,71 +293,218 @@ export function AppText({
 }: TextProps & { weight?: "regular" | "medium" | "semibold" | "bold" }) {
   const { language } = useNutriScan();
   const colors = usePalette();
-  return <Text {...props} style={[{ color: colors.ink, fontFamily: fontFamily(language, weight) }, style]}>{children}</Text>;
+  return (
+    <Text
+      {...props}
+      style={[
+        { color: colors.ink, fontFamily: fontFamily(language, weight) },
+        style,
+      ]}
+    >
+      {children}
+    </Text>
+  );
 }
 
-export function Screen({ children, scroll = true, contentStyle, ...props }: ViewProps & { scroll?: boolean; contentStyle?: ScrollViewProps["contentContainerStyle"] }) {
+export function Screen({
+  children,
+  scroll = true,
+  contentStyle,
+  ...props
+}: ViewProps & {
+  scroll?: boolean;
+  contentStyle?: ScrollViewProps["contentContainerStyle"];
+}) {
   const styles = useUiStyles();
   const content = scroll ? (
-    <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, contentStyle]}>
+    <ScrollView
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={[styles.scrollContent, contentStyle]}
+    >
       {children}
     </ScrollView>
-  ) : <View style={[styles.staticContent, contentStyle as object]}>{children}</View>;
-  return <SafeAreaView edges={["top"]} style={styles.safe} {...props}>{content}</SafeAreaView>;
+  ) : (
+    <View style={[styles.staticContent, contentStyle as object]}>
+      {children}
+    </View>
+  );
+  return (
+    <SafeAreaView edges={["top"]} style={styles.safe} {...props}>
+      {content}
+    </SafeAreaView>
+  );
 }
 
-export function PageHeader({ title, subtitle, right, back }: { title: string; subtitle?: string; right?: React.ReactNode; back?: () => void }) {
+export function PageHeader({
+  title,
+  subtitle,
+  right,
+  back,
+}: {
+  title: string;
+  subtitle?: string;
+  right?: React.ReactNode;
+  back?: () => void;
+}) {
   const { language, setLanguage, appearance, setAppearance } = useNutriScan();
   const colors = usePalette();
   const styles = useUiStyles();
   const nextAppearance = appearance === "dark" ? "light" : "dark";
-  const themeLabel = language === "en"
-    ? `Switch to ${nextAppearance} mode`
-    : nextAppearance === "dark" ? "ডার্ক মোড চালু করুন" : "লাইট মোড চালু করুন";
+  const themeLabel =
+    language === "en"
+      ? `Switch to ${nextAppearance} mode`
+      : nextAppearance === "dark"
+        ? "ডার্ক মোড চালু করুন"
+        : "লাইট মোড চালু করুন";
   return (
     <View style={styles.header}>
       <View style={styles.brandRow}>
-        {back ? <Pressable accessibilityRole="button" accessibilityLabel={language === "en" ? "Go back" : "ফিরে যান"} onPress={back} hitSlop={6} style={({ pressed }) => [styles.backButton, { opacity: pressed ? 0.72 : 1 }]}><MaterialCommunityIcons name="arrow-left" size={19} color={colors.ink} /></Pressable> : null}
+        {back ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={language === "en" ? "Go back" : "ফিরে যান"}
+            onPress={back}
+            hitSlop={6}
+            style={({ pressed }) => [
+              styles.backButton,
+              { opacity: pressed ? 0.72 : 1 },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={19}
+              color={colors.ink}
+            />
+          </Pressable>
+        ) : null}
         <View style={styles.brandMark}>
-          <Image source={nutriScanMark} resizeMode="cover" style={styles.brandImage} />
+          <Image
+            source={nutriScanMark}
+            resizeMode="cover"
+            style={styles.brandImage}
+          />
         </View>
         <View style={{ flex: 1, minWidth: 44 }}>
-          <AppText weight="bold" style={{ fontSize: 18, letterSpacing: 0.2 }}>{t(language, "brand")}</AppText>
-          <AppText style={{ color: colors.muted, fontSize: 9 }}>{t(language, "tagline")}</AppText>
+          <AppText weight="bold" style={{ fontSize: 18, letterSpacing: 0.2 }}>
+            {t(language, "brand")}
+          </AppText>
+          <AppText style={{ color: colors.muted, fontSize: 9 }}>
+            {t(language, "tagline")}
+          </AppText>
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel={language === "en" ? "Switch language" : "ভাষা পরিবর্তন করুন"} onPress={() => setLanguage(language === "en" ? "bn" : "en")} hitSlop={6} style={({ pressed }) => [styles.languageToggle, { opacity: pressed ? 0.72 : 1 }]}>
-          <AppText weight="semibold" style={{ fontSize: 11, color: colors.green }}>{language === "en" ? "বাংলা" : "EN"}</AppText>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={
+            language === "en" ? "Switch language" : "ভাষা পরিবর্তন করুন"
+          }
+          onPress={() => setLanguage(language === "en" ? "bn" : "en")}
+          hitSlop={6}
+          style={({ pressed }) => [
+            styles.languageToggle,
+            { opacity: pressed ? 0.72 : 1 },
+          ]}
+        >
+          <AppText
+            weight="semibold"
+            style={{ fontSize: 11, color: colors.green }}
+          >
+            {language === "en" ? "বাংলা" : "EN"}
+          </AppText>
         </Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel={themeLabel} accessibilityState={{ selected: appearance === "dark" }} onPress={() => setAppearance(nextAppearance)} hitSlop={6} style={({ pressed }) => [styles.smallHeaderButton, { opacity: pressed ? 0.72 : 1 }]}>
-          <MaterialCommunityIcons name={appearance === "dark" ? "weather-sunny" : "weather-night"} size={18} color={colors.green} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={themeLabel}
+          accessibilityState={{ selected: appearance === "dark" }}
+          onPress={() => setAppearance(nextAppearance)}
+          hitSlop={6}
+          style={({ pressed }) => [
+            styles.smallHeaderButton,
+            { opacity: pressed ? 0.72 : 1 },
+          ]}
+        >
+          <MaterialCommunityIcons
+            name={appearance === "dark" ? "weather-sunny" : "weather-night"}
+            size={18}
+            color={colors.green}
+          />
         </Pressable>
         {right}
       </View>
-      {title ? <View style={styles.pageHeading}>
-        <AppText weight="bold" style={styles.pageTitle}>{title}</AppText>
-        {subtitle ? <AppText style={styles.pageSubtitle}>{subtitle}</AppText> : null}
-      </View> : null}
+      {title ? (
+        <View style={styles.pageHeading}>
+          <AppText weight="bold" style={styles.pageTitle}>
+            {title}
+          </AppText>
+          {subtitle ? (
+            <AppText style={styles.pageSubtitle}>{subtitle}</AppText>
+          ) : null}
+        </View>
+      ) : null}
     </View>
   );
 }
 
-export function SectionHeading({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
+export function SectionHeading({
+  title,
+  action,
+  onAction,
+}: {
+  title: string;
+  action?: string;
+  onAction?: () => void;
+}) {
   const colors = usePalette();
   const styles = useUiStyles();
   return (
     <View style={styles.sectionHeading}>
-      <AppText weight="semibold" style={{ fontSize: 16, flex: 1 }}>{title}</AppText>
-      {action && onAction ? <Pressable accessibilityRole="button" accessibilityLabel={action} onPress={onAction} hitSlop={6} style={({ pressed }) => ({ minHeight: 44, paddingHorizontal: 8, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.68 : 1 })}><AppText weight="semibold" style={{ color: colors.green, fontSize: 12 }}>{action}</AppText></Pressable> : null}
+      <AppText weight="semibold" style={{ fontSize: 16, flex: 1 }}>
+        {title}
+      </AppText>
+      {action && onAction ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={action}
+          onPress={onAction}
+          hitSlop={6}
+          style={({ pressed }) => ({
+            minHeight: 44,
+            paddingHorizontal: 8,
+            alignItems: "center",
+            justifyContent: "center",
+            opacity: pressed ? 0.68 : 1,
+          })}
+        >
+          <AppText
+            weight="semibold"
+            style={{ color: colors.green, fontSize: 12 }}
+          >
+            {action}
+          </AppText>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
 
 export function Card({ children, style, ...props }: ViewProps) {
   const styles = useUiStyles();
-  return <View {...props} style={[styles.card, style]}>{children}</View>;
+  return (
+    <View {...props} style={[styles.card, style]}>
+      {children}
+    </View>
+  );
 }
 
-export function Pill({ children, tone = "green", style }: { children: React.ReactNode; tone?: "green" | "amber" | "clay" | "neutral"; style?: object }) {
+export function Pill({
+  children,
+  tone = "green",
+  style,
+}: {
+  children: React.ReactNode;
+  tone?: "green" | "amber" | "clay" | "neutral";
+  style?: object;
+}) {
   const colors = usePalette();
   const styles = useUiStyles();
   const tones = {
@@ -213,44 +513,157 @@ export function Pill({ children, tone = "green", style }: { children: React.Reac
     clay: { backgroundColor: colors.claySoft, color: colors.clayInk },
     neutral: { backgroundColor: colors.neutralSoft, color: colors.muted },
   } as const;
-  return <View style={[styles.pill, { backgroundColor: tones[tone].backgroundColor }, style]}><AppText weight="semibold" style={{ color: tones[tone].color, fontSize: 10 }}>{children}</AppText></View>;
+  return (
+    <View
+      style={[
+        styles.pill,
+        { backgroundColor: tones[tone].backgroundColor },
+        style,
+      ]}
+    >
+      <AppText
+        weight="semibold"
+        style={{ color: tones[tone].color, fontSize: 10 }}
+      >
+        {children}
+      </AppText>
+    </View>
+  );
 }
 
-export function PrimaryButton({ title, onPress, icon, disabled, style, ...props }: Omit<PressableProps, "style"> & { title: string; onPress?: () => void; icon?: keyof typeof MaterialCommunityIcons.glyphMap; disabled?: boolean; style?: StyleProp<ViewStyle> }) {
+export function PrimaryButton({
+  title,
+  onPress,
+  icon,
+  disabled,
+  style,
+  ...props
+}: Omit<PressableProps, "style"> & {
+  title: string;
+  onPress?: () => void;
+  icon?: keyof typeof MaterialCommunityIcons.glyphMap;
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+}) {
   const colors = usePalette();
   const styles = useUiStyles();
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ disabled: Boolean(disabled) }} onPress={onPress} disabled={disabled} style={({ pressed }) => [styles.primaryButton, { opacity: disabled ? 0.5 : pressed ? 0.86 : 1 }, style]} {...props}>
-      {icon ? <MaterialCommunityIcons name={icon} size={18} color={colors.onGreen} /> : null}
-      <AppText weight="semibold" style={{ color: colors.onGreen, fontSize: 14 }}>{title}</AppText>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(disabled) }}
+      onPress={onPress}
+      disabled={disabled}
+      style={({ pressed }) => [
+        styles.primaryButton,
+        { opacity: disabled ? 0.5 : pressed ? 0.86 : 1 },
+        style,
+      ]}
+      {...props}
+    >
+      {icon ? (
+        <MaterialCommunityIcons name={icon} size={18} color={colors.onGreen} />
+      ) : null}
+      <AppText
+        weight="semibold"
+        style={{ color: colors.onGreen, fontSize: 14 }}
+      >
+        {title}
+      </AppText>
     </Pressable>
   );
 }
 
-export function SecondaryButton({ title, onPress, icon, style, ...props }: Omit<PressableProps, "style"> & { title: string; onPress?: () => void; icon?: keyof typeof MaterialCommunityIcons.glyphMap; style?: StyleProp<ViewStyle> }) {
+export function SecondaryButton({
+  title,
+  onPress,
+  icon,
+  style,
+  ...props
+}: Omit<PressableProps, "style"> & {
+  title: string;
+  onPress?: () => void;
+  icon?: keyof typeof MaterialCommunityIcons.glyphMap;
+  style?: StyleProp<ViewStyle>;
+}) {
   const colors = usePalette();
   const styles = useUiStyles();
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ disabled: Boolean(props.disabled) }} onPress={onPress} style={({ pressed }) => [styles.secondaryButton, { opacity: props.disabled ? 0.5 : pressed ? 0.84 : 1 }, style]} {...props}>
-      {icon ? <MaterialCommunityIcons name={icon} size={17} color={colors.green} /> : null}
-      <AppText weight="semibold" style={{ color: colors.green, fontSize: 13 }}>{title}</AppText>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(props.disabled) }}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.secondaryButton,
+        { opacity: props.disabled ? 0.5 : pressed ? 0.84 : 1 },
+        style,
+      ]}
+      {...props}
+    >
+      {icon ? (
+        <MaterialCommunityIcons name={icon} size={17} color={colors.green} />
+      ) : null}
+      <AppText weight="semibold" style={{ color: colors.green, fontSize: 13 }}>
+        {title}
+      </AppText>
     </Pressable>
   );
 }
 
-export function ProductRow({ product, onPress, aside }: { product: Product; onPress: () => void; aside?: React.ReactNode }) {
+export function ProductRow({
+  product,
+  onPress,
+  aside,
+}: {
+  product: Product;
+  onPress: () => void;
+  aside?: React.ReactNode;
+}) {
   const { language } = useNutriScan();
   const colors = usePalette();
   const styles = useUiStyles();
-  const tint = product.category === "food" ? colors.greenSoft : product.category === "personalCare" ? colors.amberSoft : colors.claySoft;
+  const tint =
+    product.category === "food"
+      ? colors.greenSoft
+      : product.category === "personalCare"
+        ? colors.amberSoft
+        : colors.claySoft;
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={`${productName(product, language)}, ${productBrand(product, language)}`} onPress={onPress} style={({ pressed }) => [styles.productRow, { opacity: pressed ? 0.86 : 1 }]}>
-      <View style={[styles.productPhotoFrame, { backgroundColor: tint }]}><Image source={product.image} resizeMode="contain" style={styles.productPhoto} /></View>
-      <View style={{ flex: 1, gap: 3 }}>
-        <AppText weight="semibold" numberOfLines={2} style={{ fontSize: 13, lineHeight: 18 }}>{productName(product, language)}</AppText>
-        <AppText style={{ color: colors.muted, fontSize: 10, lineHeight: 15 }}>{productBrand(product, language)} · {categoryLabel(product.category, language)}</AppText>
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${productName(product, language)}, ${productBrand(product, language)}`}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.productRow,
+        { opacity: pressed ? 0.86 : 1 },
+      ]}
+    >
+      <View style={[styles.productPhotoFrame, { backgroundColor: tint }]}>
+        <Image
+          source={product.image}
+          resizeMode="contain"
+          style={styles.productPhoto}
+        />
       </View>
-      {aside ?? <MaterialCommunityIcons name="chevron-right" size={20} color={colors.muted} />}
+      <View style={{ flex: 1, gap: 3 }}>
+        <AppText
+          weight="semibold"
+          numberOfLines={2}
+          style={{ fontSize: 13, lineHeight: 18 }}
+        >
+          {productName(product, language)}
+        </AppText>
+        <AppText style={{ color: colors.muted, fontSize: 10, lineHeight: 15 }}>
+          {productBrand(product, language)} ·{" "}
+          {categoryLabel(product.category, language)}
+        </AppText>
+      </View>
+      {aside ?? (
+        <MaterialCommunityIcons
+          name="chevron-right"
+          size={20}
+          color={colors.muted}
+        />
+      )}
     </Pressable>
   );
 }
@@ -261,18 +674,51 @@ export function DemoNotice({ children }: { children?: React.ReactNode }) {
   const styles = useUiStyles();
   return (
     <View style={styles.demoNotice}>
-      <MaterialCommunityIcons name="information-outline" size={16} color={colors.amberInk} />
-      <AppText style={{ flex: 1, color: colors.amberInk, fontSize: 11, lineHeight: 16 }}>{children ?? t(language, "demoNote")}</AppText>
+      <MaterialCommunityIcons
+        name="information-outline"
+        size={16}
+        color={colors.amberInk}
+      />
+      <AppText
+        style={{
+          flex: 1,
+          color: colors.amberInk,
+          fontSize: 11,
+          lineHeight: 16,
+        }}
+      >
+        {children ?? t(language, "demoNote")}
+      </AppText>
     </View>
   );
 }
 
-export function IconTile({ icon, tone = "green" }: { icon: keyof typeof MaterialCommunityIcons.glyphMap; tone?: "green" | "amber" | "clay" }) {
+export function IconTile({
+  icon,
+  tone = "green",
+}: {
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  tone?: "green" | "amber" | "clay";
+}) {
   const colors = usePalette();
   const styles = useUiStyles();
-  const color = tone === "amber" ? colors.amberInk : tone === "clay" ? colors.clay : colors.green;
-  const backgroundColor = tone === "amber" ? colors.amberSoft : tone === "clay" ? colors.claySoft : colors.greenSoft;
-  return <View style={[styles.iconTile, { backgroundColor }]}><MaterialCommunityIcons name={icon} size={21} color={color} /></View>;
+  const color =
+    tone === "amber"
+      ? colors.amberInk
+      : tone === "clay"
+        ? colors.clay
+        : colors.green;
+  const backgroundColor =
+    tone === "amber"
+      ? colors.amberSoft
+      : tone === "clay"
+        ? colors.claySoft
+        : colors.greenSoft;
+  return (
+    <View style={[styles.iconTile, { backgroundColor }]}>
+      <MaterialCommunityIcons name={icon} size={21} color={color} />
+    </View>
+  );
 }
 
 export function ChipSelect({
@@ -312,7 +758,10 @@ export function ChipSelect({
           >
             <AppText
               weight={isSelected ? "semibold" : "medium"}
-              style={{ fontSize: 12, color: isSelected ? colors.onGreen : colors.ink }}
+              style={{
+                fontSize: 12,
+                color: isSelected ? colors.onGreen : colors.ink,
+              }}
             >
               {option.label[language]}
             </AppText>
@@ -342,11 +791,22 @@ export function ToggleCard({
   const activeBg = tone === "amber" ? colors.amberSoft : colors.greenSoft;
   const activeColor = tone === "amber" ? colors.amber : colors.green;
   return (
-    <Card style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: value ? activeBg : colors.card }}>
+    <Card
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 12,
+        backgroundColor: value ? activeBg : colors.card,
+      }}
+    >
       <IconTile icon={icon} tone={tone} />
       <View style={{ flex: 1, gap: 4 }}>
-        <AppText weight="semibold" style={{ fontSize: 14 }}>{title}</AppText>
-        <AppText style={{ color: colors.muted, fontSize: 11, lineHeight: 16 }}>{subtitle}</AppText>
+        <AppText weight="semibold" style={{ fontSize: 14 }}>
+          {title}
+        </AppText>
+        <AppText style={{ color: colors.muted, fontSize: 11, lineHeight: 16 }}>
+          {subtitle}
+        </AppText>
       </View>
       <Switch
         value={value}
@@ -371,17 +831,16 @@ export function ScoreRing({
   showLabel?: boolean;
 }) {
   const colors = usePalette();
-  const ringColor = score >= 75 ? colors.green : score >= 60 ? colors.amber : colors.clay;
+  const ringColor =
+    score >= 60 ? colors.green : score >= 40 ? colors.amber : colors.clay;
   const category =
-    score >= 75
+    score >= 80
       ? "Excellent"
       : score >= 60
         ? "Good"
-        : score >= 50
-          ? "Fair"
-          : score >= 35
-            ? "Check Label"
-            : "Poor";
+        : score >= 40
+          ? "Moderate"
+          : "Low";
   return (
     <View style={{ alignItems: "center", gap: 8 }}>
       <View
@@ -396,7 +855,14 @@ export function ScoreRing({
           backgroundColor: colors.card,
         }}
       >
-        <AppText weight="bold" style={{ fontSize: Math.round(size * 0.28), lineHeight: Math.round(size * 0.34), color: ringColor }}>
+        <AppText
+          weight="bold"
+          style={{
+            fontSize: Math.round(size * 0.28),
+            lineHeight: Math.round(size * 0.34),
+            color: ringColor,
+          }}
+        >
           {score}
         </AppText>
         <AppText style={{ fontSize: 10, color: colors.muted }}>/100</AppText>
@@ -464,7 +930,10 @@ export function TabSwitcher({
           >
             <AppText
               weight={active ? "semibold" : "medium"}
-              style={{ fontSize: 13, color: active ? colors.ink : colors.muted }}
+              style={{
+                fontSize: 13,
+                color: active ? colors.ink : colors.muted,
+              }}
             >
               {tab.label}
             </AppText>
@@ -488,7 +957,15 @@ export function EmptyState({
 }) {
   const colors = usePalette();
   return (
-    <View style={{ alignItems: "center", justifyContent: "center", paddingVertical: 20, paddingHorizontal: 16, gap: 10 }}>
+    <View
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: 20,
+        paddingHorizontal: 16,
+        gap: 10,
+      }}
+    >
       <View
         style={{
           width: 52,
@@ -501,10 +978,25 @@ export function EmptyState({
       >
         <MaterialCommunityIcons name={icon} size={25} color={colors.green} />
       </View>
-      <AppText weight="semibold" style={{ fontSize: 14, textAlign: "center" }}>{title}</AppText>
-      <AppText style={{ color: colors.muted, fontSize: 12, textAlign: "center", lineHeight: 18 }}>{body}</AppText>
+      <AppText weight="semibold" style={{ fontSize: 14, textAlign: "center" }}>
+        {title}
+      </AppText>
+      <AppText
+        style={{
+          color: colors.muted,
+          fontSize: 12,
+          textAlign: "center",
+          lineHeight: 18,
+        }}
+      >
+        {body}
+      </AppText>
       {action ? (
-        <PrimaryButton title={action.label} onPress={action.onPress} style={{ marginTop: 4, alignSelf: "stretch" }} />
+        <PrimaryButton
+          title={action.label}
+          onPress={action.onPress}
+          style={{ marginTop: 4, alignSelf: "stretch" }}
+        />
       ) : null}
     </View>
   );
@@ -514,7 +1006,8 @@ export function PremiumBadge() {
   const colors = usePalette();
   return (
     <Pill tone="amber">
-      <MaterialCommunityIcons name="star" size={11} color={colors.amberInk} /> Premium
+      <MaterialCommunityIcons name="star" size={11} color={colors.amberInk} />{" "}
+      Premium
     </Pill>
   );
 }

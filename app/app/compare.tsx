@@ -39,13 +39,23 @@ import {
   isAllergenIngredient,
   isPositiveIngredient,
   scoreCategoryLabel,
+  scoreTone,
 } from "@/lib/nutrition-utils";
 import { useNutriScan } from "@/lib/nutriscan-state";
 
 const QUICK_COMPARE_PAIR_IDS: [string, string][] = [
-  ["food-sample", "mangofield-mango-drink"],
-  ["pran-mr-noodles", "dailycup-tomato-noodles"],
-  ["bombay-potato-crackers", "suncrisp-potato-chips"],
+  [
+    "mr-noodles-pran-mr-noodles-cup-noodles",
+    "mr-noodles-pran-mr-noodles-egg-noodles-masala-flavor",
+  ],
+  [
+    "latina-latina-100-natural-fruit-juice-orange",
+    "pran-pranmango-fruit-drink",
+  ],
+  [
+    "lay-s-lay-s-spanish-tomato-tango",
+    "pran-potatos-real-potato-chips-original-flavor",
+  ],
 ];
 
 function ProductSlotCard({
@@ -95,11 +105,18 @@ function ProductSlotCard({
         >
           <MaterialCommunityIcons name="plus" size={22} color={palette.green} />
         </View>
-        <AppText weight="semibold" style={{ fontSize: 12, color: palette.green, textAlign: "center" }}>
+        <AppText
+          weight="semibold"
+          style={{ fontSize: 12, color: palette.green, textAlign: "center" }}
+        >
           {label}
         </AppText>
-        <AppText style={{ fontSize: 10, color: palette.muted, textAlign: "center" }}>
-          {language === "en" ? "Tap to search & pick" : "খুঁজতে ও বাছাই করতে ট্যাপ করুন"}
+        <AppText
+          style={{ fontSize: 10, color: palette.muted, textAlign: "center" }}
+        >
+          {language === "en"
+            ? "Tap to search & pick"
+            : "খুঁজতে ও বাছাই করতে ট্যাপ করুন"}
         </AppText>
       </Pressable>
     );
@@ -115,12 +132,22 @@ function ProductSlotCard({
         justifyContent: "space-between",
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Pill tone="green">{label}</Pill>
         {onClear ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={language === "en" ? `Remove ${productName(product, language)}` : "সরান"}
+            accessibilityLabel={
+              language === "en"
+                ? `Remove ${productName(product, language)}`
+                : "সরান"
+            }
             onPress={onClear}
             hitSlop={8}
             style={({ pressed }) => ({
@@ -133,7 +160,11 @@ function ProductSlotCard({
               opacity: pressed ? 0.7 : 1,
             })}
           >
-            <MaterialCommunityIcons name="close" size={14} color={palette.muted} />
+            <MaterialCommunityIcons
+              name="close"
+              size={14}
+              color={palette.muted}
+            />
           </Pressable>
         ) : null}
       </View>
@@ -158,9 +189,16 @@ function ProductSlotCard({
             overflow: "hidden",
           }}
         >
-          <Image source={product.image} resizeMode="contain" style={{ width: 52, height: 52 }} />
+          <Image
+            source={product.image}
+            resizeMode="contain"
+            style={{ width: 52, height: 52 }}
+          />
         </View>
-        <AppText style={{ fontSize: 10, color: palette.muted }} numberOfLines={1}>
+        <AppText
+          style={{ fontSize: 10, color: palette.muted }}
+          numberOfLines={1}
+        >
           {productBrand(product, language)}
         </AppText>
         <AppText
@@ -213,14 +251,18 @@ export default function CompareProductsScreen() {
 
   const foodCatalog = useMemo(() => {
     const foodOnly = products.filter((p) => p.category === "food");
-    return filterProductsByChildSafe(filterProductsByHalal(foodOnly, halalMode), childSafeMode);
+    return filterProductsByChildSafe(
+      filterProductsByHalal(foodOnly, halalMode),
+      childSafeMode,
+    );
   }, [halalMode, childSafeMode]);
 
   const filteredCatalog = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return foodCatalog;
     return foodCatalog.filter((item) => {
-      const text = `${item.name.en} ${item.name.bn} ${item.brand.en} ${item.brand.bn} ${item.barcode}`.toLowerCase();
+      const text =
+        `${item.name.en} ${item.name.bn} ${item.brand.en} ${item.brand.bn} ${item.barcode}`.toLowerCase();
       return text.includes(q);
     });
   }, [foodCatalog, searchQuery]);
@@ -237,18 +279,22 @@ export default function CompareProductsScreen() {
 
   const quickPairs = useMemo(() => {
     const availableIds = new Set(foodCatalog.map((p) => p.id));
-    return QUICK_COMPARE_PAIR_IDS
-      .filter(([a, b]) => availableIds.has(a) && availableIds.has(b))
-      .map(([a, b]) => [productById(a)!, productById(b)!] as [Product, Product]);
+    return QUICK_COMPARE_PAIR_IDS.filter(
+      ([a, b]) => availableIds.has(a) && availableIds.has(b),
+    ).map(([a, b]) => [productById(a)!, productById(b)!] as [Product, Product]);
   }, [foodCatalog]);
 
   const factorRows = useMemo(
-    () => (productA && productB ? buildFactorComparisonRows(productA, productB) : []),
+    () =>
+      productA && productB ? buildFactorComparisonRows(productA, productB) : [],
     [productA, productB],
   );
 
   const nutrientRows = useMemo(
-    () => (productA && productB ? buildNutrientComparisonRows(productA, productB, language) : []),
+    () =>
+      productA && productB
+        ? buildNutrientComparisonRows(productA, productB, language)
+        : [],
     [productA, productB, language],
   );
 
@@ -263,7 +309,12 @@ export default function CompareProductsScreen() {
   const aiSummary = useMemo(
     () =>
       productA && productB
-        ? generateComparisonAISummary(productA, productB, language, healthProfile)
+        ? generateComparisonAISummary(
+            productA,
+            productB,
+            language,
+            healthProfile,
+          )
         : null,
     [productA, productB, language, healthProfile],
   );
@@ -306,7 +357,11 @@ export default function CompareProductsScreen() {
             minHeight: 48,
           }}
         >
-          <MaterialCommunityIcons name="magnify" size={20} color={palette.muted} />
+          <MaterialCommunityIcons
+            name="magnify"
+            size={20}
+            color={palette.muted}
+          />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -330,7 +385,11 @@ export default function CompareProductsScreen() {
               onPress={() => setSearchQuery("")}
               hitSlop={8}
             >
-              <MaterialCommunityIcons name="close-circle" size={18} color={palette.muted} />
+              <MaterialCommunityIcons
+                name="close-circle"
+                size={18}
+                color={palette.muted}
+              />
             </Pressable>
           ) : null}
         </View>
@@ -350,15 +409,14 @@ export default function CompareProductsScreen() {
               const isSelectedOther =
                 (pickingSlot === 0 && productB?.id === item.id) ||
                 (pickingSlot === 1 && productA?.id === item.id);
-              const scoreTone =
-                (item.score ?? 0) >= 75
-                  ? "green"
-                  : (item.score ?? 0) >= 60
-                    ? "amber"
-                    : "clay";
+              const itemTone = scoreTone(item.score);
               return (
                 <View key={item.id}>
-                  {idx ? <View style={{ height: 1, backgroundColor: palette.line }} /> : null}
+                  {idx ? (
+                    <View
+                      style={{ height: 1, backgroundColor: palette.line }}
+                    />
+                  ) : null}
                   <ProductRow
                     product={item}
                     onPress={() => {
@@ -369,14 +427,19 @@ export default function CompareProductsScreen() {
                     aside={
                       <View style={{ alignItems: "flex-end", gap: 4 }}>
                         {item.score !== undefined ? (
-                          <Pill tone={scoreTone}>{item.score} / 100</Pill>
+                          <Pill tone={itemTone}>{item.score} / 100</Pill>
                         ) : null}
                         {isSelectedHere ? (
-                          <AppText weight="semibold" style={{ fontSize: 10, color: palette.green }}>
+                          <AppText
+                            weight="semibold"
+                            style={{ fontSize: 10, color: palette.green }}
+                          >
                             {language === "en" ? "Selected" : "নির্বাচিত"}
                           </AppText>
                         ) : isSelectedOther ? (
-                          <AppText style={{ fontSize: 10, color: palette.muted }}>
+                          <AppText
+                            style={{ fontSize: 10, color: palette.muted }}
+                          >
                             {language === "en" ? "Other slot" : "অন্য স্লট"}
                           </AppText>
                         ) : null}
@@ -391,7 +454,11 @@ export default function CompareProductsScreen() {
           <Card>
             <EmptyState
               icon="food-off-outline"
-              title={language === "en" ? "No matching food products" : "কোনো খাবার পাওয়া যায়নি"}
+              title={
+                language === "en"
+                  ? "No matching food products"
+                  : "কোনো খাবার পাওয়া যায়নি"
+              }
               body={
                 language === "en"
                   ? "Try a different product name, brand, or clear your search filter."
@@ -427,7 +494,9 @@ export default function CompareProductsScreen() {
           productA || productB ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={language === "en" ? "Clear comparison" : "তুলনা মুছুন"}
+              accessibilityLabel={
+                language === "en" ? "Clear comparison" : "তুলনা মুছুন"
+              }
               onPress={clearCompare}
               hitSlop={6}
               style={({ pressed }) => ({
@@ -442,7 +511,10 @@ export default function CompareProductsScreen() {
                 opacity: pressed ? 0.72 : 1,
               })}
             >
-              <AppText weight="medium" style={{ fontSize: 11, color: palette.muted }}>
+              <AppText
+                weight="medium"
+                style={{ fontSize: 11, color: palette.muted }}
+              >
                 {language === "en" ? "Clear" : "মুছুন"}
               </AppText>
             </Pressable>
@@ -466,14 +538,17 @@ export default function CompareProductsScreen() {
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={language === "en" ? "Swap products" : "পণ্য অদলবদল করুন"}
+            accessibilityLabel={
+              language === "en" ? "Swap products" : "পণ্য অদলবদল করুন"
+            }
             onPress={swapCompareSlots}
             disabled={!productA || !productB}
             style={({ pressed }) => ({
               width: 36,
               height: 36,
               borderRadius: 18,
-              backgroundColor: productA && productB ? palette.greenSoft : palette.neutralSoft,
+              backgroundColor:
+                productA && productB ? palette.greenSoft : palette.neutralSoft,
               borderWidth: 1,
               borderColor: productA && productB ? palette.green : palette.line,
               alignItems: "center",
@@ -516,14 +591,13 @@ export default function CompareProductsScreen() {
                   : "NQSS স্কোর, চিনির চা-চামচ, পুষ্টিগুণ ও উপাদান পাশাপাশি তুলনা করতে ক্যাটালগ থেকে দুটি খাবার বাছুন।"
               }
               action={{
-                label:
-                  !productA
-                    ? language === "en"
-                      ? "Choose Product A"
-                      : "পণ্য ক বাছুন"
-                    : language === "en"
-                      ? "Choose Product B"
-                      : "পণ্য খ বাছুন",
+                label: !productA
+                  ? language === "en"
+                    ? "Choose Product A"
+                    : "পণ্য ক বাছুন"
+                  : language === "en"
+                    ? "Choose Product B"
+                    : "পণ্য খ বাছুন",
                 onPress: () => setPickingSlot(!productA ? 0 : 1),
               }}
             />
@@ -532,7 +606,11 @@ export default function CompareProductsScreen() {
           {quickPairs.length ? (
             <View style={{ gap: 8 }}>
               <SectionHeading
-                title={language === "en" ? "Quick Compare Ideas" : "দ্রুত তুলনার উদাহরণ"}
+                title={
+                  language === "en"
+                    ? "Quick Compare Ideas"
+                    : "দ্রুত তুলনার উদাহরণ"
+                }
               />
               {quickPairs.map(([pairA, pairB]) => (
                 <Pressable
@@ -544,7 +622,13 @@ export default function CompareProductsScreen() {
                   }}
                   style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}
                 >
-                  <Card style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                  <Card
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
                     <MaterialCommunityIcons
                       name="compare-horizontal"
                       size={20}
@@ -552,7 +636,8 @@ export default function CompareProductsScreen() {
                     />
                     <View style={{ flex: 1, gap: 2 }}>
                       <AppText weight="semibold" style={{ fontSize: 12 }}>
-                        {productName(pairA, language)} vs {productName(pairB, language)}
+                        {productName(pairA, language)} vs{" "}
+                        {productName(pairB, language)}
                       </AppText>
                       <AppText style={{ fontSize: 10, color: palette.muted }}>
                         {language === "en"
@@ -560,7 +645,11 @@ export default function CompareProductsScreen() {
                           : `NQSS ${pairA.score ?? "—"} বনাম ${pairB.score ?? "—"}`}
                       </AppText>
                     </View>
-                    <MaterialCommunityIcons name="chevron-right" size={18} color={palette.muted} />
+                    <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={18}
+                      color={palette.muted}
+                    />
                   </Card>
                 </Pressable>
               ))}
@@ -572,7 +661,11 @@ export default function CompareProductsScreen() {
           {/* 1. NQSS Score Comparison */}
           <View style={{ gap: 8 }}>
             <SectionHeading
-              title={language === "en" ? "NQSS Score Comparison" : "NQSS স্কোরের তুলনা"}
+              title={
+                language === "en"
+                  ? "NQSS Score Comparison"
+                  : "NQSS স্কোরের তুলনা"
+              }
               action={
                 scoreDiff !== null && scoreDiff > 0
                   ? language === "en"
@@ -591,7 +684,8 @@ export default function CompareProductsScreen() {
                     scoreA !== null &&
                     scoreB !== null &&
                     score !== null &&
-                    ((side === "A" && scoreA > scoreB) || (side === "B" && scoreB > scoreA));
+                    ((side === "A" && scoreA > scoreB) ||
+                      (side === "B" && scoreB > scoreA));
                   return (
                     <View
                       key={prod.id}
@@ -601,13 +695,21 @@ export default function CompareProductsScreen() {
                         gap: 8,
                         padding: 12,
                         borderRadius: 16,
-                        backgroundColor: isLeader ? palette.greenSoft : palette.paper,
+                        backgroundColor: isLeader
+                          ? palette.greenSoft
+                          : palette.paper,
                         borderWidth: 1,
                         borderColor: isLeader ? palette.green : palette.line,
                       }}
                     >
-                      {score !== null ? <ScoreRing score={score} size={76} /> : null}
-                      <AppText weight="bold" style={{ fontSize: 12, textAlign: "center" }} numberOfLines={2}>
+                      {score !== null ? (
+                        <ScoreRing score={score} size={76} />
+                      ) : null}
+                      <AppText
+                        weight="bold"
+                        style={{ fontSize: 12, textAlign: "center" }}
+                        numberOfLines={2}
+                      >
                         {productName(prod, language)}
                       </AppText>
                       {score !== null ? (
@@ -617,7 +719,11 @@ export default function CompareProductsScreen() {
                       ) : null}
                       {isLeader ? (
                         <Pill tone="green">
-                          <MaterialCommunityIcons name="trophy-outline" size={11} color={palette.green} />{" "}
+                          <MaterialCommunityIcons
+                            name="trophy-outline"
+                            size={11}
+                            color={palette.green}
+                          />{" "}
                           {language === "en" ? "Higher Score" : "বেশি স্কোর"}
                         </Pill>
                       ) : null}
@@ -627,57 +733,110 @@ export default function CompareProductsScreen() {
               </View>
 
               {factorRows.length ? (
-                <View style={{ gap: 12, paddingTop: 10, borderTopWidth: 1, borderTopColor: palette.line }}>
+                <View
+                  style={{
+                    gap: 12,
+                    paddingTop: 10,
+                    borderTopWidth: 1,
+                    borderTopColor: palette.line,
+                  }}
+                >
                   <AppText weight="semibold" style={{ fontSize: 12 }}>
-                    {language === "en" ? "NQSS Weighted Breakdown" : "NQSS ওজনভিত্তিক বিভাজন"}
+                    {language === "en"
+                      ? "NQSS Weighted Breakdown"
+                      : "NQSS ওজনভিত্তিক বিভাজন"}
                   </AppText>
                   {factorRows.map((factor) => {
                     const valA = factor.scoreA ?? 0;
                     const valB = factor.scoreB ?? 0;
                     return (
                       <View key={factor.key} style={{ gap: 6 }}>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
                           <AppText weight="medium" style={{ fontSize: 11 }}>
                             {factor.label[language]}{" "}
                             {factor.weight ? (
-                              <AppText style={{ fontSize: 10, color: palette.muted }}>
+                              <AppText
+                                style={{ fontSize: 10, color: palette.muted }}
+                              >
                                 ({factor.weight})
                               </AppText>
                             ) : null}
                           </AppText>
-                          <AppText style={{ fontSize: 11, color: palette.muted }}>
+                          <AppText
+                            style={{ fontSize: 11, color: palette.muted }}
+                          >
                             <AppText
                               weight={factor.winner === "A" ? "bold" : "medium"}
-                              style={{ fontSize: 11, color: factor.winner === "A" ? palette.green : palette.ink }}
+                              style={{
+                                fontSize: 11,
+                                color:
+                                  factor.winner === "A"
+                                    ? palette.green
+                                    : palette.ink,
+                              }}
                             >
                               {factor.scoreA ?? "—"}
                             </AppText>
                             {" vs "}
                             <AppText
                               weight={factor.winner === "B" ? "bold" : "medium"}
-                              style={{ fontSize: 11, color: factor.winner === "B" ? palette.green : palette.ink }}
+                              style={{
+                                fontSize: 11,
+                                color:
+                                  factor.winner === "B"
+                                    ? palette.green
+                                    : palette.ink,
+                              }}
                             >
                               {factor.scoreB ?? "—"}
                             </AppText>
                           </AppText>
                         </View>
                         <View style={{ flexDirection: "row", gap: 8 }}>
-                          <View style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: palette.neutralSoft, overflow: "hidden" }}>
+                          <View
+                            style={{
+                              flex: 1,
+                              height: 6,
+                              borderRadius: 3,
+                              backgroundColor: palette.neutralSoft,
+                              overflow: "hidden",
+                            }}
+                          >
                             <View
                               style={{
                                 height: "100%",
                                 width: `${Math.max(4, Math.min(100, valA))}%`,
-                                backgroundColor: factor.winner === "A" ? palette.green : palette.amber,
+                                backgroundColor:
+                                  factor.winner === "A"
+                                    ? palette.green
+                                    : palette.amber,
                                 borderRadius: 3,
                               }}
                             />
                           </View>
-                          <View style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: palette.neutralSoft, overflow: "hidden" }}>
+                          <View
+                            style={{
+                              flex: 1,
+                              height: 6,
+                              borderRadius: 3,
+                              backgroundColor: palette.neutralSoft,
+                              overflow: "hidden",
+                            }}
+                          >
                             <View
                               style={{
                                 height: "100%",
                                 width: `${Math.max(4, Math.min(100, valB))}%`,
-                                backgroundColor: factor.winner === "B" ? palette.green : palette.amber,
+                                backgroundColor:
+                                  factor.winner === "B"
+                                    ? palette.green
+                                    : palette.amber,
                                 borderRadius: 3,
                               }}
                             />
@@ -695,7 +854,11 @@ export default function CompareProductsScreen() {
           {aiSummary ? (
             <View style={{ gap: 8 }}>
               <SectionHeading
-                title={language === "en" ? "AI Comparison Summary" : "AI তুলনা সারাংশ"}
+                title={
+                  language === "en"
+                    ? "AI Comparison Summary"
+                    : "AI তুলনা সারাংশ"
+                }
               />
               <Card
                 style={{
@@ -704,7 +867,13 @@ export default function CompareProductsScreen() {
                   borderColor: palette.green,
                 }}
               >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
                   <View
                     style={{
                       width: 38,
@@ -715,7 +884,11 @@ export default function CompareProductsScreen() {
                       justifyContent: "center",
                     }}
                   >
-                    <MaterialCommunityIcons name="robot-outline" size={20} color={palette.green} />
+                    <MaterialCommunityIcons
+                      name="robot-outline"
+                      size={20}
+                      color={palette.green}
+                    />
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
                     <AppText weight="bold" style={{ fontSize: 14 }}>
@@ -729,21 +902,37 @@ export default function CompareProductsScreen() {
                   </View>
                 </View>
 
-                <AppText style={{ fontSize: 12, lineHeight: 18, color: palette.ink }}>
+                <AppText
+                  style={{ fontSize: 12, lineHeight: 18, color: palette.ink }}
+                >
                   {aiSummary.overview}
                 </AppText>
 
                 {aiSummary.bullets.length ? (
                   <View style={{ gap: 6 }}>
                     {aiSummary.bullets.map((bullet, idx) => (
-                      <View key={idx} style={{ flexDirection: "row", alignItems: "flex-start", gap: 7 }}>
+                      <View
+                        key={idx}
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                          gap: 7,
+                        }}
+                      >
                         <MaterialCommunityIcons
                           name="check-circle-outline"
                           size={15}
                           color={palette.green}
                           style={{ marginTop: 2 }}
                         />
-                        <AppText style={{ flex: 1, fontSize: 12, lineHeight: 17, color: palette.ink }}>
+                        <AppText
+                          style={{
+                            flex: 1,
+                            fontSize: 12,
+                            lineHeight: 17,
+                            color: palette.ink,
+                          }}
+                        >
                           {bullet}
                         </AppText>
                       </View>
@@ -762,15 +951,38 @@ export default function CompareProductsScreen() {
                       backgroundColor: palette.card,
                     }}
                   >
-                    <MaterialCommunityIcons name="account-heart-outline" size={16} color={palette.amberInk} style={{ marginTop: 1 }} />
-                    <AppText weight="medium" style={{ flex: 1, fontSize: 11, lineHeight: 16, color: palette.ink }}>
+                    <MaterialCommunityIcons
+                      name="account-heart-outline"
+                      size={16}
+                      color={palette.amberInk}
+                      style={{ marginTop: 1 }}
+                    />
+                    <AppText
+                      weight="medium"
+                      style={{
+                        flex: 1,
+                        fontSize: 11,
+                        lineHeight: 16,
+                        color: palette.ink,
+                      }}
+                    >
                       {aiSummary.personalizedNote}
                     </AppText>
                   </View>
                 ) : null}
 
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, paddingTop: 2 }}>
-                  <AppText style={{ flex: 1, fontSize: 10, color: palette.muted }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 8,
+                    paddingTop: 2,
+                  }}
+                >
+                  <AppText
+                    style={{ flex: 1, fontSize: 10, color: palette.muted }}
+                  >
                     {language === "en"
                       ? "Informational summary only, not medical advice."
                       : "শুধু সাধারণ তথ্য, চিকিৎসা পরামর্শ নয়।"}
@@ -791,8 +1003,15 @@ export default function CompareProductsScreen() {
                       opacity: pressed ? 0.8 : 1,
                     })}
                   >
-                    <MaterialCommunityIcons name="chat-outline" size={14} color={palette.green} />
-                    <AppText weight="semibold" style={{ fontSize: 11, color: palette.green }}>
+                    <MaterialCommunityIcons
+                      name="chat-outline"
+                      size={14}
+                      color={palette.green}
+                    />
+                    <AppText
+                      weight="semibold"
+                      style={{ fontSize: 11, color: palette.green }}
+                    >
                       {language === "en" ? "Ask Nouri" : "নৌরিকে জিজ্ঞাসা"}
                     </AppText>
                   </Pressable>
@@ -804,7 +1023,11 @@ export default function CompareProductsScreen() {
           {/* 3. Nutritional Comparison */}
           <View style={{ gap: 8 }}>
             <SectionHeading
-              title={language === "en" ? "Nutritional Comparison" : "পুষ্টিগুণের তুলনা"}
+              title={
+                language === "en"
+                  ? "Nutritional Comparison"
+                  : "পুষ্টিগুণের তুলনা"
+              }
             />
             <Card style={{ gap: 12 }}>
               <View
@@ -817,7 +1040,11 @@ export default function CompareProductsScreen() {
                 }}
               >
                 <View style={{ flex: 1, gap: 2 }}>
-                  <AppText weight="semibold" style={{ fontSize: 11 }} numberOfLines={1}>
+                  <AppText
+                    weight="semibold"
+                    style={{ fontSize: 11 }}
+                    numberOfLines={1}
+                  >
                     {productName(productA, language)}
                   </AppText>
                   <AppText style={{ fontSize: 10, color: palette.muted }}>
@@ -825,7 +1052,11 @@ export default function CompareProductsScreen() {
                   </AppText>
                 </View>
                 <View style={{ flex: 1, gap: 2 }}>
-                  <AppText weight="semibold" style={{ fontSize: 11 }} numberOfLines={1}>
+                  <AppText
+                    weight="semibold"
+                    style={{ fontSize: 11 }}
+                    numberOfLines={1}
+                  >
                     {productName(productB, language)}
                   </AppText>
                   <AppText style={{ fontSize: 10, color: palette.muted }}>
@@ -847,13 +1078,22 @@ export default function CompareProductsScreen() {
                       flex: 1,
                       padding: 10,
                       borderRadius: 12,
-                      backgroundColor: isWinner ? palette.greenSoft : palette.paper,
+                      backgroundColor: isWinner
+                        ? palette.greenSoft
+                        : palette.paper,
                       borderWidth: 1,
                       borderColor: isWinner ? palette.green : palette.line,
                       gap: 4,
                     }}
                   >
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 4 }}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 4,
+                      }}
+                    >
                       <AppText
                         weight={isWinner ? "bold" : "semibold"}
                         style={{
@@ -864,11 +1104,21 @@ export default function CompareProductsScreen() {
                         {value}
                       </AppText>
                       {isWinner ? (
-                        <MaterialCommunityIcons name="check-circle" size={15} color={palette.green} />
+                        <MaterialCommunityIcons
+                          name="check-circle"
+                          size={15}
+                          color={palette.green}
+                        />
                       ) : null}
                     </View>
                     {subValue ? (
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 4,
+                        }}
+                      >
                         <MaterialCommunityIcons
                           name="spoon-sugar"
                           size={13}
@@ -898,18 +1148,38 @@ export default function CompareProductsScreen() {
                       borderTopColor: palette.line,
                     }}
                   >
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 7 }}>
-                        <MaterialCommunityIcons name={row.icon} size={17} color={palette.muted} />
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 7,
+                        }}
+                      >
+                        <MaterialCommunityIcons
+                          name={row.icon}
+                          size={17}
+                          color={palette.muted}
+                        />
                         <AppText weight="semibold" style={{ fontSize: 12 }}>
                           {row.label[language]}
                         </AppText>
                       </View>
                       {row.winner === "tie" ? (
-                        <Pill tone="neutral">{language === "en" ? "Equal" : "সমান"}</Pill>
+                        <Pill tone="neutral">
+                          {language === "en" ? "Equal" : "সমান"}
+                        </Pill>
                       ) : row.winner === "na" ? (
                         <AppText style={{ fontSize: 10, color: palette.muted }}>
-                          {language === "en" ? "Partial label data" : "আংশিক তথ্য"}
+                          {language === "en"
+                            ? "Partial label data"
+                            : "আংশিক তথ্য"}
                         </AppText>
                       ) : (
                         <AppText style={{ fontSize: 10, color: palette.green }}>
@@ -943,7 +1213,11 @@ export default function CompareProductsScreen() {
           {ingredientSummary ? (
             <View style={{ gap: 8 }}>
               <SectionHeading
-                title={language === "en" ? "Ingredients & Additives" : "উপাদান ও অ্যাডিটিভ তুলনা"}
+                title={
+                  language === "en"
+                    ? "Ingredients & Additives"
+                    : "উপাদান ও অ্যাডিটিভ তুলনা"
+                }
               />
               <Card style={{ gap: 12 }}>
                 <View style={{ flexDirection: "row", gap: 8 }}>
@@ -977,11 +1251,21 @@ export default function CompareProductsScreen() {
                         gap: 8,
                       }}
                     >
-                      <AppText weight="bold" style={{ fontSize: 12 }} numberOfLines={2}>
+                      <AppText
+                        weight="bold"
+                        style={{ fontSize: 12 }}
+                        numberOfLines={2}
+                      >
                         {productName(side.prod, language)}
                       </AppText>
 
-                      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          flexWrap: "wrap",
+                          gap: 4,
+                        }}
+                      >
                         <Pill tone={side.fewer ? "green" : "neutral"}>
                           {language === "en"
                             ? `${side.count} ingredients`
@@ -996,18 +1280,32 @@ export default function CompareProductsScreen() {
 
                       {side.personal.length ? (
                         <Pill tone="clay">
-                          {language === "en" ? "Matches your allergy" : "আপনার অ্যালার্জির সাথে মেলে"}
+                          {language === "en"
+                            ? "Matches your allergy"
+                            : "আপনার অ্যালার্জির সাথে মেলে"}
                         </Pill>
                       ) : side.allergens.length ? (
                         <Pill tone="amber">
-                          {language === "en" ? "Contains allergens" : "অ্যালার্জেন থাকতে পারে"}
+                          {language === "en"
+                            ? "Contains allergens"
+                            : "অ্যালার্জেন থাকতে পারে"}
                         </Pill>
                       ) : null}
 
-                      <View style={{ gap: 5, paddingTop: 4, borderTopWidth: 1, borderTopColor: palette.line }}>
+                      <View
+                        style={{
+                          gap: 5,
+                          paddingTop: 4,
+                          borderTopWidth: 1,
+                          borderTopColor: palette.line,
+                        }}
+                      >
                         {side.prod.ingredients.map((ing, i) => {
                           const allergen = isAllergenIngredient(ing.en, ing.bn);
-                          const additive = isAdditiveOrConcernIngredient(ing.en, ing.bn);
+                          const additive = isAdditiveOrConcernIngredient(
+                            ing.en,
+                            ing.bn,
+                          );
                           const positive = isPositiveIngredient(ing.en, ing.bn);
                           const dotColor = allergen
                             ? palette.clay
@@ -1017,7 +1315,14 @@ export default function CompareProductsScreen() {
                                 ? palette.green
                                 : palette.muted;
                           return (
-                            <View key={`${ing.en}-${i}`} style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                            <View
+                              key={`${ing.en}-${i}`}
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 6,
+                              }}
+                            >
                               <View
                                 style={{
                                   width: 7,
@@ -1026,7 +1331,13 @@ export default function CompareProductsScreen() {
                                   backgroundColor: dotColor,
                                 }}
                               />
-                              <AppText style={{ flex: 1, fontSize: 11, color: palette.ink }}>
+                              <AppText
+                                style={{
+                                  flex: 1,
+                                  fontSize: 11,
+                                  color: palette.ink,
+                                }}
+                              >
                                 {ing[language]}
                               </AppText>
                             </View>
@@ -1038,8 +1349,18 @@ export default function CompareProductsScreen() {
                 </View>
 
                 {ingredientSummary.sharedIngredients.length ? (
-                  <View style={{ gap: 5, paddingTop: 8, borderTopWidth: 1, borderTopColor: palette.line }}>
-                    <AppText weight="semibold" style={{ fontSize: 11, color: palette.muted }}>
+                  <View
+                    style={{
+                      gap: 5,
+                      paddingTop: 8,
+                      borderTopWidth: 1,
+                      borderTopColor: palette.line,
+                    }}
+                  >
+                    <AppText
+                      weight="semibold"
+                      style={{ fontSize: 11, color: palette.muted }}
+                    >
                       {language === "en"
                         ? `Shared ingredients: ${ingredientSummary.sharedIngredients.join(", ")}`
                         : `উভয় পণ্যে থাকা উপাদান: ${ingredientSummary.sharedIngredients.join(", ")}`}
@@ -1054,19 +1375,38 @@ export default function CompareProductsScreen() {
             <View style={{ flexDirection: "row", gap: 8 }}>
               <SecondaryButton
                 title={language === "en" ? "View Product A" : "পণ্য ক দেখুন"}
-                onPress={() => router.push({ pathname: "/product/[id]", params: { id: productA.id } })}
+                onPress={() =>
+                  router.push({
+                    pathname: "/product/[id]",
+                    params: { id: productA.id },
+                  })
+                }
                 style={{ flex: 1 }}
               />
               <SecondaryButton
                 title={language === "en" ? "View Product B" : "পণ্য খ দেখুন"}
-                onPress={() => router.push({ pathname: "/product/[id]", params: { id: productB.id } })}
+                onPress={() =>
+                  router.push({
+                    pathname: "/product/[id]",
+                    params: { id: productB.id },
+                  })
+                }
                 style={{ flex: 1 }}
               />
             </View>
             <SecondaryButton
-              title={language === "en" ? "Explore Ingredient Explainer" : "উপাদান ব্যাখ্যা দেখুন"}
+              title={
+                language === "en"
+                  ? "Explore Ingredient Explainer"
+                  : "উপাদান ব্যাখ্যা দেখুন"
+              }
               icon="flask-outline"
-              onPress={() => router.push({ pathname: "/ingredient/[id]", params: { id: "search" } })}
+              onPress={() =>
+                router.push({
+                  pathname: "/ingredient/[id]",
+                  params: { id: "search" },
+                })
+              }
             />
           </View>
         </>

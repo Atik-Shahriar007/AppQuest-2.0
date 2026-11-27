@@ -175,7 +175,7 @@ export function generateNouriResponse(
         language === "en"
           ? "When buying packaged snacks, check: 1) Serving size (smaller = less nutrition shown), 2) Added sugar per serving, 3) Sodium content, 4) Ingredient list length. Shorter lists with recognizable ingredients are generally a positive sign."
           : "প্যাকেটজাত নাস্তা কেনার সময় দেখুন: ১) পরিবেশনের পরিমাণ (ছোট পরিমাণ মানে কম পুষ্টিমান দেখানো হয়), ২) প্রতি পরিবেশনে যোগ করা চিনি, ৩) সোডিয়ামের পরিমাণ, ৪) উপাদান তালিকার দৈর্ঘ্য। চেনা উপাদানসহ ছোট তালিকা সাধারণত ভালো লক্ষণ।",
-      cards: [{ type: "product", productId: "olympic-energy" }],
+      cards: [{ type: "product", productId: "bakeman-s-digestive-biscuit" }],
     };
   }
 

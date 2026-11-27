@@ -70,3 +70,5 @@ export const productImages: Record<string, ImageSourcePropType> = {
   "vim-vim-dishwashing-liquid": require("../assets/products/vim-vim-dishwashing-liquid.jpg"),
   "dove-dove-deeply-nourishing-body-wash": require("../assets/products/dove-dove-deeply-nourishing-body-wash.jpg"),
 };
+
+export const placeholderImage: ImageSourcePropType = require("../assets/images/icon.png");

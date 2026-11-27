@@ -66,7 +66,11 @@ export const ADDITIVE_KEYWORDS = [
 
 const BENGALI_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
 
-export function formatLocalizedNumber(value: number, language: Language, maxDecimals = 2): string {
+export function formatLocalizedNumber(
+  value: number,
+  language: Language,
+  maxDecimals = 2,
+): string {
   const raw = Number(value.toFixed(maxDecimals)).toString();
   if (language === "en") return raw;
   return raw.replace(/\d/g, (d) => BENGALI_DIGITS[Number(d)] ?? d);
@@ -111,15 +115,26 @@ export function isPositiveIngredient(nameEn: string, nameBn: string): boolean {
   return POSITIVE_INGREDIENT_KEYWORDS.some((kw) => combined.includes(kw));
 }
 
-export function isAdditiveOrConcernIngredient(nameEn: string, nameBn: string): boolean {
+export function isAdditiveOrConcernIngredient(
+  nameEn: string,
+  nameBn: string,
+): boolean {
   const combined = `${nameEn} ${nameBn}`.toLowerCase();
   return ADDITIVE_KEYWORDS.some((kw) => combined.includes(kw));
 }
 
+/** NQSS v1.0 interpretation bands (methodology section 9). */
 export function scoreCategoryLabel(score: number, language: Language): string {
-  if (score >= 75) return language === "en" ? "Excellent" : "চমৎকার";
+  if (score >= 80) return language === "en" ? "Excellent" : "চমৎকার";
   if (score >= 60) return language === "en" ? "Good" : "ভালো";
-  if (score >= 50) return language === "en" ? "Fair" : "মোটামুটি";
-  if (score >= 35) return language === "en" ? "Check Label" : "লেবেল দেখুন";
-  return language === "en" ? "Poor" : "দুর্বল";
+  if (score >= 40) return language === "en" ? "Moderate" : "মাঝারি";
+  return language === "en" ? "Low" : "কম";
+}
+
+/** Colour tone for a score on the NQSS bands: Good+ green, Moderate amber, Low clay. */
+export function scoreTone(
+  score: number | undefined | null,
+): "green" | "amber" | "clay" {
+  const v = score ?? 0;
+  return v >= 60 ? "green" : v >= 40 ? "amber" : "clay";
 }

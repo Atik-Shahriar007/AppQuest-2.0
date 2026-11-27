@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { scoreTone } from "@/lib/nutrition-utils";
 import { Pressable, TextInput, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -50,7 +51,10 @@ const INGREDIENTS_DB: IngredientEntry[] = [
   {
     id: "sodium",
     name: { en: "Sodium (Salt)", bn: "সোডিয়াম (লবণ)" },
-    purpose: { en: "Preservative and flavor enhancer", bn: "সংরক্ষণকারী ও স্বাদবর্ধক" },
+    purpose: {
+      en: "Preservative and flavor enhancer",
+      bn: "সংরক্ষণকারী ও স্বাদবর্ধক",
+    },
     details: {
       en: "Essential in small amounts, but excess sodium intake is linked to high blood pressure. WHO advises less than 5 g of salt (about 2,000 mg sodium) per day for adults.",
       bn: "অল্প পরিমাণে প্রয়োজনীয়, তবে অতিরিক্ত সোডিয়াম উচ্চ রক্তচাপের ঝুঁকি বাড়ায়। WHO প্রাপ্তবয়স্কদের দিনে ৫ গ্রামের কম লবণ খাওয়ার পরামর্শ দেয়।",
@@ -80,7 +84,10 @@ const INGREDIENTS_DB: IngredientEntry[] = [
   {
     id: "vegetable-oil",
     name: { en: "Vegetable Oil", bn: "উদ্ভিজ্জ তেল" },
-    purpose: { en: "Cooking medium & texture", bn: "রান্নার মাধ্যম ও টেক্সচার" },
+    purpose: {
+      en: "Cooking medium & texture",
+      bn: "রান্নার মাধ্যম ও টেক্সচার",
+    },
     details: {
       en: "Plant-derived oils used for frying, baking, and mouthfeel. Nutritional quality depends on the specific oil blend and processing.",
       bn: "ভাজা, বেকিং ও স্বাদের জন্য ব্যবহৃত উদ্ভিজ্জ তেল। এর পুষ্টিগুণ নির্দিষ্ট তেলের ধরন ও প্রক্রিয়াজাতকরণের ওপর নির্ভর করে।",
@@ -145,7 +152,10 @@ const INGREDIENTS_DB: IngredientEntry[] = [
   {
     id: "fragrance",
     name: { en: "Fragrance / Perfume", bn: "সুগন্ধি" },
-    purpose: { en: "Scent (personal care only)", bn: "সুগন্ধ (শুধু ব্যক্তিগত যত্নের পণ্যে)" },
+    purpose: {
+      en: "Scent (personal care only)",
+      bn: "সুগন্ধ (শুধু ব্যক্তিগত যত্নের পণ্যে)",
+    },
     details: {
       en: "Used in soaps, shampoos, and household products for scent. Not a food ingredient; sensitive skin types may prefer fragrance-free options.",
       bn: "সাবান, শ্যাম্পু ও গৃহস্থালি পণ্যে সুগন্ধের জন্য ব্যবহৃত হয়। এটি খাদ্য উপাদান নয়; সংবেদনশীল ত্বকের জন্য সুগন্ধিমুক্ত পণ্য ভালো হতে পারে।",
@@ -158,7 +168,10 @@ const INGREDIENTS_DB: IngredientEntry[] = [
   {
     id: "mango-pulp",
     name: { en: "Mango Pulp", bn: "আমের পাল্প" },
-    purpose: { en: "Fruit base & natural flavor", bn: "ফলের ভিত্তি ও প্রাকৃতিক স্বাদ" },
+    purpose: {
+      en: "Fruit base & natural flavor",
+      bn: "ফলের ভিত্তি ও প্রাকৃতিক স্বাদ",
+    },
     details: {
       en: "Concentrated or pureed mango fruit used in juices and nectar drinks. Whole fruit retains more fiber than strained juice.",
       bn: "জুস ও পানীয়তে ব্যবহৃত আমের শাঁস। প্রক্রিয়াজাত রসের তুলনায় আস্ত ফলে আঁশ বেশি থাকে।",
@@ -171,7 +184,10 @@ const INGREDIENTS_DB: IngredientEntry[] = [
   {
     id: "black-tea",
     name: { en: "Black Tea Leaves", bn: "কালো চা পাতা" },
-    purpose: { en: "Tea base & polyphenols", bn: "চায়ের মূল উপাদান ও পলিফেনল" },
+    purpose: {
+      en: "Tea base & polyphenols",
+      bn: "চায়ের মূল উপাদান ও পলিফেনল",
+    },
     details: {
       en: "Oxidized leaves of Camellia sinensis, naturally containing caffeine and antioxidant polyphenols with virtually zero calories when brewed plain.",
       bn: "ক্যামেলিয়া সিনেনসিস গাছের পাতা, যাতে প্রাকৃতিক ক্যাফেইন ও অ্যান্টিঅক্সিডেন্ট থাকে। চিনি ছাড়া তৈরি করলে ক্যালোরি প্রায় শূন্য।",
@@ -227,7 +243,10 @@ const INGREDIENTS_DB: IngredientEntry[] = [
   {
     id: "palm-oil",
     name: { en: "Palm Oil", bn: "পাম তেল" },
-    purpose: { en: "Frying & shelf stability", bn: "ভাজা ও সংরক্ষণ স্থায়িত্ব" },
+    purpose: {
+      en: "Frying & shelf stability",
+      bn: "ভাজা ও সংরক্ষণ স্থায়িত্ব",
+    },
     details: {
       en: "Widely used in packaged snacks and noodles because it resists oxidation. Higher in saturated fat (~50%) than many liquid vegetable oils; WHO advises keeping saturated fat under 10% of daily energy.",
       bn: "প্যাকেটজাত স্ন্যাকস ও নুডলসে বহুল ব্যবহৃত তেল। এতে সম্পৃক্ত চর্বির পরিমাণ তুলনামূলক বেশি; WHO দৈনিক শক্তির ১০%-এর কম সম্পৃক্ত চর্বি গ্রহণের পরামর্শ দেয়।",
@@ -254,7 +273,9 @@ export default function IngredientDetailScreen() {
       INGREDIENTS_DB.find(
         (item) =>
           item.id === rawId ||
-          item.keywords.some((kw) => rawId.toLowerCase().includes(kw.toLowerCase())),
+          item.keywords.some((kw) =>
+            rawId.toLowerCase().includes(kw.toLowerCase()),
+          ),
       ),
     [rawId],
   );
@@ -276,7 +297,9 @@ export default function IngredientDetailScreen() {
       if (halalMode && !isHalalEligible(product)) return false;
       return product.ingredients.some((ing) => {
         const text = `${ing.en} ${ing.bn}`.toLowerCase();
-        return ingredient.keywords.some((kw) => text.includes(kw.toLowerCase()));
+        return ingredient.keywords.some((kw) =>
+          text.includes(kw.toLowerCase()),
+        );
       });
     });
   }, [ingredient, halalMode]);
@@ -286,7 +309,11 @@ export default function IngredientDetailScreen() {
       <Screen contentStyle={{ gap: 16 }}>
         <PageHeader
           title={language === "en" ? "Ingredient Guide" : "উপাদান গাইড"}
-          subtitle={language === "en" ? "Browse common packaged-product ingredients" : "প্যাকেটজাত পণ্যের সাধারণ উপাদানগুলো দেখুন"}
+          subtitle={
+            language === "en"
+              ? "Browse common packaged-product ingredients"
+              : "প্যাকেটজাত পণ্যের সাধারণ উপাদানগুলো দেখুন"
+          }
           back={() => router.back()}
         />
 
@@ -303,11 +330,17 @@ export default function IngredientDetailScreen() {
             paddingVertical: 10,
           }}
         >
-          <MaterialCommunityIcons name="magnify" size={20} color={palette.muted} />
+          <MaterialCommunityIcons
+            name="magnify"
+            size={20}
+            color={palette.muted}
+          />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder={language === "en" ? "Search ingredients…" : "উপাদান খুঁজুন…"}
+            placeholder={
+              language === "en" ? "Search ingredients…" : "উপাদান খুঁজুন…"
+            }
             placeholderTextColor={palette.muted}
             style={{ flex: 1, fontSize: 13, color: palette.ink }}
           />
@@ -318,7 +351,12 @@ export default function IngredientDetailScreen() {
             <Pressable
               key={item.id}
               accessibilityRole="button"
-              onPress={() => router.push({ pathname: "/ingredient/[id]", params: { id: item.id } })}
+              onPress={() =>
+                router.push({
+                  pathname: "/ingredient/[id]",
+                  params: { id: item.id },
+                })
+              }
               style={({ pressed }) => ({
                 flexDirection: "row",
                 alignItems: "center",
@@ -337,7 +375,11 @@ export default function IngredientDetailScreen() {
                   {item.purpose[language]}
                 </AppText>
               </View>
-              <MaterialCommunityIcons name="chevron-right" size={19} color={palette.muted} />
+              <MaterialCommunityIcons
+                name="chevron-right"
+                size={19}
+                color={palette.muted}
+              />
             </Pressable>
           ))}
         </Card>
@@ -361,15 +403,26 @@ export default function IngredientDetailScreen() {
         <Card>
           <EmptyState
             icon="flask-outline"
-            title={language === "en" ? "Ingredient not found" : "উপাদানটি পাওয়া যায়নি"}
+            title={
+              language === "en"
+                ? "Ingredient not found"
+                : "উপাদানটি পাওয়া যায়নি"
+            }
             body={
               language === "en"
                 ? "This ingredient is not in the prototype reference list yet."
                 : "এই উপাদানটি এখনও প্রোটোটাইপ তালিকায় যুক্ত হয়নি।"
             }
             action={{
-              label: language === "en" ? "Browse all ingredients" : "সব উপাদান দেখুন",
-              onPress: () => router.replace({ pathname: "/ingredient/[id]", params: { id: "search" } }),
+              label:
+                language === "en"
+                  ? "Browse all ingredients"
+                  : "সব উপাদান দেখুন",
+              onPress: () =>
+                router.replace({
+                  pathname: "/ingredient/[id]",
+                  params: { id: "search" },
+                }),
             }}
           />
         </Card>
@@ -389,7 +442,10 @@ export default function IngredientDetailScreen() {
   const concernLabel: Localized = {
     none: { en: "No major concern", bn: "বড় কোনো উদ্বেগ নেই" },
     low: { en: "Low concern", bn: "কম উদ্বেগ" },
-    moderate: { en: "Moderate · watch intake", bn: "মাঝারি · পরিমিত গ্রহণ করুন" },
+    moderate: {
+      en: "Moderate · watch intake",
+      bn: "মাঝারি · পরিমিত গ্রহণ করুন",
+    },
     high: { en: "High concern", bn: "উচ্চ উদ্বেগ" },
   }[ingredient.concern];
 
@@ -401,8 +457,15 @@ export default function IngredientDetailScreen() {
         right={
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={language === "en" ? "Search ingredients" : "উপাদান খুঁজুন"}
-            onPress={() => router.push({ pathname: "/ingredient/[id]", params: { id: "search" } })}
+            accessibilityLabel={
+              language === "en" ? "Search ingredients" : "উপাদান খুঁজুন"
+            }
+            onPress={() =>
+              router.push({
+                pathname: "/ingredient/[id]",
+                params: { id: "search" },
+              })
+            }
             hitSlop={6}
             style={({ pressed }) => ({
               width: 34,
@@ -416,7 +479,11 @@ export default function IngredientDetailScreen() {
               opacity: pressed ? 0.72 : 1,
             })}
           >
-            <MaterialCommunityIcons name="magnify" size={18} color={palette.green} />
+            <MaterialCommunityIcons
+              name="magnify"
+              size={18}
+              color={palette.green}
+            />
           </Pressable>
         }
       />
@@ -433,7 +500,15 @@ export default function IngredientDetailScreen() {
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
           <Pill tone={purposeTone}>{ingredient.purpose[language]}</Pill>
-          <Pill tone={ingredient.concern === "moderate" ? "amber" : ingredient.concern === "high" ? "clay" : "neutral"}>
+          <Pill
+            tone={
+              ingredient.concern === "moderate"
+                ? "amber"
+                : ingredient.concern === "high"
+                  ? "clay"
+                  : "neutral"
+            }
+          >
             {concernLabel[language]}
           </Pill>
         </View>
@@ -442,8 +517,19 @@ export default function IngredientDetailScreen() {
           {ingredient.details[language]}
         </AppText>
 
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingTop: 4 }}>
-          <MaterialCommunityIcons name="book-open-outline" size={14} color={palette.muted} />
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            paddingTop: 4,
+          }}
+        >
+          <MaterialCommunityIcons
+            name="book-open-outline"
+            size={14}
+            color={palette.muted}
+          />
           <AppText style={{ color: palette.muted, fontSize: 10 }}>
             {ingredient.source}
           </AppText>
@@ -451,13 +537,29 @@ export default function IngredientDetailScreen() {
       </Card>
 
       {ingredient.allergen ? (
-        <Card style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, backgroundColor: palette.amberSoft }}>
-          <MaterialCommunityIcons name="alert-outline" size={20} color={palette.amberInk} />
+        <Card
+          style={{
+            flexDirection: "row",
+            alignItems: "flex-start",
+            gap: 10,
+            backgroundColor: palette.amberSoft,
+          }}
+        >
+          <MaterialCommunityIcons
+            name="alert-outline"
+            size={20}
+            color={palette.amberInk}
+          />
           <View style={{ flex: 1, gap: 3 }}>
-            <AppText weight="semibold" style={{ fontSize: 13, color: palette.amberInk }}>
+            <AppText
+              weight="semibold"
+              style={{ fontSize: 13, color: palette.amberInk }}
+            >
               {language === "en" ? "Allergen Notice" : "অ্যালার্জেন সতর্কতা"}
             </AppText>
-            <AppText style={{ fontSize: 11, lineHeight: 16, color: palette.amberInk }}>
+            <AppText
+              style={{ fontSize: 11, lineHeight: 16, color: palette.amberInk }}
+            >
               {ingredient.allergenNote?.[language] ??
                 (language === "en"
                   ? "May trigger allergic reactions in sensitive individuals."
@@ -479,13 +581,20 @@ export default function IngredientDetailScreen() {
           <Card style={{ paddingHorizontal: 13, paddingVertical: 1, gap: 0 }}>
             {matchingProducts.map((product, idx) => (
               <View key={product.id}>
-                {idx ? <View style={{ height: 1, backgroundColor: palette.line }} /> : null}
+                {idx ? (
+                  <View style={{ height: 1, backgroundColor: palette.line }} />
+                ) : null}
                 <ProductRow
                   product={product}
-                  onPress={() => router.push({ pathname: "/product/[id]", params: { id: product.id } })}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/product/[id]",
+                      params: { id: product.id },
+                    })
+                  }
                   aside={
                     product.score !== undefined ? (
-                      <Pill tone={product.score >= 75 ? "green" : product.score >= 60 ? "amber" : "clay"}>
+                      <Pill tone={scoreTone(product.score)}>
                         {product.score}/100
                       </Pill>
                     ) : undefined
@@ -508,7 +617,12 @@ export default function IngredientDetailScreen() {
       <SecondaryButton
         title={language === "en" ? "Browse all ingredients" : "সব উপাদান দেখুন"}
         icon="format-list-bulleted"
-        onPress={() => router.push({ pathname: "/ingredient/[id]", params: { id: "search" } })}
+        onPress={() =>
+          router.push({
+            pathname: "/ingredient/[id]",
+            params: { id: "search" },
+          })
+        }
       />
 
       <DemoNotice>
