@@ -1,40 +1,23 @@
-import { createTRPCReact } from "@trpc/react-query";
 import { httpBatchLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
 import superjson from "superjson";
 import type { AppRouter } from "@/server/routers";
-import { getApiBaseUrl } from "@/constants/oauth";
-import * as Auth from "@/lib/_core/auth";
+import { getApiBaseUrl } from "@/lib/api-base";
+import { getAccessToken } from "@/lib/supabase";
 
-/**
- * tRPC React client for type-safe API calls.
- *
- * IMPORTANT (tRPC v11): The `transformer` must be inside `httpBatchLink`,
- * NOT at the root createClient level. This ensures client and server
- * use the same serialization format (superjson).
- */
+/** Type-safe client for the NutriScan API. Auth is a Supabase access token, never a cookie. */
 export const trpc = createTRPCReact<AppRouter>();
 
-/**
- * Creates the tRPC client with proper configuration.
- * Call this once in your app's root layout.
- */
 export function createTRPCClient() {
   return trpc.createClient({
     links: [
       httpBatchLink({
         url: `${getApiBaseUrl()}/api/trpc`,
-        // tRPC v11: transformer MUST be inside httpBatchLink, not at root
+        // tRPC v11: the transformer lives on the link.
         transformer: superjson,
         async headers() {
-          const token = await Auth.getSessionToken();
+          const token = await getAccessToken();
           return token ? { Authorization: `Bearer ${token}` } : {};
-        },
-        // Custom fetch to include credentials for cookie-based auth
-        fetch(url, options) {
-          return fetch(url, {
-            ...options,
-            credentials: "include",
-          });
         },
       }),
     ],

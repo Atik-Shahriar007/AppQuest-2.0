@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Image, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from "react-native";
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  TextInput,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import {
   AppText,
@@ -13,25 +20,23 @@ import {
   usePalette,
 } from "@/components/nutriscan-ui";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import { useAuth } from "@/lib/auth";
 
 const nutriScanMark = require("../assets/images/nutriscan-mark.png");
 
 export default function OnboardingScreen() {
   const router = useRouter();
   const palette = usePalette();
-  const {
-    language,
-    setIsAuthenticated,
-    setHasCompletedOnboarding,
-    setDemoAccount,
-    updateProfile,
-  } = useNutriScan();
+  const { language, setHasCompletedOnboarding, updateProfile } = useNutriScan();
+  const auth = useAuth();
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const [slide, setSlide] = useState<0 | 1 | 2>(0);
   const [authTab, setAuthTab] = useState<"signin" | "register">("signin");
 
-  const [email, setEmail] = useState("demo@nutriscan.app");
-  const [password, setPassword] = useState("••••••••");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
@@ -51,18 +56,13 @@ export default function OnboardingScreen() {
     fontSize: 14,
   } as const;
 
-  const completeAuth = (name?: string, userEmail?: string) => {
-    if (name && userEmail) {
-      setDemoAccount({ name, email: userEmail });
-      updateProfile({ displayName: name });
-    }
-    setIsAuthenticated(true);
+  const finishOnboarding = () => {
     setHasCompletedOnboarding(true);
     router.replace("/(tabs)");
   };
 
-  const handleSignIn = () => {
-    if (!email.trim() || !password.trim()) {
+  const handleSignIn = async () => {
+    if (!email.trim() || !password) {
       setError(
         language === "en"
           ? "Please enter both email and password."
@@ -71,11 +71,19 @@ export default function OnboardingScreen() {
       return;
     }
     setError(null);
-    completeAuth();
+    setNotice(null);
+    setBusy(true);
+    const result = await auth.signIn(email, password);
+    setBusy(false);
+    if (!result.ok) {
+      setError(result.message);
+      return;
+    }
+    finishOnboarding();
   };
 
-  const handleRegister = () => {
-    if (!regName.trim() || !regEmail.trim() || !regPassword.trim() || !regConfirm.trim()) {
+  const handleRegister = async () => {
+    if (!regName.trim() || !regEmail.trim() || !regPassword || !regConfirm) {
       setError(
         language === "en"
           ? "Please fill in all required fields."
@@ -91,8 +99,35 @@ export default function OnboardingScreen() {
       );
       return;
     }
+    if (regPassword.length < 6) {
+      setError(
+        language === "en"
+          ? "Password must be at least 6 characters."
+          : "পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।",
+      );
+      return;
+    }
     setError(null);
-    completeAuth(regName.trim(), regEmail.trim());
+    setNotice(null);
+    setBusy(true);
+    const result = await auth.signUp(regName, regEmail, regPassword);
+    setBusy(false);
+    if (!result.ok) {
+      setError(result.message);
+      return;
+    }
+    updateProfile({ displayName: regName.trim() });
+    if (result.needsEmailConfirmation) {
+      setAuthTab("signin");
+      setEmail(regEmail.trim());
+      setNotice(
+        language === "en"
+          ? "Account created. Check your email and tap the confirmation link, then sign in."
+          : "অ্যাকাউন্ট তৈরি হয়েছে। ইমেইলের নিশ্চিতকরণ লিংকে ট্যাপ করুন, তারপর সাইন ইন করুন।",
+      );
+      return;
+    }
+    finishOnboarding();
   };
 
   const features = [
@@ -114,7 +149,10 @@ export default function OnboardingScreen() {
     },
     {
       icon: "robot-outline" as const,
-      title: language === "en" ? "Get Personalized Insights" : "ব্যক্তিগত পরামর্শ পান",
+      title:
+        language === "en"
+          ? "Get Personalized Insights"
+          : "ব্যক্তিগত পরামর্শ পান",
       body:
         language === "en"
           ? "Tailor your shelf with Halal Mode, Child Safe Mode, and Nouri."
@@ -123,8 +161,18 @@ export default function OnboardingScreen() {
   ];
 
   return (
-    <Screen contentStyle={{ flexGrow: 1, justifyContent: "space-between", paddingVertical: 24, gap: 24 }}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1, justifyContent: "center" }}>
+    <Screen
+      contentStyle={{
+        flexGrow: 1,
+        justifyContent: "space-between",
+        paddingVertical: 24,
+        gap: 24,
+      }}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1, justifyContent: "center" }}
+      >
         {slide === 0 ? (
           <View style={{ alignItems: "center", gap: 20, paddingVertical: 20 }}>
             <View
@@ -139,13 +187,34 @@ export default function OnboardingScreen() {
                 justifyContent: "center",
               }}
             >
-              <Image source={nutriScanMark} resizeMode="contain" style={{ width: 92, height: 92, borderRadius: 26 }} />
+              <Image
+                source={nutriScanMark}
+                resizeMode="contain"
+                style={{ width: 92, height: 92, borderRadius: 26 }}
+              />
             </View>
             <View style={{ alignItems: "center", gap: 8 }}>
-              <AppText weight="bold" style={{ fontSize: 32, lineHeight: 40, textAlign: "center", letterSpacing: -0.6 }}>
-                {language === "en" ? "Know What You Eat" : "আপনি কী খান, জেনে নিন"}
+              <AppText
+                weight="bold"
+                style={{
+                  fontSize: 32,
+                  lineHeight: 40,
+                  textAlign: "center",
+                  letterSpacing: -0.6,
+                }}
+              >
+                {language === "en"
+                  ? "Know What You Eat"
+                  : "আপনি কী খান, জেনে নিন"}
               </AppText>
-              <AppText style={{ color: palette.muted, fontSize: 15, lineHeight: 22, textAlign: "center" }}>
+              <AppText
+                style={{
+                  color: palette.muted,
+                  fontSize: 15,
+                  lineHeight: 22,
+                  textAlign: "center",
+                }}
+              >
                 {language === "en"
                   ? "Bangladesh's food intelligence companion"
                   : "বাংলাদেশের খাদ্য-তথ্যের বিশ্বস্ত সঙ্গী"}
@@ -167,7 +236,10 @@ export default function OnboardingScreen() {
                   opacity: pressed ? 0.72 : 1,
                 })}
               >
-                <AppText weight="semibold" style={{ color: palette.green, fontSize: 14 }}>
+                <AppText
+                  weight="semibold"
+                  style={{ color: palette.green, fontSize: 14 }}
+                >
                   {language === "en" ? "Sign in" : "সাইন ইন করুন"}
                 </AppText>
               </Pressable>
@@ -179,7 +251,9 @@ export default function OnboardingScreen() {
               <AppText weight="bold" style={{ fontSize: 26, lineHeight: 34 }}>
                 {language === "en" ? "What NutriScan does" : "NutriScan যা করে"}
               </AppText>
-              <AppText style={{ color: palette.muted, fontSize: 13, lineHeight: 20 }}>
+              <AppText
+                style={{ color: palette.muted, fontSize: 13, lineHeight: 20 }}
+              >
                 {language === "en"
                   ? "Clear, bilingual label intelligence designed for everyday shopping."
                   : "দৈনন্দিন কেনাকাটার জন্য সহজ ও দ্বিভাষিক লেবেল তথ্য।"}
@@ -187,11 +261,28 @@ export default function OnboardingScreen() {
             </View>
             <View style={{ gap: 12 }}>
               {features.map((item) => (
-                <Card key={item.title} style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
+                <Card
+                  key={item.title}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 14,
+                  }}
+                >
                   <IconTile icon={item.icon} tone="green" />
                   <View style={{ flex: 1, gap: 3 }}>
-                    <AppText weight="semibold" style={{ fontSize: 15 }}>{item.title}</AppText>
-                    <AppText style={{ color: palette.muted, fontSize: 12, lineHeight: 18 }}>{item.body}</AppText>
+                    <AppText weight="semibold" style={{ fontSize: 15 }}>
+                      {item.title}
+                    </AppText>
+                    <AppText
+                      style={{
+                        color: palette.muted,
+                        fontSize: 12,
+                        lineHeight: 18,
+                      }}
+                    >
+                      {item.body}
+                    </AppText>
                   </View>
                 </Card>
               ))}
@@ -215,7 +306,9 @@ export default function OnboardingScreen() {
                     ? "Create your account"
                     : "নতুন অ্যাকাউন্ট তৈরি করুন"}
               </AppText>
-              <AppText style={{ color: palette.muted, fontSize: 13, lineHeight: 20 }}>
+              <AppText
+                style={{ color: palette.muted, fontSize: 13, lineHeight: 20 }}
+              >
                 {language === "en"
                   ? "Sign in to continue or try the local demo."
                   : "চালিয়ে যেতে সাইন ইন করুন অথবা ডেমো ব্যবহার করুন।"}
@@ -224,8 +317,14 @@ export default function OnboardingScreen() {
 
             <TabSwitcher
               tabs={[
-                { key: "signin", label: language === "en" ? "Sign In" : "সাইন ইন" },
-                { key: "register", label: language === "en" ? "Register" : "নিবন্ধন" },
+                {
+                  key: "signin",
+                  label: language === "en" ? "Sign In" : "সাইন ইন",
+                },
+                {
+                  key: "register",
+                  label: language === "en" ? "Register" : "নিবন্ধন",
+                },
               ]}
               activeKey={authTab}
               onSelect={(key) => {
@@ -269,18 +368,39 @@ export default function OnboardingScreen() {
                     style={inputStyle}
                   />
                 </View>
+                {notice ? (
+                  <AppText style={{ color: palette.green, fontSize: 12 }}>
+                    {notice}
+                  </AppText>
+                ) : null}
                 {error ? (
-                  <AppText style={{ color: palette.clay, fontSize: 12 }}>{error}</AppText>
+                  <AppText style={{ color: palette.clay, fontSize: 12 }}>
+                    {error}
+                  </AppText>
                 ) : null}
                 <PrimaryButton
-                  title={language === "en" ? "Sign In" : "সাইন ইন"}
+                  title={
+                    busy
+                      ? language === "en"
+                        ? "Signing in..."
+                        : "সাইন ইন হচ্ছে..."
+                      : language === "en"
+                        ? "Sign In"
+                        : "সাইন ইন"
+                  }
                   icon="login"
-                  onPress={handleSignIn}
+                  onPress={() => {
+                    if (!busy) void handleSignIn();
+                  }}
                 />
                 <SecondaryButton
-                  title={language === "en" ? "Try the demo" : "ডেমো দেখুন"}
+                  title={
+                    language === "en"
+                      ? "Continue without an account"
+                      : "অ্যাকাউন্ট ছাড়াই চালিয়ে যান"
+                  }
                   icon="star-outline"
-                  onPress={() => completeAuth()}
+                  onPress={finishOnboarding}
                 />
               </Card>
             ) : (
@@ -335,7 +455,9 @@ export default function OnboardingScreen() {
                 </View>
                 <View style={{ gap: 6 }}>
                   <AppText weight="semibold" style={{ fontSize: 12 }}>
-                    {language === "en" ? "Confirm password" : "পাসওয়ার্ড নিশ্চিত করুন"}
+                    {language === "en"
+                      ? "Confirm password"
+                      : "পাসওয়ার্ড নিশ্চিত করুন"}
                   </AppText>
                   <TextInput
                     value={regConfirm}
@@ -350,12 +472,24 @@ export default function OnboardingScreen() {
                   />
                 </View>
                 {error ? (
-                  <AppText style={{ color: palette.clay, fontSize: 12 }}>{error}</AppText>
+                  <AppText style={{ color: palette.clay, fontSize: 12 }}>
+                    {error}
+                  </AppText>
                 ) : null}
                 <PrimaryButton
-                  title={language === "en" ? "Create Account" : "অ্যাকাউন্ট তৈরি করুন"}
+                  title={
+                    busy
+                      ? language === "en"
+                        ? "Creating account..."
+                        : "অ্যাকাউন্ট তৈরি হচ্ছে..."
+                      : language === "en"
+                        ? "Create Account"
+                        : "অ্যাকাউন্ট তৈরি করুন"
+                  }
                   icon="account-plus-outline"
-                  onPress={handleRegister}
+                  onPress={() => {
+                    if (!busy) void handleRegister();
+                  }}
                 />
               </Card>
             )}
@@ -363,7 +497,15 @@ export default function OnboardingScreen() {
         )}
       </KeyboardAvoidingView>
 
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingTop: 8 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+          paddingTop: 8,
+        }}
+      >
         {([0, 1, 2] as const).map((index) => {
           const active = slide === index;
           return (
