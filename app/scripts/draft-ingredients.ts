@@ -23,7 +23,7 @@ import {
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const outPath = join(appRoot, "shared", "catalog", "ingredients.draft.json");
-const BATCH = 5;
+const BATCH = Number(process.env.BATCH) || 5;
 
 const Entry = z.object({
   key: z.string(),
