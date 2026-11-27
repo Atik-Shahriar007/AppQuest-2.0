@@ -11,6 +11,24 @@ import type {
 } from "../shared/catalog/types";
 import type { ComponentKey, NutrientValue } from "../shared/nqss/engine";
 import { placeholderImage, productImages } from "./product-images";
+import draftsJson from "../shared/catalog/ingredients.draft.json";
+import {
+  ingredientKey,
+  type IngredientDraft,
+} from "../shared/catalog/ingredients";
+
+const drafts = draftsJson as unknown as Record<string, IngredientDraft>;
+/** Explanation for one ingredient line, labelled while it is an unreviewed AI draft. */
+function explain(raw: string): Localized {
+  const d = drafts[ingredientKey(raw)];
+  if (!d) return L("", "");
+  const tagEn = d.reviewed ? "" : " (AI draft, pending team review)";
+  const tagBn = d.reviewed ? "" : " (এআই খসড়া, টিম পর্যালোচনার অপেক্ষায়)";
+  return L(
+    `${d.purposeEn}. ${d.detailsEn}${tagEn}`,
+    `${d.purposeBn}। ${d.detailsBn}${tagBn}`,
+  );
+}
 import type {
   Category,
   Localized,
@@ -263,9 +281,9 @@ function toProduct(p: CatalogProduct): Product {
     description,
     image: (p.imageKey && productImages[p.imageKey]) || placeholderImage,
     ingredients: p.ingredients.map(same),
-    ingredientExplanations: p.careIngredients?.map((i) =>
-      same(i.purpose ?? ""),
-    ),
+    ingredientExplanations: p.careIngredients
+      ? p.careIngredients.map((i) => same(i.purpose ?? ""))
+      : p.ingredients.map(explain),
     nutrition:
       isFood && p.nutrition
         ? { serving: basis, items: nutritionItems(p) }

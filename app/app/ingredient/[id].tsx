@@ -19,6 +19,8 @@ import {
 import { isHalalEligible, products } from "@/lib/nutriscan-data";
 import type { Localized } from "@/lib/nutriscan-data";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import draftsJson from "@/shared/catalog/ingredients.draft.json";
+import type { IngredientDraft } from "@/shared/catalog/ingredients";
 
 type ConcernLevel = "none" | "low" | "moderate" | "high";
 
@@ -258,6 +260,36 @@ const INGREDIENTS_DB: IngredientEntry[] = [
   },
 ];
 
+/** Team-curated entries first, then AI drafts for every other catalog ingredient. */
+const DRAFTS = Object.values(
+  draftsJson as unknown as Record<string, IngredientDraft>,
+);
+const ALL_INGREDIENTS: IngredientEntry[] = [
+  ...INGREDIENTS_DB,
+  ...DRAFTS.filter(
+    (d) =>
+      !INGREDIENTS_DB.some((c) =>
+        c.keywords.some((kw) => d.key.includes(kw.toLowerCase())),
+      ),
+  ).map(
+    (d): IngredientEntry => ({
+      id: `draft-${d.key.replace(/[^a-z0-9]+/g, "-")}`,
+      name: { en: d.nameEn, bn: d.nameBn },
+      purpose: { en: d.purposeEn, bn: d.purposeBn },
+      details: { en: d.detailsEn, bn: d.detailsBn },
+      concern: d.attention,
+      allergen: d.allergen,
+      allergenNote: d.allergenNoteEn
+        ? { en: d.allergenNoteEn, bn: d.allergenNoteBn ?? d.allergenNoteEn }
+        : undefined,
+      source: d.reviewed
+        ? "NutriScan team"
+        : "AI draft, pending NutriScan team review",
+      keywords: [d.key],
+    }),
+  ),
+];
+
 export default function IngredientDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -270,7 +302,7 @@ export default function IngredientDetailScreen() {
 
   const ingredient = useMemo(
     () =>
-      INGREDIENTS_DB.find(
+      ALL_INGREDIENTS.find(
         (item) =>
           item.id === rawId ||
           item.keywords.some((kw) =>
@@ -283,7 +315,7 @@ export default function IngredientDetailScreen() {
   const filteredIngredients = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return INGREDIENTS_DB;
-    return INGREDIENTS_DB.filter(
+    return ALL_INGREDIENTS.filter(
       (item) =>
         item.name.en.toLowerCase().includes(q) ||
         item.name.bn.toLowerCase().includes(q) ||

@@ -396,6 +396,20 @@ export default function OnboardingScreen() {
                 <SecondaryButton
                   title={
                     language === "en"
+                      ? "Continue with Google"
+                      : "গুগল দিয়ে চালিয়ে যান"
+                  }
+                  icon="google"
+                  onPress={async () => {
+                    setError(null);
+                    const r = await auth.signInWithGoogle();
+                    if (!r.ok) setError(r.message);
+                    else finishOnboarding();
+                  }}
+                />
+                <SecondaryButton
+                  title={
+                    language === "en"
                       ? "Continue without an account"
                       : "অ্যাকাউন্ট ছাড়াই চালিয়ে যান"
                   }
