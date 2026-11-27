@@ -18,7 +18,9 @@
     "qr": "node scripts/generate_qr.mjs",
     "ingest": "tsx scripts/ingest.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx server/db/migrate.ts"
+    "db:migrate": "tsx server/db/migrate.ts",
+    "build:server": "bash scripts/build-server.sh",
+    "build:web": "expo export --platform web"
   },
   "dependencies": {
     "@expo-google-fonts/noto-sans-bengali": "^0.4.4",

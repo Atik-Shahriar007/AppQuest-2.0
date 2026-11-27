@@ -70,3 +70,7 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# server bundle
+deploy/dist/
+deploy/.env.production
