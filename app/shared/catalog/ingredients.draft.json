@@ -5326,5 +5326,20 @@
   "provenance": "ai_draft",
   "reviewed": false,
   "model": "nvidia/nemotron-3.5-super-vl:free"
+ },
+ "vitamin b1": {
+  "key": "vitamin b1",
+  "nameEn": "Vitamin B1 (Thiamine)",
+  "nameBn": "ভিটামিন বি১ (থায়ামিন)",
+  "purposeEn": "Added vitamin (fortification)",
+  "purposeBn": "যোগ করা ভিটামিন (ফর্টিফিকেশন)",
+  "detailsEn": "Thiamine is a B vitamin the body uses to turn food into energy. It is added to some packaged foods to replace vitamins lost in processing.",
+  "detailsBn": "থায়ামিন একটি বি ভিটামিন, যা শরীর খাবার থেকে শক্তি তৈরিতে ব্যবহার করে। প্রক্রিয়াজাতকরণে হারানো ভিটামিন পূরণে কিছু প্যাকেটজাত খাবারে এটি যোগ করা হয়।",
+  "attention": "none",
+  "allergen": false,
+  "allergenNoteEn": null,
+  "allergenNoteBn": null,
+  "provenance": "team",
+  "reviewed": true
  }
 }
