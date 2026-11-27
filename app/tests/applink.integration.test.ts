@@ -36,6 +36,8 @@ suite("AppLink flows (integration)", () => {
       NODE_ENV: "test",
       DATABASE_URL: TEST_DB,
       OPENROUTER_API_KEY: "test-key",
+      OPENROUTER_DATA_COLLECTION: "deny",
+      OPENROUTER_CHAT_MODELS: "test/free-model:free,test/paid-model",
       APPLINK_APP_ID: "APP_000001",
       APPLINK_PASSWORD: "test-password",
       APPLINK_CAAS_DEBIT_URL: fake.url("/caas/direct/debit"),

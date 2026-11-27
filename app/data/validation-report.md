@@ -15,7 +15,7 @@ Warnings never block scoring (teammate decision 1). Fix records in `data/catalog
 | East Baker Slice Bread | 8941160188198 | 54.1 | benchmark_sodium_over_400mg |
 | Bombay Sweets Chanachur | 8941154031361 | 60 | macros_exceed_100g |
 | Pran Barbeque Chanachur | 841165108251 | 74.1 | benchmark_sodium_over_400mg |
-| Pran Cheera Mix | 846656016763 | 51.8 | benchmark_sodium_over_400mg |
+| Pran Cheera Mix | 846656016763 | 75.3 | benchmark_sodium_over_400mg |
 | Pran Hot Chanachur | 831730003739 | 74.1 | benchmark_sodium_over_400mg |
 | Ruchi Baeeque Chanachur | 8941100513569 | 45.9 | benchmark_sodium_over_400mg |
 | Ruchi Chanachur Original Mix | 8941100514191 | 48.2 | benchmark_sodium_over_400mg |
@@ -23,7 +23,7 @@ Warnings never block scoring (teammate decision 1). Fix records in `data/catalog
 | Detos Chicken Wings Chips | 8941160032567 | 52.9 | benchmark_sodium_over_400mg, image_file_named_proiduct.jpg |
 | Kurkure Spicy Chicken flavour | 0788792870949 | 48.2 | benchmark_sodium_over_400mg |
 | Lay's Spanish Tomato Tango | 0721688299516 | 55.3 | benchmark_sodium_over_400mg |
-| Mad Max Nachos (Achar Flavor) | 840205791835 | 54.1 | macros_exceed_100g |
+| Mad Max Nachos (Achar Flavor) | 840205791835 | 77.6 | macros_exceed_100g |
 | Real Thai Chicken Chips | 8850155021045 | 29.4 | benchmark_sodium_over_400mg |
 | Potatos Real Potato Chips Original Flavor | 840547605791 | 64.7 | benchmark_sodium_over_400mg |
 | Potata Spicy Biscuit | 8411651147502 | 17.6 | benchmark_sodium_over_400mg |
@@ -48,7 +48,9 @@ Warnings never block scoring (teammate decision 1). Fix records in `data/catalog
 | UHT Full Cream Milk | Dairy | 87.1 | excellent | plain_dairy_lactose_only |
 | NACHOZ Raw Mango & Tangy Tamarind | Chips | 84.7 | excellent | total_sugar_as_free_sugar |
 | Dal Vaja | Chanachur | 83.5 | excellent | total_sugar_as_free_sugar |
+| Mad Max Nachos (Achar Flavor) | Chips | 77.6 | good | total_sugar_as_free_sugar |
 | 7up | Cold-Drink | 76.5 | good | total_sugar_as_free_sugar |
+| Pran Cheera Mix | Chanachur | 75.3 | good | total_sugar_as_free_sugar |
 | Pran Barbeque Chanachur | Chanachur | 74.1 | good | total_sugar_as_free_sugar |
 | Pran Hot Chanachur | Chanachur | 74.1 | good | total_sugar_as_free_sugar |
 | Jhal Muri (Puffed Rice mixed with Spices and Peanut) | Chips | 69.4 | good | total_sugar_as_free_sugar |
@@ -69,7 +71,6 @@ Warnings never block scoring (teammate decision 1). Fix records in `data/catalog
 | Orange Drink with Basil Seed | Juice | 55.3 | moderate | total_sugar_as_free_sugar |
 | Mr. Noodles Egg Noodles Masala Flavor | Noodles | 55.3 | moderate | total_sugar_as_free_sugar |
 | East Baker Slice Bread | Bun | 54.1 | moderate | total_sugar_as_free_sugar |
-| Mad Max Nachos (Achar Flavor) | Chips | 54.1 | moderate | carbohydrate_upper_bound_sugar_declared_zero |
 | Alltime Chocolate Bun | Bun | 52.9 | moderate | total_sugar_as_free_sugar |
 | Kazi Frams Chocolate Muffin Cake | Cake | 52.9 | moderate | total_sugar_as_free_sugar |
 | Detos Chicken Wings Chips | Chips | 52.9 | moderate | total_sugar_as_free_sugar |
@@ -86,7 +87,6 @@ Warnings never block scoring (teammate decision 1). Fix records in `data/catalog
 | Pomegranate Fruit Drink | Juice | 52.9 | moderate | total_sugar_as_free_sugar |
 | PranMango Fruit Drink | Juice | 52.9 | moderate | total_sugar_as_free_sugar |
 | Starship Mango Fruit Drink | Juice | 52.9 | moderate | total_sugar_as_free_sugar |
-| Pran Cheera Mix | Chanachur | 51.8 | moderate | carbohydrate_upper_bound_sugar_declared_zero |
 | Mr. Noodles Easy Instant Noodles (Magic Masala) | Noodles | 50.6 | moderate | total_sugar_as_free_sugar |
 | SMC Plus Electrolyte Drink Lemon | Energy-Drink | 49.4 | moderate | total_sugar_as_free_sugar |
 | Ruchi Chanachur Original Mix | Chanachur | 48.2 | moderate | total_sugar_as_free_sugar |

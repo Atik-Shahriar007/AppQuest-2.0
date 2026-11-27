@@ -57,8 +57,10 @@ const LACTOSE_G = 4.7;
 export type SugarContext = {
   isDairy: boolean;
   ingredients: string;
-  /** Declared total carbohydrate, used only to repair an impossible "0 g sugar" label. */
+  /** Declared total carbohydrate, used only to repair an impossible "0 g sugar" label on a drink. */
   totalCarbohydrateG?: unknown;
+  /** The repair applies to liquids only: in a drink carbohydrate is essentially sugar, in a snack it is mostly starch. */
+  form?: "solid" | "liquid";
 };
 
 function firstIngredient(ingredients: string): string {
@@ -70,7 +72,7 @@ function firstIngredient(ingredients: string): string {
  * 1. Plain dairy with no sugar source in the ingredients: 0 g (lactose only).
  * 2. Sweetened dairy whose first ingredient is milk or yoghurt: total sugar minus 4.7 g lactose.
  * 3. Everything else: all sugar is treated as free sugar (conservative upper bound).
- * Repair: sugar declared 0 g while a sugar is listed in the ingredients -> carbohydrate as the upper bound.
+ * Repair (drinks only): sugar declared 0 g while a sugar is listed -> carbohydrate as the upper bound.
  */
 export function estimateFreeSugar(totalSugar: unknown, ctx: SugarContext): NutrientValue | null {
   const t = parseLabelValue(totalSugar);
@@ -80,7 +82,7 @@ export function estimateFreeSugar(totalSugar: unknown, ctx: SugarContext): Nutri
   // Label says 0 g sugar but sugar is an ingredient: the label is wrong. Use carbohydrate as a
   // conservative upper bound rather than rewarding the product for a data-entry error.
   const carb = parseLabelValue(ctx.totalCarbohydrateG);
-  if (t.value === 0 && hasSugarSource && /sugar|syrup|honey|dextrose|glucose|fructose|sucrose/.test(ing) && carb && carb.value > 0) {
+  if (ctx.form === "liquid" && t.value === 0 && hasSugarSource && /sugar|syrup|honey|dextrose|glucose|fructose|sucrose/.test(ing) && carb && carb.value > 0) {
     return { value: carb.value, operator: "=", provenance: "estimated", method: "carbohydrate_upper_bound_sugar_declared_zero" };
   }
   if (ctx.isDairy && !hasSugarSource) {

@@ -166,9 +166,11 @@ describe("estimates", () => {
   });
 
   it("repairs a 0 g sugar label when sugar is an ingredient", () => {
-    const v = estimateFreeSugar(0, { isDairy: false, ingredients: "Sugar, Water", totalCarbohydrateG: 11 });
+    const v = estimateFreeSugar(0, { isDairy: false, ingredients: "Sugar, Water", totalCarbohydrateG: 11, form: "liquid" });
     expect(v?.value).toBe(11);
     expect(v?.method).toBe("carbohydrate_upper_bound_sugar_declared_zero");
+    // A starchy snack is not repaired: its carbohydrate is mostly starch.
+    expect(estimateFreeSugar(0, { isDairy: false, ingredients: "Corn, Oil, Sugar", totalCarbohydrateG: 58, form: "solid" })?.value).toBe(0);
   });
 
   it("whole-food dictionary ignores potato and rewards lentils first", () => {

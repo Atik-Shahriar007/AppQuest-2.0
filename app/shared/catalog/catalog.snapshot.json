@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-26T17:25:53.916Z",
+ "generatedAt": "2026-11-27T03:17:11.196Z",
  "algorithmVersion": "1.0.0",
  "ruleSetVersion": "2026.11-showcase.1",
  "products": [
@@ -1965,10 +1965,10 @@
       "provenance": "declared"
      },
      "free_sugar_g": {
-      "value": 49,
+      "value": 0,
       "operator": "=",
       "provenance": "estimated",
-      "method": "carbohydrate_upper_bound_sugar_declared_zero"
+      "method": "total_sugar_as_free_sugar"
      },
      "added_sugar_g": null,
      "fibre_g": null,
@@ -1988,16 +1988,16 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 51.8,
-    "unroundedScore": 51.76470588235294,
-    "band": "moderate",
+    "score": 75.3,
+    "unroundedScore": 75.29411764705883,
+    "band": "good",
     "availableWeight": 85,
     "components": [
      {
       "key": "freeSugar",
       "max": 20,
-      "points": 0,
-      "input": 49,
+      "points": 20,
+      "input": 0,
       "bounded": false,
       "provenance": "estimated"
      },
@@ -3653,10 +3653,10 @@
       "provenance": "declared"
      },
      "free_sugar_g": {
-      "value": 58,
+      "value": 0,
       "operator": "=",
       "provenance": "estimated",
-      "method": "carbohydrate_upper_bound_sugar_declared_zero"
+      "method": "total_sugar_as_free_sugar"
      },
      "added_sugar_g": null,
      "fibre_g": null,
@@ -3676,16 +3676,16 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 54.1,
-    "unroundedScore": 54.11764705882353,
-    "band": "moderate",
+    "score": 77.6,
+    "unroundedScore": 77.6470588235294,
+    "band": "good",
     "availableWeight": 85,
     "components": [
      {
       "key": "freeSugar",
       "max": 20,
-      "points": 0,
-      "input": 58,
+      "points": 20,
+      "input": 0,
       "bounded": false,
       "provenance": "estimated"
      },

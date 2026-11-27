@@ -26,9 +26,9 @@ const schema = z.object({
   // AI through OpenRouter. Comma-separated model lists, tried in order: free first, a cheap
   // paid model last so Nouri keeps working when free models are rate-limited.
   OPENROUTER_API_KEY: z.string().optional(),
-  OPENROUTER_CHAT_MODELS: z.string().default("google/gemma-4-31b-it:free,google/gemma-4-26b-a4b-it:free,deepseek/deepseek-v4.1-flash"),
-  OPENROUTER_DEEP_MODELS: z.string().default("qwen/qwen3.7-plus,deepseek/deepseek-v4.1-flash"),
-  OPENROUTER_VISION_MODELS: z.string().default("google/gemma-4-31b-it:free,qwen/qwen3.7-flash"),
+  OPENROUTER_CHAT_MODELS: z.string().default("nvidia/nemotron-3.5-super-vl:free,nvidia/nemotron-3-ultra-550b-a55b:free,deepseek/deepseek-v4.1-flash"),
+  OPENROUTER_DEEP_MODELS: z.string().default("nvidia/nemotron-3-ultra-550b-a55b:free,deepseek/deepseek-v4.1-flash"),
+  OPENROUTER_VISION_MODELS: z.string().default("nvidia/nemotron-3.5-super-vl:free,qwen/qwen3.7-flash"),
   /** "deny" keeps health-profile text away from providers that store or train on prompts. */
   OPENROUTER_DATA_COLLECTION: z.enum(["deny", "allow"]).default("deny"),
   /** Hard monthly AI budget in US dollars. Calls stop when it is reached. */

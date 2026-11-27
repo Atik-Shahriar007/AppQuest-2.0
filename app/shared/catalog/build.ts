@@ -201,7 +201,7 @@ export function buildProduct(raw: RawRecord, ctx: BuildContext): CatalogProduct 
     free_sugar_g:
       dv("free_sugar_g") ??
       dv("added_sugar_g") ??
-      estimateFreeSugar(n.total_sugar_g, { isDairy, ingredients: ingredientsText, totalCarbohydrateG: n.total_carbohydrate_g }),
+      estimateFreeSugar(n.total_sugar_g, { isDairy, ingredients: ingredientsText, totalCarbohydrateG: n.total_carbohydrate_g, form: rule.form }),
     added_sugar_g: dv("added_sugar_g"),
     fibre_g: dv("fibre_g"),
     protein_g: dv("protein_g"),
