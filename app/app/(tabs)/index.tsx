@@ -35,11 +35,18 @@ import {
 import type { Category } from "@/lib/nutriscan-data";
 import { dailyTips } from "@/lib/nutrifacts";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import { useAuth } from "@/lib/auth";
+import { trpc } from "@/lib/trpc";
 
 const nutriScanMark = require("../../assets/images/nutriscan-mark.png");
 
 export default function HomeScreen() {
   const router = useRouter();
+  const auth = useAuth();
+  const notificationsQuery = trpc.me.notifications.useQuery(undefined, {
+    enabled: Boolean(auth.session),
+    refetchInterval: 60_000,
+  });
   const { language, halalMode, childSafeMode, profile, history } =
     useNutriScan();
   const palette = usePalette();
@@ -102,6 +109,9 @@ export default function HomeScreen() {
     router.push({ pathname: "/product/[id]", params: { id: productId } });
   };
   const categories: Category[] = ["food", "personalCare", "household"];
+  const unreadCount = (notificationsQuery.data ?? []).filter(
+    (n) => !n.readAt,
+  ).length;
 
   return (
     <Screen contentStyle={{ gap: 20 }}>
@@ -113,7 +123,7 @@ export default function HomeScreen() {
             accessibilityLabel={
               language === "en" ? "Notifications" : "বিজ্ঞপ্তি"
             }
-            onPress={() => undefined}
+            onPress={() => router.push("/account/notifications" as never)}
             hitSlop={6}
             style={({ pressed }) => ({
               width: 34,
@@ -128,9 +138,9 @@ export default function HomeScreen() {
             })}
           >
             <MaterialCommunityIcons
-              name="bell-outline"
+              name={unreadCount > 0 ? "bell-badge-outline" : "bell-outline"}
               size={18}
-              color={palette.green}
+              color={unreadCount > 0 ? palette.clay : palette.green}
             />
           </Pressable>
         }

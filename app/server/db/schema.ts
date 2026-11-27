@@ -6,6 +6,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  customType,
   date,
   index,
   integer,
@@ -21,8 +22,10 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-const createdAt = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
-const updatedAt = () => timestamp("updated_at", { withTimezone: true }).notNull().defaultNow();
+const createdAt = () =>
+  timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
+const updatedAt = () =>
+  timestamp("updated_at", { withTimezone: true }).notNull().defaultNow();
 
 // ---------- Accounts and personal data ----------
 
@@ -32,10 +35,16 @@ export const profiles = pgTable("profiles", {
   language: text("language").notNull().default("en"),
   theme: text("theme").notNull().default("system"),
   /** Health profile: age group, conditions, allergies, diet, pregnancy, etc. */
-  health: jsonb("health").$type<Record<string, unknown>>().notNull().default({}),
+  health: jsonb("health")
+    .$type<Record<string, unknown>>()
+    .notNull()
+    .default({}),
   goals: jsonb("goals").$type<Record<string, unknown>>().notNull().default({}),
   /** App modes: halalMode, childSafeMode. */
-  modes: jsonb("modes").$type<{ halalMode?: boolean; childSafeMode?: boolean }>().notNull().default({}),
+  modes: jsonb("modes")
+    .$type<{ halalMode?: boolean; childSafeMode?: boolean }>()
+    .notNull()
+    .default({}),
   smsAlertsOptIn: boolean("sms_alerts_opt_in").notNull().default(false),
   smsAlertsOptInAt: timestamp("sms_alerts_opt_in_at", { withTimezone: true }),
   trialStartedAt: timestamp("trial_started_at", { withTimezone: true }),
@@ -52,7 +61,10 @@ export const history = pgTable(
     source: text("source").notNull(), // scan | search | view | ussd
     createdAt: createdAt(),
   },
-  (t) => [index("history_user_idx").on(t.userId, t.createdAt), index("history_product_idx").on(t.productId)],
+  (t) => [
+    index("history_user_idx").on(t.userId, t.createdAt),
+    index("history_product_idx").on(t.productId),
+  ],
 );
 
 export const favorites = pgTable(
@@ -62,7 +74,10 @@ export const favorites = pgTable(
     productId: text("product_id").notNull(),
     createdAt: createdAt(),
   },
-  (t) => [primaryKey({ columns: [t.userId, t.productId] }), index("favorites_product_idx").on(t.productId)],
+  (t) => [
+    primaryKey({ columns: [t.userId, t.productId] }),
+    index("favorites_product_idx").on(t.productId),
+  ],
 );
 
 export const reactions = pgTable(
@@ -127,7 +142,28 @@ export const contributions = pgTable(
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (t) => [index("contributions_user_idx").on(t.userId), index("contributions_status_idx").on(t.status)],
+  (t) => [
+    index("contributions_user_idx").on(t.userId),
+    index("contributions_status_idx").on(t.status),
+  ],
+);
+
+const bytea = customType<{ data: Buffer }>({ dataType: () => "bytea" });
+
+/** Package photos for a contribution (front and back), only shown to reviewers. */
+export const contributionPhotos = pgTable(
+  "contribution_photos",
+  {
+    id: serial("id").primaryKey(),
+    contributionId: integer("contribution_id").notNull(),
+    side: text("side").notNull(), // front | back
+    mimeType: text("mime_type").notNull(),
+    data: bytea("data").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex("contribution_photos_side_uq").on(t.contributionId, t.side),
+  ],
 );
 
 // ---------- Nouri ----------
@@ -144,7 +180,10 @@ export const nouriConversations = pgTable(
   },
   (t) => [
     index("nouri_conv_user_idx").on(t.userId, t.updatedAt),
-    index("nouri_conv_summary_fts").using("gin", sql`to_tsvector('simple', coalesce(${t.summary}, ''))`),
+    index("nouri_conv_summary_fts").using(
+      "gin",
+      sql`to_tsvector('simple', coalesce(${t.summary}, ''))`,
+    ),
   ],
 );
 
@@ -185,10 +224,15 @@ export const aiUsage = pgTable(
     cacheReadTokens: integer("cache_read_tokens").notNull().default(0),
     cacheWriteTokens: integer("cache_write_tokens").notNull().default(0),
     outputTokens: integer("output_tokens").notNull().default(0),
-    costUsd: numeric("cost_usd", { precision: 12, scale: 6 }).notNull().default("0"),
+    costUsd: numeric("cost_usd", { precision: 12, scale: 6 })
+      .notNull()
+      .default("0"),
     createdAt: createdAt(),
   },
-  (t) => [index("ai_usage_created_idx").on(t.createdAt), index("ai_usage_user_idx").on(t.userId, t.feature, t.createdAt)],
+  (t) => [
+    index("ai_usage_created_idx").on(t.createdAt),
+    index("ai_usage_user_idx").on(t.userId, t.feature, t.createdAt),
+  ],
 );
 
 // ---------- AppLink: identity, consent, money ----------
@@ -199,7 +243,9 @@ export const phoneLinks = pgTable(
     userId: uuid("user_id").primaryKey(),
     /** AppLink subscriberId, stored exactly as returned (may be masked). Opaque. */
     subscriberId: text("subscriber_id").notNull(),
-    linkedAt: timestamp("linked_at", { withTimezone: true }).notNull().defaultNow(),
+    linkedAt: timestamp("linked_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (t) => [uniqueIndex("phone_links_subscriber_uq").on(t.subscriberId)],
 );
@@ -220,7 +266,10 @@ export const otpRequests = pgTable(
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     createdAt: createdAt(),
   },
-  (t) => [index("otp_msisdn_idx").on(t.msisdnHash, t.createdAt), index("otp_ip_idx").on(t.ip, t.createdAt)],
+  (t) => [
+    index("otp_msisdn_idx").on(t.msisdnHash, t.createdAt),
+    index("otp_ip_idx").on(t.ip, t.createdAt),
+  ],
 );
 
 export const consents = pgTable("consents", {
@@ -241,7 +290,9 @@ export const subscriptions = pgTable("subscriptions", {
   userId: uuid("user_id"),
   status: text("status").notNull(), // INITIAL | REG_PENDING | TRIAL | REGISTERED | UNREGISTERED | TEMPORARY_BLOCKED
   frequency: text("frequency"),
-  lastConfirmedAt: timestamp("last_confirmed_at", { withTimezone: true }).notNull().defaultNow(),
+  lastConfirmedAt: timestamp("last_confirmed_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
   confirmedBy: text("confirmed_by").notNull(), // api_response | notification | sweep
 });
 
@@ -265,7 +316,10 @@ export const charges = pgTable(
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (t) => [index("charges_user_idx").on(t.userId, t.createdAt), index("charges_status_idx").on(t.status)],
+  (t) => [
+    index("charges_user_idx").on(t.userId, t.createdAt),
+    index("charges_status_idx").on(t.status),
+  ],
 );
 
 export const entitlements = pgTable(
@@ -282,7 +336,10 @@ export const entitlements = pgTable(
     sourceRef: text("source_ref").notNull(),
     createdAt: createdAt(),
   },
-  (t) => [uniqueIndex("entitlements_source_uq").on(t.sourceRef), index("entitlements_user_idx").on(t.userId, t.kind)],
+  (t) => [
+    uniqueIndex("entitlements_source_uq").on(t.sourceRef),
+    index("entitlements_user_idx").on(t.userId, t.kind),
+  ],
 );
 
 /** Every AppLink callback, password removed. The unique key makes redelivery a no-op. */
@@ -294,7 +351,9 @@ export const applinkEvents = pgTable(
     dedupeKey: text("dedupe_key").notNull(),
     body: jsonb("body").$type<Record<string, unknown>>().notNull(),
     sourceIp: text("source_ip"),
-    receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
+    receivedAt: timestamp("received_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
     processedAt: timestamp("processed_at", { withTimezone: true }),
     error: text("error"),
   },

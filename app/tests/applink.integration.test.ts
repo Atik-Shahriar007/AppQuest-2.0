@@ -77,7 +77,7 @@ suite("AppLink flows (integration)", () => {
   beforeEach(async () => {
     fake.reset();
     await m.rawSql.unsafe(
-      "truncate charges, entitlements, user_memories, nouri_conversations, nouri_messages, consents, phone_links, subscriptions, otp_requests, applink_events, ussd_sessions, profiles, history, favorites, recalls, alert_sends, notifications, ai_usage restart identity",
+      "truncate charges, entitlements, contributions, contribution_photos, reminders, user_memories, nouri_conversations, nouri_messages, consents, phone_links, subscriptions, otp_requests, applink_events, ussd_sessions, profiles, history, favorites, recalls, alert_sends, notifications, ai_usage restart identity",
     );
   });
 
@@ -396,6 +396,28 @@ suite("AppLink flows (integration)", () => {
     } finally {
       vi.unstubAllGlobals();
     }
+  });
+
+  it("contributions keep their photos; only admins can see them; owners see review status", async () => {
+    const { appRouter } = await import("../server/routers");
+    const owner = { id: user(), email: null, isAdmin: false };
+    const admin = { id: user(), email: null, isAdmin: true };
+    const as = (u: typeof owner) => appRouter.createCaller({ db: m.db, user: u, ip: "127.0.0.1" });
+    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 0xd9]).toString("base64");
+    const row = await as(owner).community.submitContribution({
+      barcode: "8941234567890",
+      name: "New Biscuit",
+      photos: [
+        { side: "front", mimeType: "image/jpeg", base64: jpeg },
+        { side: "back", mimeType: "image/jpeg", base64: jpeg },
+      ],
+    });
+    await expect(as(owner).community.admin.contributionPhoto({ id: row.id, side: "front" })).rejects.toThrow(/Team members only/);
+    expect((await as(admin).community.admin.contributionPhoto({ id: row.id, side: "front" }))?.base64).toBe(jpeg);
+    await as(admin).community.admin.reviewContribution({ id: row.id, status: "approved", note: "Thanks" });
+    const mine = await as(owner).community.myContributions();
+    expect(mine[0]).toMatchObject({ status: "approved", reviewerNote: "Thanks" });
+    expect((await as(owner).me.whoami()).isAdmin).toBe(false);
   });
 });
 

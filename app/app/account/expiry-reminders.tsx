@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Pressable, TextInput, View } from "react-native";
+import { Platform, Pressable, TextInput, View } from "react-native";
+import * as Notifications from "expo-notifications";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -15,20 +16,34 @@ import {
   usePalette,
 } from "@/components/nutriscan-ui";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import { useAuth } from "@/lib/auth";
+import { trpc } from "@/lib/trpc";
 
 function daysUntil(isoDate: string): number | null {
   const target = new Date(isoDate);
   if (Number.isNaN(target.getTime())) return null;
   const now = new Date();
-  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const startOfTarget = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  ).getTime();
+  const startOfTarget = new Date(
+    target.getFullYear(),
+    target.getMonth(),
+    target.getDate(),
+  ).getTime();
   return Math.round((startOfTarget - startOfToday) / 86_400_000);
 }
 
 export default function ExpiryRemindersScreen() {
   const router = useRouter();
   const palette = usePalette();
-  const { language, expiryReminders, addExpiryReminder, removeExpiryReminder } = useNutriScan();
+  const { language, expiryReminders, addExpiryReminder, removeExpiryReminder } =
+    useNutriScan();
+  const auth = useAuth();
+  const addServerReminder = trpc.me.addReminder.useMutation();
+  const deleteServerReminder = trpc.me.deleteReminder.useMutation();
 
   const [productName, setProductName] = useState("");
   const [day, setDay] = useState("");
@@ -47,18 +62,36 @@ export default function ExpiryRemindersScreen() {
     color: palette.ink,
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const trimmedName = productName.trim();
     const d = Number.parseInt(day, 10);
     const m = Number.parseInt(month, 10);
     const y = Number.parseInt(year, 10);
 
     if (!trimmedName) {
-      setError(language === "en" ? "Please enter a product name." : "পণ্যের নাম লিখুন।");
+      setError(
+        language === "en"
+          ? "Please enter a product name."
+          : "পণ্যের নাম লিখুন।",
+      );
       return;
     }
-    if (!Number.isFinite(d) || !Number.isFinite(m) || !Number.isFinite(y) || d < 1 || d > 31 || m < 1 || m > 12 || y < 2024 || y > 2050) {
-      setError(language === "en" ? "Enter a valid DD / MM / YYYY date." : "সঠিক দিন / মাস / বছর লিখুন।");
+    if (
+      !Number.isFinite(d) ||
+      !Number.isFinite(m) ||
+      !Number.isFinite(y) ||
+      d < 1 ||
+      d > 31 ||
+      m < 1 ||
+      m > 12 ||
+      y < 2024 ||
+      y > 2050
+    ) {
+      setError(
+        language === "en"
+          ? "Enter a valid DD / MM / YYYY date."
+          : "সঠিক দিন / মাস / বছর লিখুন।",
+      );
       return;
     }
 
@@ -71,7 +104,56 @@ export default function ExpiryRemindersScreen() {
       return;
     }
 
-    addExpiryReminder({ productName: trimmedName, expiryDate: iso });
+    // Device notification 2 days before, 09:00 local time (phones only; works offline).
+    let notificationId: string | undefined;
+    if (Platform.OS !== "web") {
+      try {
+        const perm = await Notifications.requestPermissionsAsync();
+        const when = new Date(`${iso}T09:00:00`);
+        when.setDate(when.getDate() - 2);
+        if (perm.granted && when.getTime() > Date.now()) {
+          notificationId = await Notifications.scheduleNotificationAsync({
+            content: {
+              title:
+                language === "en"
+                  ? "Expiry reminder"
+                  : "মেয়াদ শেষের রিমাইন্ডার",
+              body:
+                language === "en"
+                  ? `${trimmedName} expires on ${iso}.`
+                  : `${trimmedName}-এর মেয়াদ ${iso} তারিখে শেষ।`,
+            },
+            trigger: {
+              type: Notifications.SchedulableTriggerInputTypes.DATE,
+              date: when,
+            },
+          });
+        }
+      } catch {
+        // Notifications are best effort; the reminder is still saved.
+      }
+    }
+    // Signed-in users also get the in-app reminder from the server.
+    let serverId: number | undefined;
+    if (auth.session) {
+      try {
+        serverId = (
+          await addServerReminder.mutateAsync({
+            label: trimmedName,
+            expiresOn: iso,
+            notifyDaysBefore: 2,
+          })
+        ).id;
+      } catch {
+        // Saved on this device even if the server is unreachable.
+      }
+    }
+    addExpiryReminder({
+      productName: trimmedName,
+      expiryDate: iso,
+      serverId,
+      notificationId,
+    });
     setProductName("");
     setDay("");
     setMonth("");
@@ -87,9 +169,14 @@ export default function ExpiryRemindersScreen() {
       />
 
       <Card style={{ gap: 12 }}>
-        <SectionHeading title={language === "en" ? "Add Reminder" : "রিমাইন্ডার যোগ করুন"} />
+        <SectionHeading
+          title={language === "en" ? "Add Reminder" : "রিমাইন্ডার যোগ করুন"}
+        />
         <View style={{ gap: 6 }}>
-          <AppText weight="medium" style={{ fontSize: 12, color: palette.muted }}>
+          <AppText
+            weight="medium"
+            style={{ fontSize: 12, color: palette.muted }}
+          >
             {language === "en" ? "Product Name" : "পণ্যের নাম"}
           </AppText>
           <TextInput
@@ -98,15 +185,24 @@ export default function ExpiryRemindersScreen() {
               setProductName(text);
               setError("");
             }}
-            placeholder={language === "en" ? "e.g. Milk carton, Mango juice" : "যেমন: দুধের কার্টন, আমের জুস"}
+            placeholder={
+              language === "en"
+                ? "e.g. Milk carton, Mango juice"
+                : "যেমন: দুধের কার্টন, আমের জুস"
+            }
             placeholderTextColor={palette.muted}
             style={inputStyle}
           />
         </View>
 
         <View style={{ gap: 6 }}>
-          <AppText weight="medium" style={{ fontSize: 12, color: palette.muted }}>
-            {language === "en" ? "Expiry Date (DD / MM / YYYY)" : "মেয়াদ শেষের তারিখ (দিন / মাস / বছর)"}
+          <AppText
+            weight="medium"
+            style={{ fontSize: 12, color: palette.muted }}
+          >
+            {language === "en"
+              ? "Expiry Date (DD / MM / YYYY)"
+              : "মেয়াদ শেষের তারিখ (দিন / মাস / বছর)"}
           </AppText>
           <View style={{ flexDirection: "row", gap: 8 }}>
             <TextInput
@@ -146,7 +242,9 @@ export default function ExpiryRemindersScreen() {
         </View>
 
         {error ? (
-          <AppText style={{ color: palette.clay, fontSize: 11 }}>{error}</AppText>
+          <AppText style={{ color: palette.clay, fontSize: 11 }}>
+            {error}
+          </AppText>
         ) : null}
 
         <PrimaryButton
@@ -156,13 +254,19 @@ export default function ExpiryRemindersScreen() {
         />
       </Card>
 
-      <SectionHeading title={language === "en" ? "Your Reminders" : "আপনার রিমাইন্ডারসমূহ"} />
+      <SectionHeading
+        title={language === "en" ? "Your Reminders" : "আপনার রিমাইন্ডারসমূহ"}
+      />
 
       {expiryReminders.length === 0 ? (
         <Card>
           <EmptyState
             icon="calendar-clock-outline"
-            title={language === "en" ? "No expiry reminders yet" : "এখনও কোনো রিমাইন্ডার নেই"}
+            title={
+              language === "en"
+                ? "No expiry reminders yet"
+                : "এখনও কোনো রিমাইন্ডার নেই"
+            }
             body={
               language === "en"
                 ? "Add a product and best-before date above to keep track locally."
@@ -178,12 +282,31 @@ export default function ExpiryRemindersScreen() {
               diff === null
                 ? { tone: "amber", label: item.expiryDate }
                 : diff > 7
-                  ? { tone: "green", label: language === "en" ? "Safe" : "নিরাপদ" }
+                  ? {
+                      tone: "green",
+                      label: language === "en" ? "Safe" : "নিরাপদ",
+                    }
                   : diff >= 1
-                    ? { tone: "amber", label: language === "en" ? "Expiring Soon" : "শীঘ্রই মেয়াদ শেষ" }
+                    ? {
+                        tone: "amber",
+                        label:
+                          language === "en"
+                            ? "Expiring Soon"
+                            : "শীঘ্রই মেয়াদ শেষ",
+                      }
                     : diff === 0
-                      ? { tone: "amber", label: language === "en" ? "Expires Today" : "আজ মেয়াদ শেষ" }
-                      : { tone: "clay", label: language === "en" ? "Expired" : "মেয়াদোত্তীর্ণ" };
+                      ? {
+                          tone: "amber",
+                          label:
+                            language === "en"
+                              ? "Expires Today"
+                              : "আজ মেয়াদ শেষ",
+                        }
+                      : {
+                          tone: "clay",
+                          label:
+                            language === "en" ? "Expired" : "মেয়াদোত্তীর্ণ",
+                        };
 
             const formattedDate = new Date(item.expiryDate).toLocaleDateString(
               language === "bn" ? "bn-BD" : "en-GB",
@@ -206,7 +329,10 @@ export default function ExpiryRemindersScreen() {
                       : `${Math.abs(diff)} দিন আগে`;
 
             return (
-              <Card key={item.id} style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+              <Card
+                key={item.id}
+                style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+              >
                 <View
                   style={{
                     width: 42,
@@ -217,7 +343,11 @@ export default function ExpiryRemindersScreen() {
                     justifyContent: "center",
                   }}
                 >
-                  <MaterialCommunityIcons name="calendar-outline" size={20} color={palette.green} />
+                  <MaterialCommunityIcons
+                    name="calendar-outline"
+                    size={20}
+                    color={palette.green}
+                  />
                 </View>
                 <View style={{ flex: 1, gap: 4 }}>
                   <AppText weight="bold" style={{ fontSize: 14 }}>
@@ -230,8 +360,18 @@ export default function ExpiryRemindersScreen() {
                 </View>
                 <Pressable
                   accessibilityRole="button"
-                  accessibilityLabel={language === "en" ? "Delete reminder" : "রিমাইন্ডার মুছুন"}
-                  onPress={() => removeExpiryReminder(item.id)}
+                  accessibilityLabel={
+                    language === "en" ? "Delete reminder" : "রিমাইন্ডার মুছুন"
+                  }
+                  onPress={() => {
+                    if (item.serverId && auth.session)
+                      deleteServerReminder.mutate({ id: item.serverId });
+                    if (item.notificationId && Platform.OS !== "web")
+                      void Notifications.cancelScheduledNotificationAsync(
+                        item.notificationId,
+                      ).catch(() => {});
+                    removeExpiryReminder(item.id);
+                  }}
                   hitSlop={8}
                   style={({ pressed }) => ({
                     width: 36,
@@ -243,7 +383,11 @@ export default function ExpiryRemindersScreen() {
                     opacity: pressed ? 0.75 : 1,
                   })}
                 >
-                  <MaterialCommunityIcons name="delete-outline" size={18} color={palette.clay} />
+                  <MaterialCommunityIcons
+                    name="delete-outline"
+                    size={18}
+                    color={palette.clay}
+                  />
                 </Pressable>
               </Card>
             );

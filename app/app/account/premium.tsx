@@ -375,7 +375,15 @@ export default function PremiumScreen() {
         </Card>
       ) : null}
 
-      {!caps?.payments || !caps?.phoneLink ? (
+      {offers.isError ? (
+        <DemoNotice>
+          {en
+            ? "Cannot reach the NutriScan server right now. Check your connection and try again."
+            : "এখন নিউট্রিস্ক্যান সার্ভারে সংযোগ করা যাচ্ছে না। ইন্টারনেট দেখে আবার চেষ্টা করুন।"}
+        </DemoNotice>
+      ) : null}
+
+      {offers.data && (!caps?.payments || !caps?.phoneLink) ? (
         <DemoNotice>
           {en
             ? "Paid plans open once Banglalink approves NutriScan on AppLink. Until then nothing can be charged."

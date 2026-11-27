@@ -14,9 +14,24 @@ import {
   usePalette,
 } from "@/components/nutriscan-ui";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import { useAuth } from "@/lib/auth";
+import { trpc } from "@/lib/trpc";
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const auth = useAuth();
+  const signedIn = Boolean(auth.session);
+  const sms = trpc.premium.smsAlerts.status.useQuery(undefined, {
+    enabled: signedIn,
+  });
+  const whoami = trpc.me.whoami.useQuery(undefined, { enabled: signedIn });
+  const enableSms = trpc.premium.smsAlerts.enable.useMutation({
+    onSuccess: () => sms.refetch(),
+  });
+  const disableSms = trpc.premium.smsAlerts.disable.useMutation({
+    onSuccess: () => sms.refetch(),
+  });
+  const [smsConsent, setSmsConsent] = useState(false);
   const palette = usePalette();
   const {
     language,
@@ -30,7 +45,9 @@ export default function SettingsScreen() {
     setChildSafeMode,
   } = useNutriScan();
 
-  const [confirmAction, setConfirmAction] = useState<"history" | "preferences" | null>(null);
+  const [confirmAction, setConfirmAction] = useState<
+    "history" | "preferences" | null
+  >(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const optionRow = (
@@ -61,7 +78,10 @@ export default function SettingsScreen() {
         size={20}
         color={selected ? palette.green : palette.muted}
       />
-      <AppText weight={selected ? "semibold" : "medium"} style={{ flex: 1, fontSize: 13 }}>
+      <AppText
+        weight={selected ? "semibold" : "medium"}
+        style={{ flex: 1, fontSize: 13 }}
+      >
         {label}
       </AppText>
       <MaterialCommunityIcons
@@ -76,7 +96,9 @@ export default function SettingsScreen() {
     if (confirmAction === "history") {
       clearHistory();
       setStatusMessage(
-        language === "en" ? "Scan history cleared." : "স্ক্যান ইতিহাস মুছে ফেলা হয়েছে।",
+        language === "en"
+          ? "Scan history cleared."
+          : "স্ক্যান ইতিহাস মুছে ফেলা হয়েছে।",
       );
     } else if (confirmAction === "preferences") {
       updateProfile({ displayName: "", district: "" });
@@ -94,7 +116,9 @@ export default function SettingsScreen() {
       setHalalMode(false);
       setChildSafeMode(false);
       setStatusMessage(
-        language === "en" ? "Preferences reset to defaults." : "পছন্দসমূহ ডিফল্টে রিসেট করা হয়েছে।",
+        language === "en"
+          ? "Preferences reset to defaults."
+          : "পছন্দসমূহ ডিফল্টে রিসেট করা হয়েছে।",
       );
     }
     setConfirmAction(null);
@@ -110,8 +134,18 @@ export default function SettingsScreen() {
       <View style={{ gap: 8 }}>
         <SectionHeading title={language === "en" ? "Language" : "ভাষা"} />
         <View style={{ gap: 8 }}>
-          {optionRow("English", language === "en", () => setLanguage("en"), "translate")}
-          {optionRow("বাংলা", language === "bn", () => setLanguage("bn"), "translate")}
+          {optionRow(
+            "English",
+            language === "en",
+            () => setLanguage("en"),
+            "translate",
+          )}
+          {optionRow(
+            "বাংলা",
+            language === "bn",
+            () => setLanguage("bn"),
+            "translate",
+          )}
         </View>
       </View>
 
@@ -134,10 +168,113 @@ export default function SettingsScreen() {
       </View>
 
       <View style={{ gap: 8 }}>
+        <SectionHeading
+          title={
+            language === "en" ? "Food safety alerts" : "খাদ্য নিরাপত্তা সতর্কতা"
+          }
+        />
+        <Card style={{ gap: 10 }}>
+          <AppText style={{ fontSize: 12 }}>
+            {language === "en"
+              ? "In-app and push alerts are free and on for everyone: you are told when a product you scanned or saved is recalled by a verified source."
+              : "অ্যাপ ও পুশ সতর্কতা সবার জন্য বিনামূল্যে চালু: আপনার স্ক্যান বা সংরক্ষিত পণ্য যাচাইকৃত উৎসে প্রত্যাহার হলে জানানো হবে।"}
+          </AppText>
+          {!signedIn ? (
+            <SecondaryButton
+              title={
+                language === "en"
+                  ? "Sign in for alerts"
+                  : "সতর্কতার জন্য সাইন ইন করুন"
+              }
+              icon="login"
+              onPress={() => router.push("/onboarding")}
+            />
+          ) : sms.data?.enabled ? (
+            <>
+              <AppText
+                weight="semibold"
+                style={{ fontSize: 12, color: palette.green }}
+              >
+                {language === "en"
+                  ? "SMS alerts are on (BDT 2 per SMS)."
+                  : "এসএমএস সতর্কতা চালু (প্রতি এসএমএস ৳২)।"}
+              </AppText>
+              <SecondaryButton
+                title={
+                  language === "en"
+                    ? "Turn off SMS alerts"
+                    : "এসএমএস সতর্কতা বন্ধ করুন"
+                }
+                icon="message-off-outline"
+                onPress={() => disableSms.mutate()}
+              />
+            </>
+          ) : sms.data && !sms.data.hasLinkedNumber ? (
+            <AppText style={{ fontSize: 11, color: palette.muted }}>
+              {language === "en"
+                ? "SMS alerts need a linked Banglalink number. Your number is linked when you subscribe to Premium or buy a pass."
+                : "এসএমএস সতর্কতার জন্য বাংলালিংক নম্বর যুক্ত থাকতে হবে। প্রিমিয়াম নিলে বা পাস কিনলে নম্বর যুক্ত হয়।"}
+            </AppText>
+          ) : sms.data ? (
+            <>
+              <AppText style={{ fontSize: 11, color: palette.muted }}>
+                {sms.data.disclosure}
+              </AppText>
+              <Pressable
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: smsConsent }}
+                onPress={() => setSmsConsent(!smsConsent)}
+                style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+              >
+                <MaterialCommunityIcons
+                  name={
+                    smsConsent ? "checkbox-marked" : "checkbox-blank-outline"
+                  }
+                  size={20}
+                  color={palette.green}
+                />
+                <AppText style={{ fontSize: 12, flex: 1 }}>
+                  {language === "en"
+                    ? "I agree to pay BDT 2 for each alert SMS."
+                    : "প্রতিটি সতর্কতা এসএমএসের জন্য ৳২ দিতে আমি সম্মত।"}
+                </AppText>
+              </Pressable>
+              <SecondaryButton
+                title={
+                  language === "en"
+                    ? "Turn on SMS alerts"
+                    : "এসএমএস সতর্কতা চালু করুন"
+                }
+                icon="message-alert-outline"
+                onPress={() => {
+                  if (smsConsent)
+                    enableSms.mutate({ acceptedDisclosure: true });
+                }}
+              />
+            </>
+          ) : null}
+        </Card>
+      </View>
+
+      {whoami.data?.isAdmin ? (
+        <SecondaryButton
+          title={
+            language === "en"
+              ? "Team tools: review and recalls"
+              : "টিম টুলস: পর্যালোচনা ও প্রত্যাহার"
+          }
+          icon="shield-account-outline"
+          onPress={() => router.push("/account/admin" as never)}
+        />
+      ) : null}
+
+      <View style={{ gap: 8 }}>
         <SectionHeading title={language === "en" ? "Data" : "ডেটা"} />
         <Card style={{ gap: 10 }}>
           <SecondaryButton
-            title={language === "en" ? "Clear scan history" : "স্ক্যান ইতিহাস মুছুন"}
+            title={
+              language === "en" ? "Clear scan history" : "স্ক্যান ইতিহাস মুছুন"
+            }
             icon="history"
             onPress={() => {
               setStatusMessage(null);
@@ -145,7 +282,9 @@ export default function SettingsScreen() {
             }}
           />
           <SecondaryButton
-            title={language === "en" ? "Reset preferences" : "পছন্দসমূহ রিসেট করুন"}
+            title={
+              language === "en" ? "Reset preferences" : "পছন্দসমূহ রিসেট করুন"
+            }
             icon="restore"
             onPress={() => {
               setStatusMessage(null);
@@ -156,8 +295,17 @@ export default function SettingsScreen() {
       </View>
 
       {confirmAction ? (
-        <Card style={{ gap: 12, backgroundColor: palette.amberSoft, borderColor: palette.amber }}>
-          <AppText weight="semibold" style={{ fontSize: 13, color: palette.amberInk }}>
+        <Card
+          style={{
+            gap: 12,
+            backgroundColor: palette.amberSoft,
+            borderColor: palette.amber,
+          }}
+        >
+          <AppText
+            weight="semibold"
+            style={{ fontSize: 13, color: palette.amberInk }}
+          >
             {confirmAction === "history"
               ? language === "en"
                 ? "Clear all recent scan history from this device?"
@@ -182,9 +330,23 @@ export default function SettingsScreen() {
       ) : null}
 
       {statusMessage ? (
-        <Card style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: palette.greenSoft }}>
-          <MaterialCommunityIcons name="check-circle" size={20} color={palette.green} />
-          <AppText weight="semibold" style={{ color: palette.green, fontSize: 13 }}>
+        <Card
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            backgroundColor: palette.greenSoft,
+          }}
+        >
+          <MaterialCommunityIcons
+            name="check-circle"
+            size={20}
+            color={palette.green}
+          />
+          <AppText
+            weight="semibold"
+            style={{ color: palette.green, fontSize: 13 }}
+          >
             {statusMessage}
           </AppText>
         </Card>
@@ -193,7 +355,9 @@ export default function SettingsScreen() {
       <View style={{ gap: 8 }}>
         <SectionHeading title={language === "en" ? "About" : "সম্পর্কে"} />
         <Card style={{ gap: 8 }}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             <AppText style={{ color: palette.muted, fontSize: 12 }}>
               {language === "en" ? "App Version" : "অ্যাপ সংস্করণ"}
             </AppText>
@@ -202,16 +366,22 @@ export default function SettingsScreen() {
             </AppText>
           </View>
           <View style={{ height: 1, backgroundColor: palette.line }} />
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             <AppText style={{ color: palette.muted, fontSize: 12 }}>
               {language === "en" ? "Build Note" : "বিল্ড নোট"}
             </AppText>
             <AppText weight="semibold" style={{ fontSize: 12 }}>
-              {language === "en" ? "Demo only — not for medical use" : "শুধুই ডেমো — চিকিৎসার জন্য নয়"}
+              {language === "en"
+                ? "Demo only — not for medical use"
+                : "শুধুই ডেমো — চিকিৎসার জন্য নয়"}
             </AppText>
           </View>
           <View style={{ height: 1, backgroundColor: palette.line }} />
-          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
             <AppText style={{ color: palette.muted, fontSize: 12 }}>
               {language === "en" ? "Team" : "টিম"}
             </AppText>
