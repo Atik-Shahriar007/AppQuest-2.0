@@ -9,9 +9,10 @@
  *   lib/product-images.ts                  static require() map for React Native
  *   data/validation-report.md              data-quality warnings for the team
  */
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 import { buildProduct } from "../shared/catalog/build";
 import type { CatalogOverrides, CatalogProduct, CatalogSnapshot } from "../shared/catalog/types";
 import { ALGORITHM_VERSION, RULE_SET_VERSION } from "../shared/nqss/engine";
@@ -29,6 +30,8 @@ const overrides: CatalogOverrides = existsSync(overridesPath)
   : {};
 
 const products: CatalogProduct[] = [];
+/** Source photos vary (one is WebP named .jpg, one is 1792x2400). Phones get real JPEGs, max 800 px. */
+const imageJobs: { from: string; to: string }[] = [];
 const imagesDir = join(appRoot, "assets", "products");
 mkdirSync(imagesDir, { recursive: true });
 
@@ -45,11 +48,17 @@ for (const kindDir of listDirs(dbRoot)) {
       if (products.some((p) => p.id === id)) id = `${id}-${draft.barcode.slice(-4)}`;
       const product: CatalogProduct = { ...draft, id, imageKey: image ? id : "" };
       if (image) {
-        copyFileSync(join(dir, image), join(imagesDir, `${id}.jpg`));
+        imageJobs.push({ from: join(dir, image), to: join(imagesDir, `${id}.jpg`) });
         if (image !== "product.jpg") product.validation.push(`image_file_named_${image}`);
       } else product.validation.push("missing_image");
       products.push(product);
     }
+  }
+}
+
+async function writeImages() {
+  for (const job of imageJobs) {
+    await sharp(job.from).rotate().resize(800, 800, { fit: "inside", withoutEnlargement: true }).flatten({ background: "#ffffff" }).jpeg({ quality: 80, mozjpeg: true }).toFile(job.to);
   }
 }
 
@@ -111,4 +120,11 @@ const report = [
 mkdirSync(join(appRoot, "data"), { recursive: true });
 writeFileSync(join(appRoot, "data", "validation-report.md"), report);
 
-console.log(`Ingested ${products.length} products, ${scored.length} scored, ${flagged.length} with warnings.`);
+writeImages()
+  .then(() =>
+    console.log(`Ingested ${products.length} products, ${scored.length} scored, ${flagged.length} with warnings.`),
+  )
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
