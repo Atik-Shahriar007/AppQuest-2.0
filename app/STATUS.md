@@ -14,7 +14,7 @@ approval or decision only the team can provide.
 | Sign-in (email) | Done | Real account signed in through the browser; token accepted by the API |
 | Sign-in (Google) | Code done | **team**: enable the Google provider in Supabase |
 | Profile, modes, history, favorites sync | Done | Rows appear in the database after sign-in |
-| Nouri (free OpenRouter models) | Done | 30-question eval, see `data/nouri-eval-report.md` |
+| Nouri (free OpenRouter models) | Done | 30 of 30 eval cases pass on free models, see `data/nouri-eval-report.md` |
 | Label OCR + review + score preview | Done | Unreadable photo correctly reported as unreadable |
 | Compare (advanced part behind Premium/pass) | Done | Server gate tests |
 | Premium: trial, subscription, passes | Done | Integration tests against an AppLink double + official validator |
