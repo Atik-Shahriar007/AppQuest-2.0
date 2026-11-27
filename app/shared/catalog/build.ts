@@ -3,7 +3,12 @@
  * Pure function: the ingest script handles files, this handles rules.
  */
 import { scoreNqss, type NutrientValue } from "../nqss/engine";
-import { assessWholeFood, declared, estimateEnergyKcal, estimateFreeSugar } from "../nqss/estimate";
+import {
+  assessWholeFood,
+  declared,
+  estimateEnergyKcal,
+  estimateFreeSugar,
+} from "../nqss/estimate";
 import { childLabel, halalLabel } from "../nqss/labels";
 import type {
   CareIngredient,
@@ -15,7 +20,11 @@ import type {
   ScoringCategory,
 } from "./types";
 
-type GroupRule = { category: ScoringCategory; subcategory: string; form: "solid" | "liquid" };
+type GroupRule = {
+  category: ScoringCategory;
+  subcategory: string;
+  form: "solid" | "liquid";
+};
 
 /** Folder name -> scoring category (methodology section 5.1). */
 const GROUPS: Record<string, GroupRule> = {
@@ -23,16 +32,37 @@ const GROUPS: Record<string, GroupRule> = {
   Cake: { category: "Bakery", subcategory: "Cake", form: "solid" },
   Chanachur: { category: "Snacks", subcategory: "Chanachur", form: "solid" },
   Chips: { category: "Snacks", subcategory: "Chips", form: "solid" },
-  "Chocolate-Biscuit": { category: "Bakery", subcategory: "Biscuit", form: "solid" },
-  "Classic-Buicuit": { category: "Bakery", subcategory: "Biscuit", form: "solid" },
-  "Cold-Drink": { category: "Beverages", subcategory: "Soft Drink", form: "liquid" },
+  "Chocolate-Biscuit": {
+    category: "Bakery",
+    subcategory: "Biscuit",
+    form: "solid",
+  },
+  "Classic-Buicuit": {
+    category: "Bakery",
+    subcategory: "Biscuit",
+    form: "solid",
+  },
+  "Cold-Drink": {
+    category: "Beverages",
+    subcategory: "Soft Drink",
+    form: "liquid",
+  },
   Dairy: { category: "Dairy", subcategory: "Milk", form: "liquid" },
-  "Energy-Drink": { category: "Beverages", subcategory: "Energy Drink", form: "liquid" },
+  "Energy-Drink": {
+    category: "Beverages",
+    subcategory: "Energy Drink",
+    form: "liquid",
+  },
   Juice: { category: "Beverages", subcategory: "Juice", form: "liquid" },
-  Noodles: { category: "Instant Food", subcategory: "Instant Noodles", form: "solid" },
+  Noodles: {
+    category: "Instant Food",
+    subcategory: "Instant Noodles",
+    form: "solid",
+  },
 };
 
-const SWEETENER_RE = /sugar|syrup|honey|dextrose|glucose|fructose|sucrose|jaggery|molasses/i;
+const SWEETENER_RE =
+  /sugar|syrup|honey|dextrose|glucose|fructose|sucrose|jaggery|molasses/i;
 const VALID_BARCODE_LENGTHS = new Set([8, 12, 13, 14]);
 
 export type RawRecord = Record<string, unknown>;
@@ -74,7 +104,9 @@ export function splitIngredients(text: string): string[] {
 }
 
 /** "30g" -> {amount: 30, unit: "g"}; "1 L" -> {amount: 1000, unit: "ml"}. */
-export function parseQuantity(s: unknown): { amount: number; unit: "g" | "ml" } | null {
+export function parseQuantity(
+  s: unknown,
+): { amount: number; unit: "g" | "ml" } | null {
   if (typeof s !== "string") return null;
   const m = /(\d+(?:\.\d+)?)\s*(kg|g|gm|ml|l|ltr|litre|liter)\b/i.exec(s);
   if (!m) return null;
@@ -86,7 +118,10 @@ export function parseQuantity(s: unknown): { amount: number; unit: "g" | "ml" } 
   return { amount: n * 1000, unit: "ml" };
 }
 
-function estimateServing(net: unknown, form: "solid" | "liquid"): Nutrition["servingSize"] {
+function estimateServing(
+  net: unknown,
+  form: "solid" | "liquid",
+): Nutrition["servingSize"] {
   const q = parseQuantity(net);
   if (!q) return null;
   if (form === "liquid") {
@@ -110,16 +145,26 @@ export type BuildContext = {
   overrides: CatalogOverrides;
 };
 
-export function buildProduct(raw: RawRecord, ctx: BuildContext): CatalogProduct {
+export function buildProduct(
+  raw: RawRecord,
+  ctx: BuildContext,
+): CatalogProduct {
   const kind: ProductKind =
-    ctx.kindDir === "food" ? "food" : ctx.kindDir === "personal-care" ? "personal_care" : "home_care";
+    ctx.kindDir === "food"
+      ? "food"
+      : ctx.kindDir === "personal-care"
+        ? "personal_care"
+        : "home_care";
   const barcode = String(raw.barcode ?? "").replace(/\D/g, "");
   const override = ctx.overrides[barcode];
-  const name = String(override?.name ?? raw.product_name ?? "Unnamed product").trim();
+  const name = String(
+    override?.name ?? raw.product_name ?? "Unnamed product",
+  ).trim();
   const brand = String(raw.brand ?? "").trim();
   const validation: string[] = [];
 
-  if (!VALID_BARCODE_LENGTHS.has(barcode.length)) validation.push(`barcode_length_${barcode.length}`);
+  if (!VALID_BARCODE_LENGTHS.has(barcode.length))
+    validation.push(`barcode_length_${barcode.length}`);
 
   const halalRaw = override?.halal_status ?? raw.halal_status;
   const childRaw = override?.child_suitability ?? raw.child_suitability;
@@ -157,9 +202,12 @@ export function buildProduct(raw: RawRecord, ctx: BuildContext): CatalogProduct 
       nqss: null, // Methodology scope: personal and home care never get an NQSS.
       care: {
         description: (raw.description as string) ?? null,
-        productInformation: (raw.product_information as Record<string, unknown>) ?? null,
-        safetyInformation: (raw.safety_information as Record<string, unknown>) ?? null,
-        chemicalInformation: (raw.chemical_information as Record<string, unknown>) ?? null,
+        productInformation:
+          (raw.product_information as Record<string, unknown>) ?? null,
+        safetyInformation:
+          (raw.safety_information as Record<string, unknown>) ?? null,
+        chemicalInformation:
+          (raw.chemical_information as Record<string, unknown>) ?? null,
         manufacturer: (raw.manufacturer as string) ?? null,
         countryOfOrigin: (raw.country_of_origin as string) ?? null,
       },
@@ -169,14 +217,23 @@ export function buildProduct(raw: RawRecord, ctx: BuildContext): CatalogProduct 
 
   if (halalRaw === undefined) validation.push("missing_halal_status");
   if (childRaw === undefined) validation.push("missing_child_suitability");
-  if (halalRaw === "suitable_with_caution") validation.push("halal_value_looks_like_a_child_value");
+  if (halalRaw === "suitable_with_caution")
+    validation.push("halal_value_looks_like_a_child_value");
 
-  const rule = GROUPS[ctx.group] ?? { category: "Other Food" as const, subcategory: ctx.group, form: "solid" as const };
+  const rule = GROUPS[ctx.group] ?? {
+    category: "Other Food" as const,
+    subcategory: ctx.group,
+    form: "solid" as const,
+  };
   const ingredientsText = String(raw.ingredients ?? "");
   const ingredients = splitIngredients(ingredientsText);
   const hasSweetener = SWEETENER_RE.test(ingredientsText);
   const isDairy = rule.category === "Dairy";
-  const subcategory = isDairy ? (hasSweetener ? "Flavoured Milk" : "Milk") : rule.subcategory;
+  const subcategory = isDairy
+    ? hasSweetener
+      ? "Flavoured Milk"
+      : "Milk"
+    : rule.subcategory;
 
   const n = { ...((raw.nutrition_per_100g as Record<string, unknown>) ?? {}) };
   const corrected = new Set<string>();
@@ -189,19 +246,36 @@ export function buildProduct(raw: RawRecord, ctx: BuildContext): CatalogProduct 
     return v && corrected.has(k) ? { ...v, provenance: "corrected" } : v;
   };
 
+  // A label that says 0 mg sodium while listing salt is wrong. Treat sodium as not declared
+  // (missing is never zero) instead of rewarding the product, and flag it for correction.
+  // Only real salt or MSG: additives such as sodium benzoate add a few mg that labels may round to 0.
+  const SALT_RE = /\bsalt\b|sodium chloride|monosodium glutamate|\bmsg\b/i;
+  const sodiumDeclaredZero =
+    !corrected.has("sodium_mg") &&
+    declared(n.sodium_mg)?.value === 0 &&
+    SALT_RE.test(ingredientsText);
+  if (sodiumDeclaredZero) validation.push("sodium_zero_but_salt_listed");
+
   const values: Record<NutrientField, NutrientValue | null> = {
-    energy_kcal: dv("energy_kcal") ?? estimateEnergyKcal(n.total_fat_g, n.total_carbohydrate_g, n.protein_g),
+    energy_kcal:
+      dv("energy_kcal") ??
+      estimateEnergyKcal(n.total_fat_g, n.total_carbohydrate_g, n.protein_g),
     total_fat_g: dv("total_fat_g"),
     saturated_fat_g: dv("saturated_fat_g"),
     trans_fat_g: dv("trans_fat_g"),
     cholesterol_mg: dv("cholesterol_mg"),
-    sodium_mg: dv("sodium_mg"),
+    sodium_mg: sodiumDeclaredZero ? null : dv("sodium_mg"),
     total_carbohydrate_g: dv("total_carbohydrate_g"),
     total_sugar_g: dv("total_sugar_g"),
     free_sugar_g:
       dv("free_sugar_g") ??
       dv("added_sugar_g") ??
-      estimateFreeSugar(n.total_sugar_g, { isDairy, ingredients: ingredientsText, totalCarbohydrateG: n.total_carbohydrate_g, form: rule.form }),
+      estimateFreeSugar(n.total_sugar_g, {
+        isDairy,
+        ingredients: ingredientsText,
+        totalCarbohydrateG: n.total_carbohydrate_g,
+        form: rule.form,
+      }),
     added_sugar_g: dv("added_sugar_g"),
     fibre_g: dv("fibre_g"),
     protein_g: dv("protein_g"),
@@ -214,16 +288,31 @@ export function buildProduct(raw: RawRecord, ctx: BuildContext): CatalogProduct 
   const sugar = num(values.total_sugar_g);
   const sat = num(values.saturated_fat_g);
   const sodium = num(values.sodium_mg);
-  if (fat !== null && carb !== null && protein !== null && fat + carb + protein > 100) validation.push("macros_exceed_100g");
-  if (sugar !== null && carb !== null && sugar > carb) validation.push("sugar_exceeds_carbohydrate");
-  if (sat !== null && fat !== null && sat > fat) validation.push("saturated_fat_exceeds_total_fat");
-  const declaredNumbers = Object.values(n).map((v) => declared(v)?.value).filter((v) => v !== undefined);
-  if (declaredNumbers.length > 0 && declaredNumbers.every((v) => v === 0)) validation.push("all_values_zero");
-  if (rule.form === "liquid" && sugar === 0 && carb !== null && carb > 5) validation.push("sugar_zero_but_carbohydrate_high");
-  if (rule.category === "Bakery" && sodium !== null && sodium > 1500) validation.push("sodium_unusually_high");
+  if (
+    fat !== null &&
+    carb !== null &&
+    protein !== null &&
+    fat + carb + protein > 100
+  )
+    validation.push("macros_exceed_100g");
+  if (sugar !== null && carb !== null && sugar > carb)
+    validation.push("sugar_exceeds_carbohydrate");
+  if (sat !== null && fat !== null && sat > fat)
+    validation.push("saturated_fat_exceeds_total_fat");
+  const declaredNumbers = Object.values(n)
+    .map((v) => declared(v)?.value)
+    .filter((v) => v !== undefined);
+  if (declaredNumbers.length > 0 && declaredNumbers.every((v) => v === 0))
+    validation.push("all_values_zero");
+  if (rule.form === "liquid" && sugar === 0 && carb !== null && carb > 5)
+    validation.push("sugar_zero_but_carbohydrate_high");
+  if (rule.category === "Bakery" && sodium !== null && sodium > 1500)
+    validation.push("sodium_unusually_high");
   // Benchmark comparison (child-suitability-benchmark.md): warnings only, the record's label wins.
-  if (sodium !== null && sodium > 400 && base.child.badge !== "not_suitable") validation.push("benchmark_sodium_over_400mg");
-  if (/caffeine/i.test(ingredientsText) && base.child.badge !== "not_suitable") validation.push("benchmark_contains_caffeine");
+  if (sodium !== null && sodium > 400 && base.child.badge !== "not_suitable")
+    validation.push("benchmark_sodium_over_400mg");
+  if (/caffeine/i.test(ingredientsText) && base.child.badge !== "not_suitable")
+    validation.push("benchmark_contains_caffeine");
 
   const nutrition: Nutrition = {
     basis: rule.form === "liquid" ? "per_100ml" : "per_100g",

@@ -2,11 +2,25 @@ import { describe, expect, it } from "vitest";
 import { buildProduct } from "../shared/catalog/build";
 import snapshot from "../shared/catalog/catalog.snapshot.json";
 import type { CatalogSnapshot } from "../shared/catalog/types";
-import { roundHalfUp1, scoreNqss, type NqssInput, type NutrientValue } from "../shared/nqss/engine";
-import { assessWholeFood, estimateEnergyKcal, estimateFreeSugar, parseLabelValue } from "../shared/nqss/estimate";
+import {
+  roundHalfUp1,
+  scoreNqss,
+  type NqssInput,
+  type NutrientValue,
+} from "../shared/nqss/engine";
+import {
+  assessWholeFood,
+  estimateEnergyKcal,
+  estimateFreeSugar,
+  parseLabelValue,
+} from "../shared/nqss/estimate";
 import { childLabel, halalLabel } from "../shared/nqss/labels";
 
-const d = (value: number, operator: "=" | "<" = "="): NutrientValue => ({ value, operator, provenance: "declared" });
+const d = (value: number, operator: "=" | "<" = "="): NutrientValue => ({
+  value,
+  operator,
+  provenance: "declared",
+});
 
 const base = (over: Partial<NqssInput>): NqssInput => ({
   form: "solid",
@@ -25,7 +39,13 @@ const base = (over: Partial<NqssInput>): NqssInput => ({
 describe("NQSS methodology worked examples (section 6)", () => {
   it("6.4 sweetened beverage scores 56", () => {
     const r = scoreNqss(
-      base({ form: "liquid", sweetenedBeverage: true, freeSugarG: d(10), sodiumMg: d(15), energyKcal: d(40) }),
+      base({
+        form: "liquid",
+        sweetenedBeverage: true,
+        freeSugarG: d(10),
+        sodiumMg: d(15),
+        energyKcal: d(40),
+      }),
     );
     expect(r.score).toBe(56);
     expect(r.status).toBe("complete");
@@ -40,7 +60,12 @@ describe("NQSS methodology worked examples (section 6)", () => {
         energyKcal: d(370),
         fibreG: d(7),
         proteinG: d(12),
-        wholeFood: { level: "B", points: 8, matched: ["oats", "nuts"], provenance: "declared" },
+        wholeFood: {
+          level: "B",
+          points: 8,
+          matched: ["oats", "nuts"],
+          provenance: "declared",
+        },
       }),
     );
     expect(r.score).toBe(76);
@@ -91,7 +116,9 @@ describe("bands and rules", () => {
   });
 
   it("sugar-sweetened beverage above 10 g/100 ml gets 0 sugar points", () => {
-    const r = scoreNqss(base({ form: "liquid", sweetenedBeverage: true, freeSugarG: d(12) }));
+    const r = scoreNqss(
+      base({ form: "liquid", sweetenedBeverage: true, freeSugarG: d(12) }),
+    );
     expect(r.components.find((c) => c.key === "freeSugar")!.points).toBe(0);
     expect(r.flags).toContain("sugar_sweetened_beverage");
   });
@@ -133,7 +160,9 @@ describe("bands and rules", () => {
   it("lower sodium never earns fewer points (monotonic)", () => {
     let last = Infinity;
     for (let mg = 0; mg <= 1500; mg += 10) {
-      const p = scoreNqss(base({ sodiumMg: d(mg) })).components.find((c) => c.key === "sodium")!.points!;
+      const p = scoreNqss(base({ sodiumMg: d(mg) })).components.find(
+        (c) => c.key === "sodium",
+      )!.points!;
       expect(p).toBeLessThanOrEqual(last);
       last = p;
     }
@@ -160,17 +189,40 @@ describe("estimates", () => {
   });
 
   it("free sugar: plain milk 0, sweetened milk minus lactose, others all sugar", () => {
-    expect(estimateFreeSugar(4.6, { isDairy: true, ingredients: "Cow's Milk" })?.value).toBe(0);
-    expect(estimateFreeSugar(13.12, { isDairy: true, ingredients: "Cow's Milk, Water, Refined Sugar" })?.value).toBe(8.4);
-    expect(estimateFreeSugar(12, { isDairy: false, ingredients: "Water, Sugar" })?.value).toBe(12);
+    expect(
+      estimateFreeSugar(4.6, { isDairy: true, ingredients: "Cow's Milk" })
+        ?.value,
+    ).toBe(0);
+    expect(
+      estimateFreeSugar(13.12, {
+        isDairy: true,
+        ingredients: "Cow's Milk, Water, Refined Sugar",
+      })?.value,
+    ).toBe(8.4);
+    expect(
+      estimateFreeSugar(12, { isDairy: false, ingredients: "Water, Sugar" })
+        ?.value,
+    ).toBe(12);
   });
 
   it("repairs a 0 g sugar label when sugar is an ingredient", () => {
-    const v = estimateFreeSugar(0, { isDairy: false, ingredients: "Sugar, Water", totalCarbohydrateG: 11, form: "liquid" });
+    const v = estimateFreeSugar(0, {
+      isDairy: false,
+      ingredients: "Sugar, Water",
+      totalCarbohydrateG: 11,
+      form: "liquid",
+    });
     expect(v?.value).toBe(11);
     expect(v?.method).toBe("carbohydrate_upper_bound_sugar_declared_zero");
     // A starchy snack is not repaired: its carbohydrate is mostly starch.
-    expect(estimateFreeSugar(0, { isDairy: false, ingredients: "Corn, Oil, Sugar", totalCarbohydrateG: 58, form: "solid" })?.value).toBe(0);
+    expect(
+      estimateFreeSugar(0, {
+        isDairy: false,
+        ingredients: "Corn, Oil, Sugar",
+        totalCarbohydrateG: 58,
+        form: "solid",
+      })?.value,
+    ).toBe(0);
   });
 
   it("whole-food dictionary ignores potato and rewards lentils first", () => {
@@ -184,7 +236,9 @@ describe("estimates", () => {
 describe("labels", () => {
   it("maps child suitability to 4 badges without hiding caution", () => {
     expect(childLabel("suitable_with_caution").badge).toBe("caution");
-    expect(childLabel("not_suitable_for_children_under_3_years").badge).toBe("caution");
+    expect(childLabel("not_suitable_for_children_under_3_years").badge).toBe(
+      "caution",
+    );
     expect(childLabel("not_recommended").badge).toBe("not_suitable");
     expect(childLabel(undefined).badge).toBe("not_assessed");
   });
@@ -208,11 +262,50 @@ describe("catalog", () => {
       expect(p.nutrition!.values.fibre_g).toBeNull();
     }
   });
+  it("a 0 mg sodium label that lists salt is treated as not declared, never as zero", () => {
+    const p = buildProduct(
+      {
+        product_name: "X",
+        barcode: "12345678",
+        ingredients: "Potato, Oil, Salt",
+        nutrition_per_100g: {
+          sodium_mg: 0,
+          total_fat_g: 30,
+          total_carbohydrate_g: 50,
+          protein_g: 6,
+          saturated_fat_g: 10,
+          trans_fat_g: 0,
+          total_sugar_g: 2,
+        },
+      },
+      { kindDir: "food", group: "Chips", imageKey: "", overrides: {} },
+    );
+    expect(p.nutrition!.values.sodium_mg).toBeNull();
+    expect(p.validation).toContain("sodium_zero_but_salt_listed");
+    expect(
+      p.nqss!.components.find((c) => c.key === "sodium")!.points,
+    ).toBeNull();
+  });
+
   it("applies a team override as a corrected value", () => {
     const p = buildProduct(
-      { product_name: "X", barcode: "12345678", nutrition_per_100g: { sodium_mg: 2000 } },
-      { kindDir: "food", group: "Bun", imageKey: "", overrides: { "12345678": { note: "typo", nutrition: { sodium_mg: 200 } } } },
+      {
+        product_name: "X",
+        barcode: "12345678",
+        nutrition_per_100g: { sodium_mg: 2000 },
+      },
+      {
+        kindDir: "food",
+        group: "Bun",
+        imageKey: "",
+        overrides: {
+          "12345678": { note: "typo", nutrition: { sodium_mg: 200 } },
+        },
+      },
     );
-    expect(p.nutrition!.values.sodium_mg).toMatchObject({ value: 200, provenance: "corrected" });
+    expect(p.nutrition!.values.sodium_mg).toMatchObject({
+      value: 200,
+      provenance: "corrected",
+    });
   });
 });

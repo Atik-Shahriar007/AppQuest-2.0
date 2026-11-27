@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-27T04:54:36.792Z",
+ "generatedAt": "2026-11-27T05:51:33.452Z",
  "algorithmVersion": "1.0.0",
  "ruleSetVersion": "2026.11-showcase.1",
  "products": [
@@ -4181,11 +4181,7 @@
       "operator": "=",
       "provenance": "declared"
      },
-     "sodium_mg": {
-      "value": 0,
-      "operator": "=",
-      "provenance": "declared"
-     },
+     "sodium_mg": null,
      "total_carbohydrate_g": {
       "value": 78.13,
       "operator": "=",
@@ -4220,10 +4216,10 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 45.9,
-    "unroundedScore": 45.88235294117647,
-    "band": "moderate",
-    "availableWeight": 85,
+    "score": 34.3,
+    "unroundedScore": 34.285714285714285,
+    "band": "low",
+    "availableWeight": 70,
     "components": [
      {
       "key": "freeSugar",
@@ -4236,10 +4232,10 @@
      {
       "key": "sodium",
       "max": 15,
-      "points": 15,
-      "input": 0,
+      "points": null,
+      "input": null,
       "bounded": false,
-      "provenance": "declared"
+      "provenance": null
      },
      {
       "key": "saturatedFat",
@@ -4292,6 +4288,7 @@
     ],
     "flags": [
      "estimated:freeSugar",
+     "unavailable:sodium",
      "bounded:transFat",
      "estimated:energy",
      "unavailable:fibre",
@@ -4299,7 +4296,9 @@
     ]
    },
    "care": null,
-   "validation": []
+   "validation": [
+    "sodium_zero_but_salt_listed"
+   ]
   },
   {
    "id": "pran-potatos-real-potato-chips-original-flavor",
@@ -4736,11 +4735,7 @@
       "operator": "=",
       "provenance": "declared"
      },
-     "sodium_mg": {
-      "value": 0,
-      "operator": "=",
-      "provenance": "declared"
-     },
+     "sodium_mg": null,
      "total_carbohydrate_g": {
       "value": 52.66,
       "operator": "=",
@@ -4775,10 +4770,10 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 48.2,
-    "unroundedScore": 48.23529411764706,
-    "band": "moderate",
-    "availableWeight": 85,
+    "score": 37.1,
+    "unroundedScore": 37.142857142857146,
+    "band": "low",
+    "availableWeight": 70,
     "components": [
      {
       "key": "freeSugar",
@@ -4791,10 +4786,10 @@
      {
       "key": "sodium",
       "max": 15,
-      "points": 15,
-      "input": 0,
+      "points": null,
+      "input": null,
       "bounded": false,
-      "provenance": "declared"
+      "provenance": null
      },
      {
       "key": "saturatedFat",
@@ -4847,13 +4842,16 @@
     ],
     "flags": [
      "estimated:freeSugar",
+     "unavailable:sodium",
      "estimated:energy",
      "unavailable:fibre",
      "estimated:wholeFood"
     ]
    },
    "care": null,
-   "validation": []
+   "validation": [
+    "sodium_zero_but_salt_listed"
+   ]
   },
   {
    "id": "belleame-choco-little-cookies-biscuit",
@@ -4925,11 +4923,7 @@
       "operator": "=",
       "provenance": "declared"
      },
-     "sodium_mg": {
-      "value": 0,
-      "operator": "=",
-      "provenance": "declared"
-     },
+     "sodium_mg": null,
      "total_carbohydrate_g": {
       "value": 65.99,
       "operator": "=",
@@ -4964,10 +4958,10 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 40,
-    "unroundedScore": 40,
-    "band": "moderate",
-    "availableWeight": 85,
+    "score": 27.1,
+    "unroundedScore": 27.142857142857142,
+    "band": "low",
+    "availableWeight": 70,
     "components": [
      {
       "key": "freeSugar",
@@ -4980,10 +4974,10 @@
      {
       "key": "sodium",
       "max": 15,
-      "points": 15,
-      "input": 0,
+      "points": null,
+      "input": null,
       "bounded": false,
-      "provenance": "declared"
+      "provenance": null
      },
      {
       "key": "saturatedFat",
@@ -5036,13 +5030,16 @@
     ],
     "flags": [
      "estimated:freeSugar",
+     "unavailable:sodium",
      "estimated:energy",
      "unavailable:fibre",
      "estimated:wholeFood"
     ]
    },
    "care": null,
-   "validation": []
+   "validation": [
+    "sodium_zero_but_salt_listed"
+   ]
   },
   {
    "id": "olympic-nut-cream-biscuit",
@@ -7329,11 +7326,7 @@
       "operator": "=",
       "provenance": "declared"
      },
-     "sodium_mg": {
-      "value": 0,
-      "operator": "=",
-      "provenance": "declared"
-     },
+     "sodium_mg": null,
      "total_carbohydrate_g": {
       "value": 7.56,
       "operator": "=",
@@ -7368,10 +7361,10 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 69.4,
-    "unroundedScore": 69.41176470588235,
+    "score": 62.9,
+    "unroundedScore": 62.857142857142854,
     "band": "good",
-    "availableWeight": 85,
+    "availableWeight": 70,
     "components": [
      {
       "key": "freeSugar",
@@ -7384,10 +7377,10 @@
      {
       "key": "sodium",
       "max": 15,
-      "points": 15,
-      "input": 0,
+      "points": null,
+      "input": null,
       "bounded": false,
-      "provenance": "declared"
+      "provenance": null
      },
      {
       "key": "saturatedFat",
@@ -7440,6 +7433,7 @@
     ],
     "flags": [
      "estimated:freeSugar",
+     "unavailable:sodium",
      "estimated:energy",
      "unavailable:fibre",
      "estimated:wholeFood"
@@ -7447,6 +7441,7 @@
    },
    "care": null,
    "validation": [
+    "sodium_zero_but_salt_listed",
     "sugar_zero_but_carbohydrate_high"
    ]
   },
@@ -8237,11 +8232,7 @@
       "operator": "=",
       "provenance": "declared"
      },
-     "sodium_mg": {
-      "value": 0,
-      "operator": "=",
-      "provenance": "declared"
-     },
+     "sodium_mg": null,
      "total_carbohydrate_g": {
       "value": 6.7,
       "operator": "=",
@@ -8276,10 +8267,10 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 69.4,
-    "unroundedScore": 69.41176470588235,
+    "score": 62.9,
+    "unroundedScore": 62.857142857142854,
     "band": "good",
-    "availableWeight": 85,
+    "availableWeight": 70,
     "components": [
      {
       "key": "freeSugar",
@@ -8292,10 +8283,10 @@
      {
       "key": "sodium",
       "max": 15,
-      "points": 15,
-      "input": 0,
+      "points": null,
+      "input": null,
       "bounded": false,
-      "provenance": "declared"
+      "provenance": null
      },
      {
       "key": "saturatedFat",
@@ -8348,6 +8339,7 @@
     ],
     "flags": [
      "estimated:freeSugar",
+     "unavailable:sodium",
      "estimated:energy",
      "unavailable:fibre",
      "estimated:wholeFood"
@@ -8355,6 +8347,7 @@
    },
    "care": null,
    "validation": [
+    "sodium_zero_but_salt_listed",
     "sugar_exceeds_carbohydrate"
    ]
   },
@@ -8789,11 +8782,7 @@
       "operator": "=",
       "provenance": "declared"
      },
-     "sodium_mg": {
-      "value": 0,
-      "operator": "=",
-      "provenance": "declared"
-     },
+     "sodium_mg": null,
      "total_carbohydrate_g": {
       "value": 11,
       "operator": "=",
@@ -8828,10 +8817,10 @@
     "algorithmVersion": "1.0.0",
     "ruleSetVersion": "2026.11-showcase.1",
     "status": "provisional",
-    "score": 65.9,
-    "unroundedScore": 65.88235294117646,
-    "band": "good",
-    "availableWeight": 85,
+    "score": 58.6,
+    "unroundedScore": 58.57142857142857,
+    "band": "moderate",
+    "availableWeight": 70,
     "components": [
      {
       "key": "freeSugar",
@@ -8844,10 +8833,10 @@
      {
       "key": "sodium",
       "max": 15,
-      "points": 15,
-      "input": 0,
+      "points": null,
+      "input": null,
       "bounded": false,
-      "provenance": "declared"
+      "provenance": null
      },
      {
       "key": "saturatedFat",
@@ -8900,6 +8889,7 @@
     ],
     "flags": [
      "estimated:freeSugar",
+     "unavailable:sodium",
      "estimated:energy",
      "unavailable:fibre",
      "estimated:wholeFood"
@@ -8907,7 +8897,8 @@
    },
    "care": null,
    "validation": [
-    "barcode_length_11"
+    "barcode_length_11",
+    "sodium_zero_but_salt_listed"
    ]
   },
   {

@@ -167,6 +167,7 @@ export default function RootLayout() {
         <QueryClientProvider client={queryClient}>
           <NutriScanProvider>
             <AuthProvider>
+              <ServerSync />
               <AppNavigator />
             </AuthProvider>
           </NutriScanProvider>

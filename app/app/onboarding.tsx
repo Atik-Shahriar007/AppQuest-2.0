@@ -347,7 +347,7 @@ export default function OnboardingScreen() {
                     }}
                     keyboardType="email-address"
                     autoCapitalize="none"
-                    placeholder="demo@nutriscan.app"
+                    placeholder="you@example.com"
                     placeholderTextColor={palette.muted}
                     style={inputStyle}
                   />
