@@ -10,13 +10,19 @@ import { adminIds, env } from "./env";
 export type AuthUser = { id: string; email: string | null; isAdmin: boolean };
 
 const jwks = env.SUPABASE_URL
-  ? createRemoteJWKSet(new URL("/auth/v1/.well-known/jwks.json", env.SUPABASE_URL))
+  ? createRemoteJWKSet(
+      new URL("/auth/v1/.well-known/jwks.json", env.SUPABASE_URL),
+    )
   : null;
-const devSecret = env.DEV_JWT_SECRET ? new TextEncoder().encode(env.DEV_JWT_SECRET) : null;
+const devSecret = env.DEV_JWT_SECRET
+  ? new TextEncoder().encode(env.DEV_JWT_SECRET)
+  : null;
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 async function verify(token: string): Promise<JWTPayload | null> {
+  let reason = "no verifier configured";
   if (jwks) {
     try {
       const { payload } = await jwtVerify(token, jwks, {
@@ -24,18 +30,22 @@ async function verify(token: string): Promise<JWTPayload | null> {
         audience: "authenticated",
       });
       return payload;
-    } catch {
-      // fall through to the dev secret, if any
+    } catch (err) {
+      // Log why, never the token itself.
+      reason = err instanceof Error ? `${err.name}: ${err.message}` : "unknown";
     }
   }
   if (devSecret) {
     try {
-      const { payload } = await jwtVerify(token, devSecret, { audience: "authenticated" });
+      const { payload } = await jwtVerify(token, devSecret, {
+        audience: "authenticated",
+      });
       return payload;
     } catch {
-      return null;
+      // fall through to the warning
     }
   }
+  console.warn(`[auth] rejected a bearer token (${reason})`);
   return null;
 }
 
