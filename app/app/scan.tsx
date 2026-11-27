@@ -34,6 +34,10 @@ import {
   t,
 } from "@/lib/nutriscan-data";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import { useAuth } from "@/lib/auth";
+import { trpc } from "@/lib/trpc";
+import { buildProduct } from "@/shared/catalog/build";
+import * as ImagePicker from "expo-image-picker";
 
 const normalizeBarcode = (value: string) =>
   value
@@ -44,53 +48,81 @@ type OcrNutritionValues = {
   energy: string;
   totalFat: string;
   saturatedFat: string;
+  transFat: string;
   sodium: string;
   totalCarb: string;
   sugars: string;
+  fibre: string;
   protein: string;
 };
 
-const OCR_MOCKS: { label: string; values: OcrNutritionValues }[] = [
-  {
-    label: "Mango Drink (250 ml)",
-    values: {
-      energy: "92 kcal",
-      totalFat: "0g",
-      saturatedFat: "0g",
-      sodium: "15mg",
-      totalCarb: "23g",
-      sugars: "22g",
-      protein: "0g",
-    },
-  },
-  {
-    label: "Instant Noodles (75 g)",
-    values: {
-      energy: "285 kcal",
-      totalFat: "11g",
-      saturatedFat: "5g",
-      sodium: "680mg",
-      totalCarb: "38g",
-      sugars: "2g",
-      protein: "7g",
-    },
-  },
-];
-
-const parseMetricNumber = (raw: string) => {
-  const match = raw.replace(",", ".").match(/\d+(\.\d+)?/);
-  return match ? Number(match[0]) : 0;
+const EMPTY_OCR: OcrNutritionValues = {
+  energy: "",
+  totalFat: "",
+  saturatedFat: "",
+  transFat: "",
+  sodium: "",
+  totalCarb: "",
+  sugars: "",
+  fibre: "",
+  protein: "",
 };
 
-const estimateNqss = (values: OcrNutritionValues) => {
-  const sugars = parseMetricNumber(values.sugars);
-  const sodium = parseMetricNumber(values.sodium);
-  const satFat = parseMetricNumber(values.saturatedFat);
-  const protein = parseMetricNumber(values.protein);
-  const raw = Math.round(
-    86 - sugars * 1.4 - sodium * 0.045 - satFat * 1.5 + protein * 0.8,
-  );
-  return Math.max(15, Math.min(98, raw));
+/** Field names the label reader uses for each review field. */
+const OCR_FIELD: Record<keyof OcrNutritionValues, string> = {
+  energy: "energyKcal",
+  totalFat: "totalFatG",
+  saturatedFat: "saturatedFatG",
+  transFat: "transFatG",
+  sodium: "sodiumMg",
+  totalCarb: "totalCarbohydrateG",
+  sugars: "totalSugarG",
+  fibre: "fibreG",
+  protein: "proteinG",
+};
+
+/** "12 g" -> "12", "<0.1g" -> "<0.1", "" -> null. Never invents a value. */
+const cleanValue = (raw: string): string | null => {
+  const m = raw.replace(",", ".").match(/(<)?\s*(\d+(?:\.\d+)?)/);
+  return m ? `${m[1] ?? ""}${m[2]}` : null;
+};
+
+/** Score the reviewed values with the same NQSS engine the catalog uses. */
+const scoreReviewedLabel = (
+  values: OcrNutritionValues,
+  basis: "per_100g" | "per_100ml",
+  ingredients: string,
+) => {
+  const n: Record<string, string> = {};
+  const map: Record<keyof OcrNutritionValues, string> = {
+    energy: "energy_kcal",
+    totalFat: "total_fat_g",
+    saturatedFat: "saturated_fat_g",
+    transFat: "trans_fat_g",
+    sodium: "sodium_mg",
+    totalCarb: "total_carbohydrate_g",
+    sugars: "total_sugar_g",
+    fibre: "fibre_g",
+    protein: "protein_g",
+  };
+  for (const k of Object.keys(map) as (keyof OcrNutritionValues)[]) {
+    const v = cleanValue(values[k]);
+    if (v !== null) n[map[k]] = v;
+  }
+  return buildProduct(
+    {
+      product_name: "Scanned label",
+      barcode: "00000000",
+      ingredients,
+      nutrition_per_100g: n,
+    },
+    {
+      kindDir: "food",
+      group: basis === "per_100ml" ? "Juice" : "Other",
+      imageKey: "",
+      overrides: {},
+    },
+  ).nqss;
 };
 
 export default function ScanScreen() {
@@ -113,10 +145,16 @@ export default function ScanScreen() {
   const [ocrStatus, setOcrStatus] = useState<
     "idle" | "extracting" | "extracted"
   >("idle");
-  const [ocrMockIndex, setOcrMockIndex] = useState(0);
-  const [ocrValues, setOcrValues] = useState<OcrNutritionValues>(
-    OCR_MOCKS[0].values,
+  const [ocrValues, setOcrValues] = useState<OcrNutritionValues>(EMPTY_OCR);
+  const [ocrName, setOcrName] = useState<string | null>(null);
+  const [ocrBasis, setOcrBasis] = useState<"per_100g" | "per_100ml">(
+    "per_100g",
   );
+  const [ocrIngredients, setOcrIngredients] = useState("");
+  const [ocrError, setOcrError] = useState<string | null>(null);
+  const [ocrUncertain, setOcrUncertain] = useState<string[]>([]);
+  const auth = useAuth();
+  const readLabel = trpc.nouri.readLabel.useMutation();
   const [nqssModalVisible, setNqssModalVisible] = useState(false);
   const extractTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -190,24 +228,123 @@ export default function ScanScreen() {
       params: { barcode: notFoundCode || normalizeBarcode(barcode) },
     });
 
-  const handleCaptureLabel = () => {
-    if (extractTimerRef.current) clearTimeout(extractTimerRef.current);
+  const handleCaptureLabel = async () => {
+    setOcrError(null);
+    if (!auth.session) {
+      setOcrError(
+        language === "en"
+          ? "Please sign in to read labels from a photo."
+          : "ছবি থেকে লেবেল পড়তে সাইন ইন করুন।",
+      );
+      return;
+    }
+    const opts: ImagePicker.ImagePickerOptions = {
+      mediaTypes: ["images"],
+      base64: true,
+      quality: 0.6,
+    };
+    let result: ImagePicker.ImagePickerResult;
+    if (Platform.OS === "web") {
+      result = await ImagePicker.launchImageLibraryAsync(opts);
+    } else {
+      const perm = await ImagePicker.requestCameraPermissionsAsync();
+      result = perm.granted
+        ? await ImagePicker.launchCameraAsync(opts)
+        : await ImagePicker.launchImageLibraryAsync(opts);
+    }
+    const asset = result.canceled ? null : result.assets[0];
+    if (!asset?.base64) return;
+    const mediaType =
+      asset.mimeType === "image/png"
+        ? "image/png"
+        : asset.mimeType === "image/webp"
+          ? "image/webp"
+          : "image/jpeg";
     setOcrStatus("extracting");
-    extractTimerRef.current = setTimeout(() => {
-      const mock = OCR_MOCKS[ocrMockIndex % OCR_MOCKS.length];
-      setOcrValues({ ...mock.values });
+    try {
+      const label = await readLabel.mutateAsync({
+        base64: asset.base64,
+        mediaType,
+      });
+      if (!label || !label.readable) {
+        setOcrStatus("idle");
+        setOcrError(
+          language === "en"
+            ? "No readable nutrition table found. Take a clear, straight photo of the nutrition facts panel."
+            : "পড়ার মতো পুষ্টি তালিকা পাওয়া যায়নি। পুষ্টি তথ্যের টেবিলের পরিষ্কার, সোজা ছবি তুলুন।",
+        );
+        return;
+      }
+      setOcrValues({
+        energy:
+          label.energyKcal ??
+          (label.energyKj
+            ? String(
+                Math.round(
+                  Number(cleanValue(label.energyKj)?.replace("<", "") ?? 0) /
+                    4.184,
+                ),
+              )
+            : ""),
+        totalFat: label.totalFatG ?? "",
+        saturatedFat: label.saturatedFatG ?? "",
+        transFat: label.transFatG ?? "",
+        sodium:
+          label.sodiumMg ??
+          (label.saltG
+            ? String(
+                Math.round(
+                  Number(cleanValue(label.saltG)?.replace("<", "") ?? 0) * 400,
+                ),
+              )
+            : ""),
+        totalCarb: label.totalCarbohydrateG ?? "",
+        sugars: label.totalSugarG ?? "",
+        fibre: label.fibreG ?? "",
+        protein: label.proteinG ?? "",
+      });
+      setOcrName(label.productName);
+      setOcrBasis(label.basis === "per_100ml" ? "per_100ml" : "per_100g");
+      setOcrIngredients(label.ingredients ?? "");
+      setOcrUncertain(label.uncertainFields);
+      if (label.basis === "per_serving" || label.basis === "unknown") {
+        setOcrError(
+          language === "en"
+            ? "This label shows values per serving. Convert them to per 100 g/ml before scoring, or the score will be wrong."
+            : "এই লেবেলে প্রতি পরিবেশনের মান আছে। স্কোরের আগে প্রতি ১০০ গ্রাম/মি.লি.-তে রূপান্তর করুন, নইলে স্কোর ভুল হবে।",
+        );
+      }
       setOcrStatus("extracted");
-    }, 1500);
+    } catch (err) {
+      setOcrStatus("idle");
+      const m = err instanceof Error ? err.message : "";
+      setOcrError(
+        m === "ocr_limit"
+          ? language === "en"
+            ? "Daily label-reading limit reached. Try again tomorrow."
+            : "আজকের লেবেল পড়ার সীমা শেষ। আগামীকাল চেষ্টা করুন।"
+          : language === "en"
+            ? "Could not read the label right now. Please try again."
+            : "এখন লেবেল পড়া যাচ্ছে না। আবার চেষ্টা করুন।",
+      );
+    }
   };
 
   const handleResetOcr = () => {
-    if (extractTimerRef.current) clearTimeout(extractTimerRef.current);
     setNqssModalVisible(false);
     setOcrStatus("idle");
-    setOcrMockIndex((prev) => (prev + 1) % OCR_MOCKS.length);
+    setOcrValues(EMPTY_OCR);
+    setOcrName(null);
+    setOcrIngredients("");
+    setOcrError(null);
+    setOcrUncertain([]);
   };
 
-  const estimatedScore = estimateNqss(ocrValues);
+  const ocrResult =
+    ocrStatus === "extracted"
+      ? scoreReviewedLabel(ocrValues, ocrBasis, ocrIngredients)
+      : null;
+  const estimatedScore = ocrResult?.score ?? 0;
 
   const ocrFieldDefs: { key: keyof OcrNutritionValues; label: string }[] = [
     { key: "energy", label: language === "en" ? "Energy" : "শক্তি" },
@@ -221,7 +358,12 @@ export default function ScanScreen() {
       key: "totalCarb",
       label: language === "en" ? "Total Carb" : "মোট শর্করা",
     },
-    { key: "sugars", label: language === "en" ? "Sugars" : "চিনি" },
+    {
+      key: "transFat",
+      label: language === "en" ? "Trans Fat" : "ট্রান্স ফ্যাট",
+    },
+    { key: "sugars", label: language === "en" ? "Total Sugars" : "মোট চিনি" },
+    { key: "fibre", label: language === "en" ? "Fibre" : "আঁশ" },
     { key: "protein", label: language === "en" ? "Protein" : "প্রোটিন" },
   ];
 
@@ -770,8 +912,13 @@ export default function ScanScreen() {
                 language === "en" ? "Capture Label" : "লেবেল ক্যাপচার করুন"
               }
               icon="camera-outline"
-              onPress={handleCaptureLabel}
+              onPress={() => void handleCaptureLabel()}
             />
+          ) : null}
+          {ocrError ? (
+            <AppText style={{ color: palette.clay, fontSize: 12 }}>
+              {ocrError}
+            </AppText>
           ) : null}
 
           {ocrStatus === "extracting" ? (
@@ -811,7 +958,8 @@ export default function ScanScreen() {
                     : "প্রাপ্ত পুষ্টিমান"}
                 </AppText>
                 <Pill tone="green">
-                  {OCR_MOCKS[ocrMockIndex % OCR_MOCKS.length].label}
+                  {ocrName ??
+                    (ocrBasis === "per_100ml" ? "per 100 ml" : "per 100 g")}
                 </Pill>
               </View>
               <View style={{ gap: 10 }}>
@@ -827,9 +975,20 @@ export default function ScanScreen() {
                   >
                     <AppText
                       weight="medium"
-                      style={{ flex: 1, fontSize: 12, color: palette.ink }}
+                      style={{
+                        flex: 1,
+                        fontSize: 12,
+                        color: ocrUncertain.includes(OCR_FIELD[field.key])
+                          ? palette.clay
+                          : palette.ink,
+                      }}
                     >
                       {field.label}
+                      {ocrUncertain.includes(OCR_FIELD[field.key])
+                        ? language === "en"
+                          ? " (check)"
+                          : " (যাচাই করুন)"
+                        : ""}
                     </AppText>
                     <TextInput
                       value={ocrValues[field.key]}
@@ -875,8 +1034,8 @@ export default function ScanScreen() {
 
           <DemoNotice>
             {language === "en"
-              ? "OCR extraction is simulated with sample nutrition tables for prototype demonstration."
-              : "প্রোটোটাইপ প্রদর্শনের জন্য নমুনা পুষ্টি টেবিল ব্যবহার করে OCR অনুকরণ করা হয়েছে।"}
+              ? "Values are read from your photo by AI and can be wrong. Check every number against the label before saving. Empty means not on the label, never zero."
+              : "এআই আপনার ছবি থেকে মান পড়ে, ভুল হতে পারে। সংরক্ষণের আগে প্রতিটি সংখ্যা লেবেলের সঙ্গে মিলিয়ে নিন। খালি ঘর মানে লেবেলে নেই, শূন্য নয়।"}
           </DemoNotice>
         </>
       )}
@@ -914,9 +1073,13 @@ export default function ScanScreen() {
             <AppText
               style={{ fontSize: 13, lineHeight: 20, color: palette.ink }}
             >
-              {language === "en"
-                ? `Based on these values, estimated NQSS: ${estimatedScore}/100`
-                : `এই মানগুলোর ভিত্তিতে আনুমানিক NQSS: ${estimatedScore}/১০০`}
+              {ocrResult?.status === "withheld" || !ocrResult
+                ? language === "en"
+                  ? "Not enough values on this label to give a meaningful score."
+                  : "অর্থবহ স্কোর দেওয়ার মতো যথেষ্ট মান এই লেবেলে নেই।"
+                : language === "en"
+                  ? `Based on these values, ${ocrResult.status === "complete" ? "" : "estimated "}NQSS: ${estimatedScore}/100`
+                  : `এই মানগুলোর ভিত্তিতে ${ocrResult.status === "complete" ? "" : "আনুমানিক "}NQSS: ${estimatedScore}/১০০`}
             </AppText>
             <Pill tone={scoreTone(estimatedScore)}>
               {estimatedScore >= 60

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Image, Pressable, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -12,6 +12,7 @@ import {
   ProductRow,
   ScoreRing,
   Screen,
+  PrimaryButton,
   SecondaryButton,
   SectionHeading,
   fontFamily,
@@ -42,6 +43,8 @@ import {
   scoreTone,
 } from "@/lib/nutrition-utils";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import { useAuth } from "@/lib/auth";
+import { trpc } from "@/lib/trpc";
 
 const QUICK_COMPARE_PAIR_IDS: [string, string][] = [
   [
@@ -244,7 +247,9 @@ export default function CompareProductsScreen() {
     setCompareSlot,
     swapCompareSlots,
     clearCompare,
+    isPremium,
   } = useNutriScan();
+  const auth = useAuth();
 
   const [pickingSlot, setPickingSlot] = useState<0 | 1 | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -283,6 +288,45 @@ export default function CompareProductsScreen() {
       ([a, b]) => availableIds.has(a) && availableIds.has(b),
     ).map(([a, b]) => [productById(a)!, productById(b)!] as [Product, Product]);
   }, [foodCatalog]);
+
+  // Advanced comparison (breakdown, summary, ingredients): Premium, or one Comparison Pass use.
+  // The server decides and spends the pass; Premium spends nothing.
+  const pairKey = productA && productB ? `${productA.id}|${productB.id}` : null;
+  const [unlockedPair, setUnlockedPair] = useState<string | null>(null);
+  const [unlockError, setUnlockError] = useState<string | null>(null);
+  const advancedCompare = trpc.catalog.advancedCompare.useMutation();
+  const advancedUnlocked = pairKey !== null && unlockedPair === pairKey;
+  const unlockAdvanced = () => {
+    if (!pairKey || !productA || !productB) return;
+    setUnlockError(null);
+    advancedCompare.mutate(
+      { ids: [productA.id, productB.id] },
+      {
+        onSuccess: () => setUnlockedPair(pairKey),
+        onError: (e) =>
+          setUnlockError(
+            e.message === "premium_required" ? "premium_required" : e.message,
+          ),
+      },
+    );
+  };
+  useEffect(() => {
+    // Premium: unlock automatically (the server spends nothing for Premium).
+    if (
+      !pairKey ||
+      !productA ||
+      !productB ||
+      !isPremium ||
+      !auth.session ||
+      unlockedPair === pairKey
+    )
+      return;
+    advancedCompare.mutate(
+      { ids: [productA.id, productB.id] },
+      { onSuccess: () => setUnlockedPair(pairKey) },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pairKey, isPremium, auth.session]);
 
   const factorRows = useMemo(
     () =>
@@ -732,7 +776,7 @@ export default function CompareProductsScreen() {
                 })}
               </View>
 
-              {factorRows.length ? (
+              {factorRows.length && advancedUnlocked ? (
                 <View
                   style={{
                     gap: 12,
@@ -850,14 +894,69 @@ export default function CompareProductsScreen() {
             </Card>
           </View>
 
-          {/* 2. AI-Generated Comparison Summary */}
-          {aiSummary ? (
+          {/* Advanced comparison lock */}
+          {!advancedUnlocked ? (
+            <Card
+              style={{ gap: 10, borderColor: palette.amber, borderWidth: 1 }}
+            >
+              <AppText weight="bold" style={{ fontSize: 14 }}>
+                {language === "en" ? "Advanced comparison" : "উন্নত তুলনা"}
+              </AppText>
+              <AppText style={{ fontSize: 12, color: palette.muted }}>
+                {language === "en"
+                  ? "See the full score breakdown, a comparison summary and the ingredient analysis. Included in Premium, or use one Food Comparison Pass (৳5 for 5 comparisons)."
+                  : "পূর্ণ স্কোর বিভাজন, তুলনার সারাংশ ও উপাদান বিশ্লেষণ দেখুন। প্রিমিয়ামে অন্তর্ভুক্ত, অথবা একটি খাবার তুলনা পাস ব্যবহার করুন (৳৫-এ ৫টি তুলনা)।"}
+              </AppText>
+              {unlockError === "premium_required" ? (
+                <AppText style={{ fontSize: 12, color: palette.clay }}>
+                  {language === "en"
+                    ? "You have no comparison passes left."
+                    : "আপনার কোনো তুলনা পাস বাকি নেই।"}
+                </AppText>
+              ) : unlockError ? (
+                <AppText style={{ fontSize: 12, color: palette.clay }}>
+                  {unlockError}
+                </AppText>
+              ) : null}
+              {auth.session ? (
+                <PrimaryButton
+                  title={
+                    advancedCompare.isPending
+                      ? "..."
+                      : language === "en"
+                        ? "Unlock this comparison"
+                        : "এই তুলনা আনলক করুন"
+                  }
+                  icon="lock-open-variant-outline"
+                  onPress={unlockAdvanced}
+                />
+              ) : null}
+              <SecondaryButton
+                title={
+                  language === "en"
+                    ? auth.session
+                      ? "Get Premium or a pass"
+                      : "Sign in to unlock"
+                    : auth.session
+                      ? "প্রিমিয়াম বা পাস নিন"
+                      : "আনলক করতে সাইন ইন করুন"
+                }
+                icon="crown-outline"
+                onPress={() =>
+                  router.push(
+                    auth.session ? ("/account/premium" as any) : "/onboarding",
+                  )
+                }
+              />
+            </Card>
+          ) : null}
+
+          {/* 2. Comparison Summary (rule-based, from the scores and labels) */}
+          {aiSummary && advancedUnlocked ? (
             <View style={{ gap: 8 }}>
               <SectionHeading
                 title={
-                  language === "en"
-                    ? "AI Comparison Summary"
-                    : "AI তুলনা সারাংশ"
+                  language === "en" ? "Comparison Summary" : "তুলনার সারাংশ"
                 }
               />
               <Card
@@ -1210,7 +1309,7 @@ export default function CompareProductsScreen() {
           </View>
 
           {/* 4. Ingredients & Additives Comparison */}
-          {ingredientSummary ? (
+          {ingredientSummary && advancedUnlocked ? (
             <View style={{ gap: 8 }}>
               <SectionHeading
                 title={

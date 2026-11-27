@@ -25,6 +25,7 @@ import {
 import type { EdgeInsets, Rect } from "react-native-safe-area-context";
 import { trpc, createTRPCClient } from "@/lib/trpc";
 import { AuthProvider } from "@/lib/auth";
+import { ServerSync } from "@/lib/server-sync";
 import { NutriScanProvider, useNutriScan } from "@/lib/nutriscan-state";
 import { AppText, usePalette } from "@/components/nutriscan-ui";
 

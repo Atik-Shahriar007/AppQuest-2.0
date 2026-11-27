@@ -1,7 +1,12 @@
-import { useState } from "react";
-import { Pressable, View } from "react-native";
-import { useRouter } from "expo-router";
+/**
+ * NutriScan Premium: backend-managed 30-day trial, BDT 29/month through AppLink Subscription,
+ * and three CaaS passes. Access is only ever granted by the server after AppLink confirms
+ * payment; this screen just starts flows and shows the server's state.
+ */
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Pressable, TextInput, View } from "react-native";
 import {
   AppText,
   Card,
@@ -14,46 +19,244 @@ import {
   SectionHeading,
   usePalette,
 } from "@/components/nutriscan-ui";
+import { useAuth } from "@/lib/auth";
 import { useNutriScan } from "@/lib/nutriscan-state";
+import { trpc } from "@/lib/trpc";
 
-type PlanCycle = "monthly" | "yearly";
+type Sku = "compare_pass" | "nouri_pass" | "day_pass";
+type Flow =
+  | { kind: "idle" }
+  | { kind: "number"; target: "subscription" | Sku }
+  | { kind: "sub_code"; requestId: string }
+  | { kind: "pay_code"; purchaseId: string }
+  | { kind: "pay_wait"; purchaseId: string };
+
+const FINAL = new Set(["CHARGED", "FAILED", "EXPIRED", "PARTIAL"]);
 
 export default function PremiumScreen() {
   const router = useRouter();
   const palette = usePalette();
-  const { language, isPremium, setIsPremium } = useNutriScan();
+  const { language, setIsPremium } = useNutriScan();
+  const auth = useAuth();
+  const en = language === "en";
+  const signedIn = Boolean(auth.session);
 
-  const [selectedPlan, setSelectedPlan] = useState<PlanCycle>("yearly");
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const offers = trpc.premium.offers.useQuery();
+  const access = trpc.premium.access.useQuery(undefined, { enabled: signedIn });
+  const utils = trpc.useUtils();
+  const refresh = () => utils.premium.access.invalidate();
 
-  const freeFeatures =
-    language === "en"
-      ? ["5 scans/day", "Basic product details", "Standard search", "Community access"]
-      : ["দিনে ৫টি স্ক্যান", "মৌলিক পণ্যের তথ্য", "সাধারণ সার্চ", "কমিউনিটি অ্যাক্সেস"];
+  const startTrial = trpc.premium.startTrial.useMutation({
+    onSuccess: refresh,
+  });
+  const subRequest = trpc.premium.subscription.request.useMutation();
+  const subVerify = trpc.premium.subscription.verify.useMutation({
+    onSuccess: refresh,
+  });
+  const subCancel = trpc.premium.subscription.cancel.useMutation({
+    onSuccess: refresh,
+  });
+  const payStart = trpc.premium.purchase.start.useMutation();
+  const payConfirm = trpc.premium.purchase.confirm.useMutation();
 
-  const premiumFeatures =
-    language === "en"
-      ? [
-          "Unlimited scans",
-          "Advanced NQSS insights",
-          "Personalized Nouri",
-          "Detailed ingredient analysis",
-          "Extended scan history",
-          "Priority support",
-        ]
-      : [
-          "সীমাহীন স্ক্যান",
-          "উন্নত NQSS বিশ্লেষণ",
-          "ব্যক্তিগতকৃত নৌরি",
-          "বিস্তারিত উপাদান বিশ্লেষণ",
-          "দীর্ঘ স্ক্যান ইতিহাস",
-          "অগ্রাধিকার সহায়তা",
-        ];
+  const [flow, setFlow] = useState<Flow>({ kind: "idle" });
+  const [msisdn, setMsisdn] = useState("");
+  const [code, setCode] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [message, setMessage] = useState<{
+    tone: "good" | "bad";
+    text: string;
+  } | null>(null);
+
+  // Poll the server while a payment waits for Banglalink's confirmation.
+  const purchaseId = flow.kind === "pay_wait" ? flow.purchaseId : null;
+  const purchase = trpc.premium.purchase.get.useQuery(
+    { id: purchaseId ?? "" },
+    {
+      enabled: Boolean(purchaseId),
+      refetchInterval: (q) =>
+        q.state.data && FINAL.has(q.state.data.status) ? false : 2000,
+    },
+  );
+  const paymentDone =
+    flow.kind === "pay_wait" &&
+    purchase.data !== undefined &&
+    FINAL.has(purchase.data.status);
+  useEffect(() => {
+    if (paymentDone) void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paymentDone]);
+
+  // Other screens read the local flag; keep it equal to what the server says.
+  useEffect(() => {
+    if (access.data) setIsPremium(access.data.premium);
+  }, [access.data, setIsPremium]);
+
+  const caps = offers.data?.capabilities;
+  const a = access.data;
+  const reset = () => {
+    setFlow({ kind: "idle" });
+    setCode("");
+    setAgreed(false);
+  };
+  const fail = (err: unknown) =>
+    setMessage({
+      tone: "bad",
+      text: err instanceof Error ? err.message : String(err),
+    });
+
+  const disclosureFor = (target: "subscription" | Sku) =>
+    target === "subscription"
+      ? offers.data?.subscription.disclosure
+      : offers.data?.passes.find((p) => p.sku === target)?.disclosure;
+
+  const submitNumber = async () => {
+    if (flow.kind !== "number" || !agreed) return;
+    setMessage(null);
+    try {
+      if (flow.target === "subscription") {
+        const r = await subRequest.mutateAsync({
+          msisdn,
+          acceptedDisclosure: true,
+        });
+        setFlow({ kind: "sub_code", requestId: r.requestId });
+      } else {
+        const r = await payStart.mutateAsync({
+          sku: flow.target,
+          msisdn,
+          acceptedDisclosure: true,
+        });
+        if (r.status === "OTP_SENT")
+          setFlow({ kind: "pay_code", purchaseId: r.id });
+        else {
+          setMessage({ tone: "bad", text: r.message });
+          reset();
+        }
+      }
+      setCode("");
+    } catch (err) {
+      fail(err);
+    }
+  };
+
+  const submitCode = async () => {
+    setMessage(null);
+    try {
+      if (flow.kind === "sub_code") {
+        const r = await subVerify.mutateAsync({
+          requestId: flow.requestId,
+          otp: code,
+        });
+        if (r.ok) {
+          setMessage({
+            tone: "good",
+            text: en
+              ? "Number verified. Premium starts as soon as Banglalink confirms."
+              : "নম্বর যাচাই হয়েছে। বাংলালিংক নিশ্চিত করলেই প্রিমিয়াম শুরু হবে।",
+          });
+          reset();
+        } else {
+          const text = {
+            wrong_code: en
+              ? `Wrong code. ${r.attemptsLeft} tries left.`
+              : `ভুল কোড। আর ${r.attemptsLeft} বার চেষ্টা করা যাবে।`,
+            expired: en
+              ? "The code expired. Please start again."
+              : "কোডের মেয়াদ শেষ। আবার শুরু করুন।",
+            too_many_attempts: en
+              ? "Too many wrong codes. Please start again."
+              : "অনেকবার ভুল কোড। আবার শুরু করুন।",
+            failed: en
+              ? "Verification failed. Please try again."
+              : "যাচাই ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
+          }[r.reason];
+          setMessage({ tone: "bad", text });
+          if (r.reason !== "wrong_code") reset();
+        }
+      } else if (flow.kind === "pay_code") {
+        const r = await payConfirm.mutateAsync({
+          id: flow.purchaseId,
+          otp: code,
+        });
+        if (r.status === "OTP_SENT")
+          setMessage({
+            tone: "bad",
+            text: en
+              ? `Wrong code. ${r.otpAttemptsLeft} tries left.`
+              : `ভুল কোড। আর ${r.otpAttemptsLeft} বার চেষ্টা করা যাবে।`,
+          });
+        else if (r.status === "VERIFYING" || r.status === "UNKNOWN")
+          setFlow({ kind: "pay_wait", purchaseId: flow.purchaseId });
+        else {
+          setMessage({
+            tone: r.status === "CHARGED" ? "good" : "bad",
+            text: r.message,
+          });
+          reset();
+        }
+      }
+      setCode("");
+    } catch (err) {
+      fail(err);
+    }
+  };
+
+  const input = {
+    minHeight: 46,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: palette.line,
+    backgroundColor: palette.card,
+    paddingHorizontal: 12,
+    color: palette.ink,
+    fontSize: 15,
+  } as const;
+
+  const statusLine = (() => {
+    if (!a?.premium)
+      return en ? "You are on the free plan." : "আপনি ফ্রি প্ল্যানে আছেন।";
+    const until = a.premiumEndsAt
+      ? new Date(a.premiumEndsAt).toLocaleDateString(en ? "en-GB" : "bn-BD")
+      : null;
+    if (a.premiumSource === "subscription")
+      return en
+        ? "Premium is active (monthly subscription)."
+        : "প্রিমিয়াম চালু (মাসিক সাবস্ক্রিপশন)।";
+    if (a.premiumSource === "trial")
+      return en
+        ? `Free trial active until ${until}.`
+        : `ফ্রি ট্রায়াল চালু, ${until} পর্যন্ত।`;
+    return en
+      ? `24-hour pass active until ${until}.`
+      : `২৪ ঘণ্টার পাস চালু, ${until} পর্যন্ত।`;
+  })();
+
+  const features = en
+    ? [
+        "Advanced food comparison",
+        "Detailed ingredient and nutrition analysis",
+        "Extended Nouri chat (20 messages a day)",
+        "Personalised food insights",
+        "Advanced food safety reports",
+      ]
+    : [
+        "উন্নত খাবার তুলনা",
+        "বিস্তারিত উপাদান ও পুষ্টি বিশ্লেষণ",
+        "বেশি নৌরি চ্যাট (দিনে ২০টি বার্তা)",
+        "ব্যক্তিগত খাদ্য পরামর্শ",
+        "উন্নত খাদ্য নিরাপত্তা রিপোর্ট",
+      ];
+
+  const busy =
+    subRequest.isPending ||
+    subVerify.isPending ||
+    payStart.isPending ||
+    payConfirm.isPending;
 
   return (
     <Screen contentStyle={{ gap: 16 }}>
       <PageHeader
-        title={language === "en" ? "NutriScan Premium" : "NutriScan প্রিমিয়াম"}
+        title={en ? "NutriScan Premium" : "নিউট্রিস্ক্যান প্রিমিয়াম"}
         back={() => router.back()}
       />
 
@@ -61,212 +264,294 @@ export default function PremiumScreen() {
         style={{
           backgroundColor: palette.green,
           borderColor: palette.green,
-          alignItems: "center",
-          paddingVertical: 24,
-          gap: 10,
+          gap: 8,
+          paddingVertical: 20,
         }}
       >
-        <View
-          style={{
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            backgroundColor: "rgba(255,255,255,0.16)",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <MaterialCommunityIcons name="crown" size={34} color={palette.onGreen} />
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <MaterialCommunityIcons
+            name="crown"
+            size={28}
+            color={palette.onGreen}
+          />
+          <AppText
+            weight="bold"
+            style={{ fontSize: 18, color: palette.onGreen }}
+          >
+            {signedIn
+              ? statusLine
+              : en
+                ? "Sign in to use Premium"
+                : "প্রিমিয়ামের জন্য সাইন ইন করুন"}
+          </AppText>
         </View>
-        <AppText weight="bold" style={{ fontSize: 20, color: palette.onGreen, textAlign: "center" }}>
-          {isPremium
-            ? language === "en"
-              ? "You're on Premium!"
-              : "আপনি প্রিমিয়াম ব্যবহার করছেন!"
-            : language === "en"
-              ? "Upgrade to Premium"
-              : "প্রিমিয়ামে আপগ্রেড করুন"}
-        </AppText>
-        <AppText style={{ fontSize: 12, color: palette.onGreen, opacity: 0.9, textAlign: "center" }}>
-          {isPremium
-            ? language === "en"
-              ? "All demo premium features are currently active on this device."
-              : "এই ডিভাইসে সব ডেমো প্রিমিয়াম ফিচার চালু আছে।"
-            : language === "en"
-              ? "Unlock the full NutriScan experience"
-              : "NutriScan-এর সম্পূর্ণ অভিজ্ঞতা আনলক করুন"}
-        </AppText>
+        {a && !a.premium && (a.comparePassUses > 0 || a.nouriPassUses > 0) ? (
+          <AppText style={{ color: palette.onGreen, fontSize: 12 }}>
+            {en
+              ? `Passes: ${a.comparePassUses} comparisons, ${a.nouriPassUses} Nouri messages left.`
+              : `পাস: ${a.comparePassUses}টি তুলনা, ${a.nouriPassUses}টি নৌরি বার্তা বাকি।`}
+          </AppText>
+        ) : null}
+        {a ? (
+          <AppText style={{ color: palette.onGreen, fontSize: 12 }}>
+            {en
+              ? `Nouri today: ${a.nouriUsedToday} of ${a.nouriDailyLimit} messages.`
+              : `আজ নৌরি: ${a.nouriDailyLimit}টির মধ্যে ${a.nouriUsedToday}টি বার্তা।`}
+          </AppText>
+        ) : null}
       </Card>
 
-      <SectionHeading title={language === "en" ? "Plan Comparison" : "প্ল্যানের তুলনা"} />
+      {!signedIn ? (
+        <PrimaryButton
+          title={
+            en ? "Sign in or create account" : "সাইন ইন বা অ্যাকাউন্ট খুলুন"
+          }
+          icon="login"
+          onPress={() => router.push("/onboarding")}
+        />
+      ) : null}
 
-      <View style={{ flexDirection: "row", gap: 10 }}>
-        <Card style={{ flex: 1, gap: 10, padding: 13 }}>
-          <AppText weight="bold" style={{ fontSize: 15 }}>
-            {language === "en" ? "Free" : "ফ্রি"}
-          </AppText>
-          <View style={{ gap: 7 }}>
-            {freeFeatures.map((item) => (
-              <View key={item} style={{ flexDirection: "row", alignItems: "flex-start", gap: 6 }}>
-                <MaterialCommunityIcons name="check" size={14} color={palette.muted} style={{ marginTop: 2 }} />
-                <AppText style={{ flex: 1, fontSize: 11, color: palette.muted, lineHeight: 15 }}>{item}</AppText>
-              </View>
-            ))}
-          </View>
-        </Card>
-
-        <Card style={{ flex: 1, gap: 10, padding: 13, borderColor: palette.green, borderWidth: 1.5, backgroundColor: palette.greenSoft }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-            <AppText weight="bold" style={{ fontSize: 15, color: palette.green }}>
-              {language === "en" ? "Premium" : "প্রিমিয়াম"}
-            </AppText>
-            <MaterialCommunityIcons name="crown" size={16} color={palette.amber} />
-          </View>
-          <View style={{ gap: 7 }}>
-            {premiumFeatures.map((item) => (
-              <View key={item} style={{ flexDirection: "row", alignItems: "flex-start", gap: 6 }}>
-                <MaterialCommunityIcons name="check-circle" size={14} color={palette.green} style={{ marginTop: 2 }} />
-                <AppText style={{ flex: 1, fontSize: 11, color: palette.ink, lineHeight: 15 }}>{item}</AppText>
-              </View>
-            ))}
-          </View>
-        </Card>
-      </View>
-
-      <SectionHeading title={language === "en" ? "Demo Pricing" : "ডেমো মূল্য"} />
-
-      <View style={{ gap: 10 }}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ selected: selectedPlan === "monthly" }}
-          onPress={() => setSelectedPlan("monthly")}
-          style={({ pressed }) => ({
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: 15,
-            borderRadius: 16,
-            borderWidth: 1.5,
-            borderColor: selectedPlan === "monthly" ? palette.green : palette.line,
-            backgroundColor: selectedPlan === "monthly" ? palette.greenSoft : palette.card,
-            opacity: pressed ? 0.85 : 1,
-          })}
-        >
-          <View style={{ gap: 2 }}>
-            <AppText weight="semibold" style={{ fontSize: 14 }}>
-              {language === "en" ? "Monthly" : "মাসিক"}
-            </AppText>
-            <AppText style={{ fontSize: 11, color: palette.muted }}>
-              {language === "en" ? "৳99/month (demo)" : "৳৯৯/মাস (ডেমো)"}
-            </AppText>
-          </View>
-          <MaterialCommunityIcons
-            name={selectedPlan === "monthly" ? "check-circle" : "circle-outline"}
-            size={22}
-            color={selectedPlan === "monthly" ? palette.green : palette.muted}
-          />
-        </Pressable>
-
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ selected: selectedPlan === "yearly" }}
-          onPress={() => setSelectedPlan("yearly")}
-          style={({ pressed }) => ({
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: 15,
-            borderRadius: 16,
-            borderWidth: 1.5,
-            borderColor: selectedPlan === "yearly" ? palette.green : palette.line,
-            backgroundColor: selectedPlan === "yearly" ? palette.greenSoft : palette.card,
-            opacity: pressed ? 0.85 : 1,
-          })}
-        >
-          <View style={{ gap: 4 }}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <AppText weight="semibold" style={{ fontSize: 14 }}>
-                {language === "en" ? "Yearly" : "বাৎসরিক"}
-              </AppText>
-              <Pill tone="amber">{language === "en" ? "Save 33%!" : "৩৩% সাশ্রয়!"}</Pill>
-            </View>
-            <AppText style={{ fontSize: 11, color: palette.muted }}>
-              {language === "en" ? "৳799/year (demo)" : "৳৭৯৯/বছর (ডেমো)"}
-            </AppText>
-          </View>
-          <MaterialCommunityIcons
-            name={selectedPlan === "yearly" ? "check-circle" : "circle-outline"}
-            size={22}
-            color={selectedPlan === "yearly" ? palette.green : palette.muted}
-          />
-        </Pressable>
-
-        <View
+      {message ? (
+        <Card
           style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 8,
-            padding: 10,
-            borderRadius: 12,
-            backgroundColor: palette.amberSoft,
+            backgroundColor:
+              message.tone === "good" ? palette.greenSoft : palette.claySoft,
+            gap: 4,
           }}
         >
-          <MaterialCommunityIcons name="tag-outline" size={16} color={palette.amberInk} />
-          <AppText style={{ color: palette.amberInk, fontSize: 11 }}>
-            {language === "en" ? "Demo pricing only — no real payment" : "শুধুই ডেমো মূল্য — কোনো আসল পেমেন্ট নেই"}
-          </AppText>
-        </View>
-      </View>
-
-      {isPremium ? (
-        <SecondaryButton
-          title={language === "en" ? "Deactivate Premium (Demo)" : "প্রিমিয়াম নিষ্ক্রিয় করুন (ডেমো)"}
-          icon="close-circle-outline"
-          onPress={() => setIsPremium(false)}
-        />
-      ) : (
-        <PrimaryButton
-          title={language === "en" ? "Activate Premium — Demo" : "প্রিমিয়াম চালু করুন — ডেমো"}
-          icon="crown-outline"
-          onPress={() => setShowConfirmModal(true)}
-        />
-      )}
-
-      {showConfirmModal ? (
-        <Card style={{ gap: 12, backgroundColor: palette.greenSoft, borderColor: palette.green }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <MaterialCommunityIcons name="check-decagram" size={24} color={palette.green} />
-            <AppText weight="semibold" style={{ flex: 1, fontSize: 13 }}>
-              {language === "en"
-                ? "Premium activated! (Demo mode — no real payment was made)"
-                : "প্রিমিয়াম চালু হয়েছে! (ডেমো মোড — কোনো আসল পেমেন্ট হয়নি)"}
-            </AppText>
-          </View>
-          <PrimaryButton
-            title={language === "en" ? "Continue" : "চালিয়ে যান"}
-            onPress={() => {
-              setIsPremium(true);
-              setShowConfirmModal(false);
+          <AppText
+            style={{
+              fontSize: 13,
+              color: message.tone === "good" ? palette.green : palette.clay,
             }}
-          />
+          >
+            {message.text}
+          </AppText>
         </Card>
       ) : null}
 
-      <Card style={{ gap: 10 }}>
-        <SectionHeading title={language === "en" ? "Included Features" : "অন্তর্ভুক্ত সুবিধাসমূহ"} />
-        {premiumFeatures.map((feature) => (
-          <View key={feature} style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <MaterialCommunityIcons name="check-circle-outline" size={18} color={palette.green} />
-            <AppText style={{ fontSize: 12, flex: 1 }}>{feature}</AppText>
+      <SectionHeading
+        title={en ? "What Premium includes" : "প্রিমিয়ামে যা আছে"}
+      />
+      <Card style={{ gap: 8 }}>
+        {features.map((f) => (
+          <View
+            key={f}
+            style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+          >
+            <MaterialCommunityIcons
+              name="check-circle"
+              size={16}
+              color={palette.green}
+            />
+            <AppText style={{ fontSize: 13, flex: 1 }}>{f}</AppText>
           </View>
         ))}
       </Card>
 
-      <DemoNotice>
-        {language === "en"
-          ? "This is a demonstration. No payment is processed."
-          : "এটি একটি ডেমো। কোনো পেমেন্ট প্রক্রিয়া করা হয় না।"}
-      </DemoNotice>
+      {signedIn && a?.trialAvailable && !a.premium ? (
+        <Card style={{ gap: 10 }}>
+          <AppText weight="bold" style={{ fontSize: 15 }}>
+            {en
+              ? `${offers.data?.trialDays ?? 30}-day free trial`
+              : `${offers.data?.trialDays ?? 30} দিনের ফ্রি ট্রায়াল`}
+          </AppText>
+          <AppText style={{ fontSize: 12, color: palette.muted }}>
+            {en
+              ? "Free. No phone number or payment needed. One trial per account."
+              : "বিনামূল্যে। ফোন নম্বর বা পেমেন্ট লাগবে না। প্রতি অ্যাকাউন্টে একবার।"}
+          </AppText>
+          <PrimaryButton
+            title={
+              startTrial.isPending
+                ? "..."
+                : en
+                  ? "Start free trial"
+                  : "ফ্রি ট্রায়াল শুরু করুন"
+            }
+            icon="gift-outline"
+            onPress={() => startTrial.mutate()}
+          />
+        </Card>
+      ) : null}
+
+      {!caps?.payments || !caps?.phoneLink ? (
+        <DemoNotice>
+          {en
+            ? "Paid plans open once Banglalink approves NutriScan on AppLink. Until then nothing can be charged."
+            : "বাংলালিংক অ্যাপলিংকে নিউট্রিস্ক্যান অনুমোদন দিলে পেইড প্ল্যান চালু হবে। তার আগে কোনো চার্জ হবে না।"}
+        </DemoNotice>
+      ) : null}
+
+      <SectionHeading title={en ? "Monthly Premium" : "মাসিক প্রিমিয়াম"} />
+      <Card style={{ gap: 10 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <AppText weight="bold" style={{ fontSize: 15 }}>
+            {en ? "Premium" : "প্রিমিয়াম"}
+          </AppText>
+          <Pill tone="green">{en ? "৳29 / month" : "৳২৯ / মাস"}</Pill>
+        </View>
+        <AppText style={{ fontSize: 12, color: palette.muted }}>
+          {en
+            ? "Charged to your Banglalink balance. Cancel anytime."
+            : "বাংলালিংক ব্যালেন্স থেকে কাটা হবে। যেকোনো সময় বাতিল করা যায়।"}
+        </AppText>
+        {a?.premiumSource === "subscription" ? (
+          <SecondaryButton
+            title={en ? "Cancel subscription" : "সাবস্ক্রিপশন বাতিল করুন"}
+            icon="close-circle-outline"
+            onPress={() => subCancel.mutate(undefined, { onError: fail })}
+          />
+        ) : (
+          <PrimaryButton
+            title={en ? "Subscribe" : "সাবস্ক্রাইব করুন"}
+            icon="crown-outline"
+            onPress={() => {
+              if (!signedIn) return router.push("/onboarding");
+              setMessage(null);
+              setFlow({ kind: "number", target: "subscription" });
+            }}
+          />
+        )}
+      </Card>
+
+      <SectionHeading title={en ? "One-time passes" : "এককালীন পাস"} />
+      {(offers.data?.passes ?? []).map((p) => (
+        <Card key={p.sku} style={{ gap: 8 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <AppText weight="bold" style={{ fontSize: 14 }}>
+              {p.name}
+            </AppText>
+            <Pill tone="amber">{`৳${Number(p.amountBdt).toFixed(0)}`}</Pill>
+          </View>
+          <AppText style={{ fontSize: 12, color: palette.muted }}>
+            {p.disclosure}
+          </AppText>
+          <SecondaryButton
+            title={en ? "Buy" : "কিনুন"}
+            icon="cart-outline"
+            onPress={() => {
+              if (!signedIn) return router.push("/onboarding");
+              setMessage(null);
+              setFlow({ kind: "number", target: p.sku as Sku });
+            }}
+          />
+        </Card>
+      ))}
+
+      {flow.kind === "number" ? (
+        <Card style={{ gap: 10, borderColor: palette.green, borderWidth: 2 }}>
+          <AppText weight="bold" style={{ fontSize: 14 }}>
+            {en ? "Your Banglalink number" : "আপনার বাংলালিংক নম্বর"}
+          </AppText>
+          <TextInput
+            value={msisdn}
+            onChangeText={setMsisdn}
+            keyboardType="phone-pad"
+            placeholder="019XXXXXXXX"
+            placeholderTextColor={palette.muted}
+            style={input}
+          />
+          <AppText style={{ fontSize: 12 }}>
+            {disclosureFor(flow.target)}
+          </AppText>
+          <Pressable
+            accessibilityRole="checkbox"
+            accessibilityState={{ checked: agreed }}
+            onPress={() => setAgreed(!agreed)}
+            style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+          >
+            <MaterialCommunityIcons
+              name={agreed ? "checkbox-marked" : "checkbox-blank-outline"}
+              size={20}
+              color={palette.green}
+            />
+            <AppText style={{ fontSize: 12, flex: 1 }}>
+              {en ? "I agree to this charge." : "আমি এই চার্জে সম্মত।"}
+            </AppText>
+          </Pressable>
+          <PrimaryButton
+            title={busy ? "..." : en ? "Send code" : "কোড পাঠান"}
+            icon="message-text-outline"
+            onPress={() => void submitNumber()}
+          />
+          <SecondaryButton title={en ? "Cancel" : "বাতিল"} onPress={reset} />
+        </Card>
+      ) : null}
+
+      {flow.kind === "sub_code" || flow.kind === "pay_code" ? (
+        <Card style={{ gap: 10, borderColor: palette.green, borderWidth: 2 }}>
+          <AppText weight="bold" style={{ fontSize: 14 }}>
+            {flow.kind === "pay_code"
+              ? en
+                ? "Enter the payment code from the SMS"
+                : "এসএমএসের পেমেন্ট কোড লিখুন"
+              : en
+                ? "Enter the code from the SMS"
+                : "এসএমএসের কোড লিখুন"}
+          </AppText>
+          <TextInput
+            value={code}
+            onChangeText={setCode}
+            keyboardType="number-pad"
+            maxLength={8}
+            placeholder="123456"
+            placeholderTextColor={palette.muted}
+            style={input}
+          />
+          <PrimaryButton
+            title={busy ? "..." : en ? "Confirm" : "নিশ্চিত করুন"}
+            icon="check"
+            onPress={() => void submitCode()}
+          />
+          <SecondaryButton title={en ? "Cancel" : "বাতিল"} onPress={reset} />
+        </Card>
+      ) : null}
+
+      {flow.kind === "pay_wait" ? (
+        <Card style={{ gap: 8 }}>
+          <AppText
+            weight="semibold"
+            style={{
+              color: paymentDone
+                ? purchase.data?.status === "CHARGED"
+                  ? palette.green
+                  : palette.clay
+                : palette.ink,
+            }}
+          >
+            {purchase.data?.message ??
+              (en
+                ? "Confirming your payment..."
+                : "পেমেন্ট নিশ্চিত করা হচ্ছে...")}
+          </AppText>
+          {paymentDone ? (
+            <PrimaryButton
+              title={en ? "Done" : "ঠিক আছে"}
+              icon="check"
+              onPress={reset}
+            />
+          ) : (
+            <AppText style={{ fontSize: 12, color: palette.muted }}>
+              {en
+                ? "Do not pay again. This updates automatically."
+                : "আবার পেমেন্ট করবেন না। এটি নিজে থেকেই আপডেট হবে।"}
+            </AppText>
+          )}
+        </Card>
+      ) : null}
     </Screen>
   );
 }

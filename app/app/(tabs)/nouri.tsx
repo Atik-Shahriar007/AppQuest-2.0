@@ -21,10 +21,12 @@ import {
 } from "@/components/nutriscan-ui";
 import type { Palette } from "@/components/nutriscan-ui";
 import {
-  generateNouriResponse,
   getSuggestedQuestions,
   type NouriResponseCard,
 } from "@/lib/nouri-engine";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "@/lib/auth";
+import { trpc } from "@/lib/trpc";
 import { productById, t } from "@/lib/nutriscan-data";
 import { useNutriScan } from "@/lib/nutriscan-state";
 
@@ -40,8 +42,16 @@ function TypingIndicator({ palette }: { palette: Palette }) {
       Animated.loop(
         Animated.sequence([
           Animated.delay(delay),
-          Animated.timing(val, { toValue: 1, duration: 350, useNativeDriver: true }),
-          Animated.timing(val, { toValue: 0.3, duration: 350, useNativeDriver: true }),
+          Animated.timing(val, {
+            toValue: 1,
+            duration: 350,
+            useNativeDriver: true,
+          }),
+          Animated.timing(val, {
+            toValue: 0.3,
+            duration: 350,
+            useNativeDriver: true,
+          }),
           Animated.delay(Math.max(0, 400 - delay)),
         ]),
       );
@@ -65,7 +75,11 @@ function TypingIndicator({ palette }: { palette: Palette }) {
           justifyContent: "center",
         }}
       >
-        <MaterialCommunityIcons name="robot-outline" size={16} color={palette.green} />
+        <MaterialCommunityIcons
+          name="robot-outline"
+          size={16}
+          color={palette.green}
+        />
       </View>
       <View
         style={{
@@ -296,9 +310,7 @@ export default function NouriTab() {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
-  const [cardsByMsgCount, setCardsByMsgCount] = useState<
-    Record<string, NouriResponseCard[]>
-  >({});
+  const [cardsByMsgCount] = useState<Record<string, NouriResponseCard[]>>({});
 
   const scrollRef = useRef<ScrollView>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -329,34 +341,90 @@ export default function NouriTab() {
     return () => clearTimeout(id);
   }, [nouriHistory.length, isTyping]);
 
-  const handleSend = (overrideText?: string) => {
+  const auth = useAuth();
+  const userId = auth.session?.user.id ?? null;
+  const sendToNouri = trpc.nouri.send.useMutation();
+  const memories = trpc.nouri.memories.useQuery(undefined, {
+    enabled: Boolean(userId),
+  });
+  const setMemory = trpc.nouri.setMemory.useMutation({
+    onSuccess: () => memories.refetch(),
+  });
+  const proposed = (memories.data ?? [])
+    .filter((m) => m.status === "proposed")
+    .slice(0, 2);
+  const [conversationId, setConversationId] = useState<string | undefined>(
+    undefined,
+  );
+  const conversationKey = userId ? `nouri-conversation:${userId}` : null;
+
+  useEffect(() => {
+    if (!conversationKey) return;
+    AsyncStorage.getItem(conversationKey).then((v) =>
+      setConversationId(v ?? undefined),
+    );
+  }, [conversationKey]);
+
+  const errorText = (message: string): string => {
+    const en: Record<string, string> = {
+      daily_limit:
+        "You have used today's Nouri messages. A Nouri Chat Pass or Premium gives you more.",
+      ai_busy: "Nouri is busy right now. Please try again in a minute.",
+      ai_budget:
+        "Nouri is resting for the rest of the month. Please try again later.",
+      ai_unavailable: "Nouri could not answer right now. Please try again.",
+    };
+    const bn: Record<string, string> = {
+      daily_limit:
+        "আজকের নৌরি বার্তা শেষ। নৌরি চ্যাট পাস বা প্রিমিয়ামে আরও বার্তা পাবেন।",
+      ai_busy: "নৌরি এখন ব্যস্ত। এক মিনিট পরে আবার চেষ্টা করুন।",
+      ai_budget: "এই মাসে নৌরি বিশ্রামে আছে। পরে আবার চেষ্টা করুন।",
+      ai_unavailable: "নৌরি এখন উত্তর দিতে পারছে না। আবার চেষ্টা করুন।",
+    };
+    const table = language === "en" ? en : bn;
+    return table[message] ?? table.ai_unavailable;
+  };
+
+  const handleSend = async (overrideText?: string) => {
     const raw = typeof overrideText === "string" ? overrideText : inputText;
     const trimmed = raw.trim();
     if (!trimmed || isTyping) return;
 
     addNouriMessage({ role: "user", text: trimmed });
-    if (typeof overrideText !== "string") {
-      setInputText("");
-    }
-    setIsTyping(true);
+    if (typeof overrideText !== "string") setInputText("");
 
-    const expectedIndex = nouriHistory.length + 1;
-    timerRef.current = setTimeout(() => {
-      const response = generateNouriResponse(
-        trimmed,
-        language,
-        healthProfile,
-        lastProductId,
-      );
-      addNouriMessage({ role: "nouri", text: response.text });
-      if (response.cards && response.cards.length > 0) {
-        setCardsByMsgCount((prev) => ({
-          ...prev,
-          [String(expectedIndex)]: response.cards!,
-        }));
+    if (!userId) {
+      addNouriMessage({
+        role: "nouri",
+        text:
+          language === "en"
+            ? "Please sign in to chat with me. I use your health profile to personalise answers, so I need an account."
+            : "আমার সঙ্গে কথা বলতে সাইন ইন করুন। উত্তর ব্যক্তিগত করতে আমি আপনার স্বাস্থ্য প্রোফাইল ব্যবহার করি, তাই অ্যাকাউন্ট লাগবে।",
+      });
+      return;
+    }
+
+    setIsTyping(true);
+    try {
+      const reply = await sendToNouri.mutateAsync({
+        conversationId,
+        message: trimmed,
+        productId: lastProductId,
+      });
+      if (reply.conversationId !== conversationId) {
+        setConversationId(reply.conversationId);
+        if (conversationKey)
+          void AsyncStorage.setItem(conversationKey, reply.conversationId);
       }
+      addNouriMessage({ role: "nouri", text: reply.text });
+      if (reply.proposedPreferences.length) void memories.refetch();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "";
+      addNouriMessage({ role: "nouri", text: errorText(message) });
+      if (message === "daily_limit") router.push("/account/premium" as any);
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
   const canSend = inputText.trim().length > 0 && !isTyping;
@@ -390,7 +458,9 @@ export default function NouriTab() {
               {t(language, "nouri")}
             </AppText>
             <AppText style={{ fontSize: 11, color: palette.muted }}>
-              {language === "en" ? "AI Nutrition Assistant" : "AI পুষ্টি সহকারী"}
+              {language === "en"
+                ? "AI Nutrition Assistant"
+                : "AI পুষ্টি সহকারী"}
             </AppText>
           </View>
           <Pressable
@@ -417,8 +487,8 @@ export default function NouriTab() {
           <View style={styles.contextNoticeWrap}>
             <DemoNotice>
               {language === "en"
-                ? "Nouri provides general nutrition information for this prototype and is not a substitute for professional medical advice."
-                : "নৌরি এই প্রোটোটাইপে সাধারণ পুষ্টি-তথ্য দেয় এবং এটি পেশাদার চিকিৎসা-পরামর্শের বিকল্প নয়।"}
+                ? "Nouri is an AI assistant. It answers from NutriScan\u2019s product data and your profile, can make mistakes, and is not a substitute for professional medical advice."
+                : "নৌরি একটি এআই সহকারী। এটি নিউট্রিস্ক্যানের পণ্য-তথ্য ও আপনার প্রোফাইল থেকে উত্তর দেয়, ভুল হতে পারে, এবং পেশাদার চিকিৎসা-পরামর্শের বিকল্প নয়।"}
             </DemoNotice>
           </View>
         ) : null}
@@ -438,7 +508,14 @@ export default function NouriTab() {
               { opacity: pressed ? 0.84 : 1 },
             ]}
           >
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+                flex: 1,
+              }}
+            >
               <MaterialCommunityIcons
                 name="heart-pulse"
                 size={16}
@@ -485,7 +562,10 @@ export default function NouriTab() {
                   color={palette.green}
                 />
               </View>
-              <AppText weight="bold" style={{ fontSize: 22, textAlign: "center" }}>
+              <AppText
+                weight="bold"
+                style={{ fontSize: 22, textAlign: "center" }}
+              >
                 {language === "en" ? "Hi! I'm Nouri" : "হ্যালো! আমি নৌরি"}
               </AppText>
               <AppText
@@ -624,6 +704,58 @@ export default function NouriTab() {
 
           {isTyping ? <TypingIndicator palette={palette} /> : null}
         </ScrollView>
+
+        {proposed.length ? (
+          <View style={{ paddingHorizontal: 16, paddingBottom: 8, gap: 6 }}>
+            {proposed.map((m) => (
+              <View
+                key={m.id}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: 10,
+                  borderRadius: 12,
+                  backgroundColor: palette.amberSoft,
+                }}
+              >
+                <AppText
+                  style={{ flex: 1, fontSize: 12, color: palette.amberInk }}
+                >
+                  {language === "en"
+                    ? `Remember: "${m.text}"?`
+                    : `মনে রাখব: "${m.text}"?`}
+                </AppText>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() =>
+                    setMemory.mutate({ id: m.id, status: "confirmed" })
+                  }
+                >
+                  <AppText
+                    weight="semibold"
+                    style={{ fontSize: 12, color: palette.green }}
+                  >
+                    {language === "en" ? "Yes" : "হ্যাঁ"}
+                  </AppText>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() =>
+                    setMemory.mutate({ id: m.id, status: "rejected" })
+                  }
+                >
+                  <AppText
+                    weight="semibold"
+                    style={{ fontSize: 12, color: palette.muted }}
+                  >
+                    {language === "en" ? "No" : "না"}
+                  </AppText>
+                </Pressable>
+              </View>
+            ))}
+          </View>
+        ) : null}
 
         {/* Sticky Input Bar */}
         <View style={styles.inputBar}>
