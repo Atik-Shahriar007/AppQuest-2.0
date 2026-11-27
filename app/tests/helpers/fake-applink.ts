@@ -16,6 +16,7 @@ const SERVICE_BY_PATH: Record<string, string> = {
   "/sms/send": "sms-send",
   "/ussd/send": "ussd-send",
   "/subscription/send": "subscription-register",
+  "/subscription/getSubscriberChargingInfo": "subscription-charging-info",
   "/otp/request": "otp-request",
   "/otp/verify": "otp-verify",
   "/caas/direct/debit": "caas-otp-generation",

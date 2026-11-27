@@ -98,8 +98,11 @@ export async function complete(
     max_tokens: number;
     response_format?: Record<string, unknown>;
     temperature?: number;
+    /** Offline jobs may wait longer than the 60 s default used for users. */
+    timeoutMs?: number;
   },
 ): Promise<ChatResponse> {
+  const { timeoutMs, ...requestBody } = body;
   if (!env.OPENROUTER_API_KEY) throw new AiUnavailableError("no_key");
   const models = MODELS[tier];
   if (models.length === 0) throw new AiUnavailableError("no_key");
@@ -115,14 +118,14 @@ export async function complete(
       },
       body: JSON.stringify({
         models,
-        ...body,
+        ...requestBody,
         ...(body.tools ? { tool_choice: "auto" } : {}),
         provider: {
           require_parameters: true,
           data_collection: env.OPENROUTER_DATA_COLLECTION,
         },
       }),
-      signal: AbortSignal.timeout(TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs ?? TIMEOUT_MS),
     });
 
   let res: Response;

@@ -45,6 +45,7 @@ suite("AppLink flows (integration)", () => {
       APPLINK_OTP_REQUEST_URL: fake.url("/otp/request"),
       APPLINK_OTP_VERIFY_URL: fake.url("/otp/verify"),
       APPLINK_SUBSCRIPTION_SEND_URL: fake.url("/subscription/send"),
+      APPLINK_SUBSCRIPTION_CHARGING_INFO_URL: fake.url("/subscription/getSubscriberChargingInfo"),
       APPLINK_SMS_SEND_URL: fake.url("/sms/send"),
       APPLINK_USSD_SEND_URL: fake.url("/ussd/send"),
     });
@@ -418,6 +419,29 @@ suite("AppLink flows (integration)", () => {
     const mine = await as(owner).community.myContributions();
     expect(mine[0]).toMatchObject({ status: "approved", reviewerNote: "Thanks" });
     expect((await as(owner).me.whoami()).isAdmin).toBe(false);
+  });
+
+  it("reconciliation: the sweep updates stale mirrors; expired OTP requests are closed", async () => {
+    const { sweepSubscriptions, expireOtpRequests } = await import("../server/jobs/reconcile");
+    await m.db.insert(m.schema.subscriptions).values({
+      subscriberId: "tel:8801912345678",
+      status: "REGISTERED",
+      confirmedBy: "notification",
+      lastConfirmedAt: new Date(Date.now() - 3 * 86_400_000),
+    });
+    fake.next("/subscription/getSubscriberChargingInfo", (b) => ({
+      version: "1.0",
+      statusCode: "S1000",
+      statusDetail: "Success.",
+      destinationResponses: (b.subscriberIds as string[]).map((id) => ({ subscriberId: id, subscriptionStatus: "TEMPORARY_BLOCKED", statusCode: "S1000", statusDetail: "ok" })),
+    }));
+    expect(await sweepSubscriptions(m.db)).toEqual({ checked: 1, changed: 1 });
+    const [row] = await m.db.select().from(m.schema.subscriptions);
+    expect(row).toMatchObject({ status: "TEMPORARY_BLOCKED", confirmedBy: "sweep" });
+
+    const u = user();
+    await m.db.insert(m.schema.otpRequests).values({ userId: u, msisdnHash: "h", purpose: "subscribe", expiresAt: new Date(Date.now() - 1000) });
+    expect(await expireOtpRequests(m.db)).toBe(1);
   });
 });
 

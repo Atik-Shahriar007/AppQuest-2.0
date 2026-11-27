@@ -11,6 +11,7 @@ import { catalogVersion } from "./catalog";
 import { db } from "./db/client";
 import { env } from "./env";
 import { runDueReminders } from "./jobs/reminders";
+import { expireOtpRequests, flagStaleCharges, sweepSubscriptions } from "./jobs/reconcile";
 import { appRouter } from "./routers";
 import { createContext } from "./trpc";
 
@@ -110,6 +111,9 @@ const every = (ms: number, name: string, fn: () => Promise<unknown>) =>
 if (env.NODE_ENV !== "test") {
   every(30_000, "applink-events", () => processPendingEvents());
   every(15 * 60_000, "reminders", () => runDueReminders(db));
+  every(10 * 60_000, "otp-expiry", () => expireOtpRequests(db));
+  every(30 * 60_000, "stale-charges", () => flagStaleCharges(db));
+  every(6 * 3600_000, "subscription-sweep", () => sweepSubscriptions(db));
 }
 
 for (const sig of ["SIGINT", "SIGTERM"] as const) {
