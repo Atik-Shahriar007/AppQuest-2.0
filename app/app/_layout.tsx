@@ -1,0 +1,198 @@
+import "@/global.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Redirect, Stack, useSegments } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useMemo, useState } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-reanimated";
+import { ActivityIndicator, Image, Platform, View } from "react-native";
+import { useFonts } from "expo-font";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  NotoSansBengali_400Regular,
+  NotoSansBengali_500Medium,
+  NotoSansBengali_600SemiBold,
+  NotoSansBengali_700Bold,
+} from "@expo-google-fonts/noto-sans-bengali";
+import "@/lib/_core/nativewind-pressable";
+import { ThemeProvider } from "@/lib/theme-provider";
+import {
+  SafeAreaFrameContext,
+  SafeAreaInsetsContext,
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from "react-native-safe-area-context";
+import type { EdgeInsets, Rect } from "react-native-safe-area-context";
+import { trpc, createTRPCClient } from "@/lib/trpc";
+import { AuthProvider } from "@/lib/auth";
+import { ServerSync } from "@/lib/server-sync";
+import { NutriScanProvider, useNutriScan } from "@/lib/nutriscan-state";
+import { AppText, usePalette } from "@/components/nutriscan-ui";
+
+const DEFAULT_WEB_INSETS: EdgeInsets = { top: 0, right: 0, bottom: 0, left: 0 };
+const DEFAULT_WEB_FRAME: Rect = { x: 0, y: 0, width: 0, height: 0 };
+const nutriScanMark = require("../assets/images/nutriscan-mark.png");
+
+export const unstable_settings = { anchor: "(tabs)" };
+
+function AppNavigator() {
+  const { appearance, language, ready, hasCompletedOnboarding } =
+    useNutriScan();
+  const colors = usePalette();
+  const segments = useSegments();
+  if (!ready) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.paper,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 32,
+          gap: 14,
+        }}
+      >
+        <View
+          style={{
+            width: 82,
+            height: 82,
+            borderRadius: 26,
+            backgroundColor: colors.card,
+            borderWidth: 1,
+            borderColor: colors.line,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            source={nutriScanMark}
+            resizeMode="contain"
+            style={{ width: 76, height: 76, borderRadius: 22 }}
+          />
+        </View>
+        <AppText weight="semibold" style={{ fontSize: 19 }}>
+          {language === "en"
+            ? "Preparing your shelf"
+            : "আপনার শেলফ প্রস্তুত হচ্ছে"}
+        </AppText>
+        <AppText
+          style={{
+            color: colors.muted,
+            fontSize: 12,
+            textAlign: "center",
+            lineHeight: 19,
+          }}
+        >
+          {language === "en"
+            ? "Loading your on-device preferences…"
+            : "আপনার ডিভাইসের পছন্দগুলো লোড হচ্ছে…"}
+        </AppText>
+        <ActivityIndicator color={colors.green} />
+      </View>
+    );
+  }
+  const inOnboarding = segments[0] === "onboarding";
+  if (!hasCompletedOnboarding && !inOnboarding) {
+    return <Redirect href="/onboarding" />;
+  }
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.paper }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.paper },
+        }}
+      >
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+        <Stack.Screen name="scan" options={{ presentation: "modal" }} />
+        <Stack.Screen name="compare" options={{ presentation: "card" }} />
+        <Stack.Screen name="product/[id]" options={{ presentation: "card" }} />
+        <Stack.Screen
+          name="ingredient/[id]"
+          options={{ presentation: "card" }}
+        />
+        <Stack.Screen name="account/health-profile" />
+        <Stack.Screen name="account/nutrition-goals" />
+        <Stack.Screen name="account/preferences" />
+        <Stack.Screen name="account/premium" />
+        <Stack.Screen name="account/expiry-reminders" />
+        <Stack.Screen name="account/tips" />
+        <Stack.Screen name="account/settings" />
+      </Stack>
+      <StatusBar style={appearance === "dark" ? "light" : "dark"} />
+    </View>
+  );
+}
+
+export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    ...MaterialCommunityIcons.font,
+    NotoSansBengali_400Regular,
+    NotoSansBengali_500Medium,
+    NotoSansBengali_600SemiBold,
+    NotoSansBengali_700Bold,
+  });
+  const initialInsets = initialWindowMetrics?.insets ?? DEFAULT_WEB_INSETS;
+  const initialFrame = initialWindowMetrics?.frame ?? DEFAULT_WEB_FRAME;
+  const [insets] = useState<EdgeInsets>(initialInsets);
+  const [frame] = useState<Rect>(initialFrame);
+
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1 } },
+      }),
+  );
+  const [trpcClient] = useState(() => createTRPCClient());
+  const providerInitialMetrics = useMemo(() => {
+    const metrics = initialWindowMetrics ?? {
+      insets: initialInsets,
+      frame: initialFrame,
+    };
+    return {
+      ...metrics,
+      insets: {
+        ...metrics.insets,
+        top: Math.max(metrics.insets.top, 16),
+        bottom: Math.max(metrics.insets.bottom, 12),
+      },
+    };
+  }, [initialInsets, initialFrame]);
+
+  if (!fontsLoaded) return null;
+  const content = (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <NutriScanProvider>
+            <AuthProvider>
+              <ServerSync />
+              <AppNavigator />
+            </AuthProvider>
+          </NutriScanProvider>
+        </QueryClientProvider>
+      </trpc.Provider>
+    </GestureHandlerRootView>
+  );
+  if (Platform.OS === "web") {
+    return (
+      <ThemeProvider>
+        <SafeAreaProvider initialMetrics={providerInitialMetrics}>
+          <SafeAreaFrameContext.Provider value={frame}>
+            <SafeAreaInsetsContext.Provider value={insets}>
+              {content}
+            </SafeAreaInsetsContext.Provider>
+          </SafeAreaFrameContext.Provider>
+        </SafeAreaProvider>
+      </ThemeProvider>
+    );
+  }
+  return (
+    <ThemeProvider>
+      <SafeAreaProvider initialMetrics={providerInitialMetrics}>
+        {content}
+      </SafeAreaProvider>
+    </ThemeProvider>
+  );
+}

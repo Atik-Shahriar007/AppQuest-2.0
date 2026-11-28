@@ -1,0 +1,5 @@
+# Automatic HTTPS for the API domain. AppLink callbacks must be public HTTPS URLs.
+{$API_DOMAIN} {
+	encode gzip
+	reverse_proxy api:3000
+}
