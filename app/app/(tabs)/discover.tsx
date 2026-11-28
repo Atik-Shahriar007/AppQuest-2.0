@@ -121,10 +121,10 @@ export default function DiscoverScreen() {
             })}
           >
             <AppText
-              weight="bold"
+              weight="semibold"
               style={{
                 color: palette.amberInk,
-                fontSize: 11,
+                fontSize: 12,
                 textDecorationLine: "underline",
               }}
             >
@@ -226,7 +226,7 @@ export default function DiscoverScreen() {
                 weight="semibold"
                 style={{
                   color: active ? palette.white : palette.ink,
-                  fontSize: 11,
+                  fontSize: 12,
                 }}
               >
                 {t(language, filterKey(item))}
@@ -314,7 +314,7 @@ export default function DiscoverScreen() {
               </View>
               <View style={{ padding: 12, gap: 5 }}>
                 <AppText
-                  style={{ color: palette.muted, fontSize: 10, lineHeight: 15 }}
+                  style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
                 >
                   {productBrand(product, language)}
                 </AppText>
@@ -325,7 +325,7 @@ export default function DiscoverScreen() {
                 >
                   {productName(product, language)}
                 </AppText>
-                <AppText style={{ color: palette.muted, fontSize: 10 }}>
+                <AppText style={{ color: palette.muted, fontSize: 12 }}>
                   {product.size[language]}
                 </AppText>
                 <View
@@ -368,7 +368,7 @@ export default function DiscoverScreen() {
                 : "মিল থাকা পণ্য নেই"}
           </AppText>
           <AppText
-            style={{ color: palette.muted, fontSize: 11, textAlign: "center" }}
+            style={{ color: palette.muted, fontSize: 12, textAlign: "center" }}
           >
             {halalMode
               ? t(language, "halalEmptyBody")
@@ -413,7 +413,7 @@ export default function DiscoverScreen() {
           style={{
             flex: 1,
             color: palette.amberInk,
-            fontSize: 11,
+            fontSize: 12,
             lineHeight: 17,
           }}
         >

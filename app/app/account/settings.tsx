@@ -210,14 +210,14 @@ export default function SettingsScreen() {
               />
             </>
           ) : sms.data && !sms.data.hasLinkedNumber ? (
-            <AppText style={{ fontSize: 11, color: palette.muted }}>
+            <AppText style={{ fontSize: 12, color: palette.muted }}>
               {language === "en"
                 ? "SMS alerts need a linked Banglalink number. Your number is linked when you subscribe to Premium or buy a pass."
                 : "এসএমএস সতর্কতার জন্য বাংলালিংক নম্বর যুক্ত থাকতে হবে। প্রিমিয়াম নিলে বা পাস কিনলে নম্বর যুক্ত হয়।"}
             </AppText>
           ) : sms.data ? (
             <>
-              <AppText style={{ fontSize: 11, color: palette.muted }}>
+              <AppText style={{ fontSize: 12, color: palette.muted }}>
                 {sms.data.disclosure}
               </AppText>
               <Pressable

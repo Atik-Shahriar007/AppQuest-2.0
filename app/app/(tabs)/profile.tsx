@@ -56,7 +56,7 @@ function MenuRow({
         </AppText>
         {subtitle ? (
           <AppText
-            style={{ color: palette.muted, fontSize: 11, lineHeight: 15 }}
+            style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
           >
             {subtitle}
           </AppText>
@@ -151,7 +151,7 @@ export default function ProfileHubScreen() {
           >
             {initials ? (
               <AppText
-                weight="bold"
+                weight="semibold"
                 style={{ fontSize: 20, color: palette.green }}
               >
                 {initials}
@@ -173,7 +173,7 @@ export default function ProfileHubScreen() {
                 flexWrap: "wrap",
               }}
             >
-              <AppText weight="bold" style={{ fontSize: 17 }}>
+              <AppText weight="semibold" style={{ fontSize: 17 }}>
                 {displayName}
               </AppText>
               {isPremium ? <PremiumBadge /> : null}
@@ -477,7 +477,7 @@ export default function ProfileHubScreen() {
         style={{
           color: palette.muted,
           textAlign: "center",
-          fontSize: 11,
+          fontSize: 12,
           paddingBottom: 8,
         }}
       >

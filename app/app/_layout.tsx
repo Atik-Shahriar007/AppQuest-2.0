@@ -70,7 +70,7 @@ function AppNavigator() {
             style={{ width: 76, height: 76, borderRadius: 22 }}
           />
         </View>
-        <AppText weight="bold" style={{ fontSize: 19 }}>
+        <AppText weight="semibold" style={{ fontSize: 19 }}>
           {language === "en"
             ? "Preparing your shelf"
             : "আপনার শেলফ প্রস্তুত হচ্ছে"}

@@ -148,7 +148,7 @@ export default function OnboardingScreen() {
           : "পুষ্টি-তথ্য, অ্যাডিটিভ এবং লেবেলের বিবরণ সহজে দেখুন।",
     },
     {
-      icon: "robot-outline" as const,
+      icon: "message-text-outline" as const,
       title:
         language === "en"
           ? "Get Personalized Insights"
@@ -195,12 +195,11 @@ export default function OnboardingScreen() {
             </View>
             <View style={{ alignItems: "center", gap: 8 }}>
               <AppText
-                weight="bold"
+                weight="semibold"
                 style={{
                   fontSize: 32,
                   lineHeight: 40,
                   textAlign: "center",
-                  letterSpacing: -0.6,
                 }}
               >
                 {language === "en"
@@ -248,7 +247,7 @@ export default function OnboardingScreen() {
         ) : slide === 1 ? (
           <View style={{ gap: 16 }}>
             <View style={{ gap: 6 }}>
-              <AppText weight="bold" style={{ fontSize: 26, lineHeight: 34 }}>
+              <AppText weight="semibold" style={{ fontSize: 26, lineHeight: 34 }}>
                 {language === "en" ? "What NutriScan does" : "NutriScan যা করে"}
               </AppText>
               <AppText
@@ -297,7 +296,7 @@ export default function OnboardingScreen() {
         ) : (
           <View style={{ gap: 18 }}>
             <View style={{ gap: 6 }}>
-              <AppText weight="bold" style={{ fontSize: 26, lineHeight: 34 }}>
+              <AppText weight="semibold" style={{ fontSize: 26, lineHeight: 34 }}>
                 {authTab === "signin"
                   ? language === "en"
                     ? "Welcome back"

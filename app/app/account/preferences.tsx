@@ -103,7 +103,7 @@ export default function PreferencesScreen() {
         {childSafeMode ? (
           <Card style={{ flexDirection: "row", alignItems: "flex-start", gap: 10, backgroundColor: palette.amberSoft }}>
             <MaterialCommunityIcons name="information-outline" size={18} color={palette.amberInk} />
-            <AppText style={{ flex: 1, color: palette.amberInk, fontSize: 11, lineHeight: 17 }}>
+            <AppText style={{ flex: 1, color: palette.amberInk, fontSize: 12, lineHeight: 17 }}>
               {language === "en"
                 ? "Products with an NQSS below 60 will be hidden in Discover, search results, and recommendations."
                 : "৬০-এর নিচে NQSS স্কোর থাকা পণ্যগুলো Discover, সার্চ ফলাফল এবং সুপারিশে লুকানো থাকবে।"}

@@ -76,7 +76,7 @@ function TypingIndicator({ palette }: { palette: Palette }) {
         }}
       >
         <MaterialCommunityIcons
-          name="robot-outline"
+          name="message-text-outline"
           size={16}
           color={palette.green}
         />
@@ -245,7 +245,7 @@ const createStyles = (palette: Palette) =>
       padding: 12,
     },
     timestamp: {
-      fontSize: 10,
+      fontSize: 12,
       color: palette.muted,
       paddingHorizontal: 4,
     },
@@ -448,16 +448,16 @@ export default function NouriTab() {
         <View style={styles.header}>
           <View style={styles.headerAvatar}>
             <MaterialCommunityIcons
-              name="robot-outline"
+              name="message-text-outline"
               size={22}
               color={palette.green}
             />
           </View>
           <View style={{ flex: 1, gap: 1 }}>
-            <AppText weight="bold" style={{ fontSize: 17 }}>
+            <AppText weight="semibold" style={{ fontSize: 17 }}>
               {t(language, "nouri")}
             </AppText>
-            <AppText style={{ fontSize: 11, color: palette.muted }}>
+            <AppText style={{ fontSize: 12, color: palette.muted }}>
               {language === "en"
                 ? "AI Nutrition Assistant"
                 : "AI পুষ্টি সহকারী"}
@@ -530,7 +530,7 @@ export default function NouriTab() {
                     ? "Nouri sees your health profile"
                     : "নৌরি আপনার স্বাস্থ্য প্রোফাইল দেখছে"}
                 </AppText>
-                <AppText style={{ fontSize: 10, color: palette.amberInk }}>
+                <AppText style={{ fontSize: 12, color: palette.amberInk }}>
                   {language === "en"
                     ? `${activePreferencesCount} preferences active`
                     : `${activePreferencesCount}টি পছন্দ সক্রিয়`}
@@ -557,16 +557,16 @@ export default function NouriTab() {
             <View style={styles.welcomeWrap}>
               <View style={styles.welcomeAvatar}>
                 <MaterialCommunityIcons
-                  name="robot-outline"
-                  size={36}
+                  name="message-text-outline"
+                  size={32}
                   color={palette.green}
                 />
               </View>
               <AppText
-                weight="bold"
+                weight="semibold"
                 style={{ fontSize: 22, textAlign: "center" }}
               >
-                {language === "en" ? "Hi! I'm Nouri" : "হ্যালো! আমি নৌরি"}
+                {language === "en" ? "Nouri" : "নৌরি"}
               </AppText>
               <AppText
                 style={{
@@ -636,7 +636,7 @@ export default function NouriTab() {
                 <View key={msg.id} style={styles.nouriRow}>
                   <View style={styles.nouriMiniAvatar}>
                     <MaterialCommunityIcons
-                      name="robot-outline"
+                      name="message-text-outline"
                       size={16}
                       color={palette.green}
                     />
@@ -764,8 +764,8 @@ export default function NouriTab() {
             onChangeText={setInputText}
             placeholder={
               language === "en"
-                ? "Ask Nouri anything..."
-                : "নৌরিকে যেকোনো কিছু জিজ্ঞেস করুন..."
+                ? "Ask Nouri"
+                : "নৌরিকে জিজ্ঞাসা করুন"
             }
             placeholderTextColor={palette.muted}
             multiline

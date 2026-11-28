@@ -19,8 +19,8 @@ export default function TabLayout() {
       tabBarButton: HapticTab,
       tabBarActiveTintColor: palette.green,
       tabBarInactiveTintColor: palette.muted,
-      tabBarLabelStyle: { fontFamily: fontFamily(language, "medium"), fontSize: 10, marginTop: 1 },
-      tabBarStyle: { paddingTop: 7, paddingBottom: bottomPadding, height: 68 + bottomPadding, backgroundColor: palette.card, borderTopColor: palette.line, borderTopWidth: 1, elevation: 0 },
+      tabBarLabelStyle: { fontFamily: fontFamily(language, "medium"), fontSize: 11, marginTop: 2 },
+      tabBarStyle: { paddingTop: 8, paddingBottom: bottomPadding, height: 68 + bottomPadding, backgroundColor: palette.card, borderTopColor: palette.line, borderTopWidth: 1, elevation: 0 },
     }}>
       <Tabs.Screen
         name="index"
@@ -62,11 +62,8 @@ export default function TabLayout() {
                   height: 56,
                   alignItems: "center",
                   justifyContent: "center",
-                  shadowColor: palette.green,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.35,
-                  shadowRadius: 8,
-                  elevation: 6,
+                  borderWidth: 2,
+                  borderColor: palette.card,
                 }}
               >
                 <MaterialCommunityIcons name="barcode-scan" size={28} color={palette.onGreen} />
@@ -79,7 +76,7 @@ export default function TabLayout() {
         name="nouri"
         options={{
           title: t(language, "nouri"),
-          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="robot-outline" size={21} color={color} />,
+          tabBarIcon: ({ color }) => <MaterialCommunityIcons name="message-text-outline" size={21} color={color} />,
         }}
       />
       <Tabs.Screen

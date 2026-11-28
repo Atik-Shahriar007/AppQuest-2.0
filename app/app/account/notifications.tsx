@@ -95,7 +95,7 @@ export default function NotificationsScreen() {
             <AppText style={{ fontSize: 12, color: palette.muted }}>
               {n.body}
             </AppText>
-            <AppText style={{ fontSize: 10, color: palette.muted }}>
+            <AppText style={{ fontSize: 12, color: palette.muted }}>
               {date(n.createdAt)}
             </AppText>
           </Card>
@@ -138,11 +138,11 @@ export default function NotificationsScreen() {
               ) : null;
             })}
             <Pressable onPress={() => void Linking.openURL(r.sourceUrl)}>
-              <AppText style={{ fontSize: 11, color: palette.green }}>
+              <AppText style={{ fontSize: 12, color: palette.green }}>
                 {en ? "Source" : "উৎস"}: {r.sourceUrl}
               </AppText>
             </Pressable>
-            <AppText style={{ fontSize: 10, color: palette.muted }}>
+            <AppText style={{ fontSize: 12, color: palette.muted }}>
               {date(r.approvedAt)}
             </AppText>
           </Card>

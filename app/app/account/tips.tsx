@@ -111,13 +111,13 @@ export default function TipsScreen() {
             />
           </View>
           <View style={{ flex: 1, gap: 4 }}>
-            <AppText weight="bold" style={{ fontSize: 14 }}>
+            <AppText weight="semibold" style={{ fontSize: 14 }}>
               {tip.title[language]}
             </AppText>
             <AppText style={{ color: palette.ink, fontSize: 12, lineHeight: 18 }}>
               {tip.body[language]}
             </AppText>
-            <AppText style={{ color: palette.muted, fontSize: 10, marginTop: 2 }}>
+            <AppText style={{ color: palette.muted, fontSize: 12, marginTop: 2 }}>
               {tip.source}
             </AppText>
           </View>
@@ -179,7 +179,7 @@ export default function TipsScreen() {
 
       <SecondaryButton
         title={language === "en" ? "Ask Nouri for more" : "আরও জানতে নৌরিকে জিজ্ঞাসা করুন"}
-        icon="robot-outline"
+        icon="message-text-outline"
         onPress={() => router.push("/(tabs)/nouri")}
       />
     </Screen>

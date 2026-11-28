@@ -201,7 +201,7 @@ export default function ContributeScreen() {
           onPress={() => addPhoto("back")}
           action={t(language, "addPhoto")}
         />
-        <AppText style={{ color: palette.muted, fontSize: 10, lineHeight: 16 }}>
+        <AppText style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}>
           {t(language, "uploadHint")}
         </AppText>
       </View>
@@ -265,7 +265,7 @@ export default function ContributeScreen() {
                 weight="semibold"
                 style={{
                   color: item === category ? palette.white : palette.ink,
-                  fontSize: 10,
+                  fontSize: 12,
                   textAlign: "center",
                 }}
               >
@@ -293,7 +293,7 @@ export default function ContributeScreen() {
           <AppText
             style={{
               color: palette.muted,
-              fontSize: 11,
+              fontSize: 12,
               lineHeight: 17,
               textAlign: "center",
             }}
@@ -304,7 +304,7 @@ export default function ContributeScreen() {
           </AppText>
         ) : null}
         <AppText
-          style={{ color: palette.muted, fontSize: 10, textAlign: "center" }}
+          style={{ color: palette.muted, fontSize: 12, textAlign: "center" }}
         >
           {t(language, "pointsAfterReview")}
         </AppText>
@@ -326,7 +326,7 @@ export default function ContributeScreen() {
             size={18}
             color={palette.green}
           />
-          <AppText style={{ flex: 1, color: palette.green, fontSize: 11 }}>
+          <AppText style={{ flex: 1, color: palette.green, fontSize: 12 }}>
             {notice}
           </AppText>
         </View>
@@ -375,11 +375,11 @@ export default function ContributeScreen() {
                   <AppText weight="semibold" style={{ fontSize: 12 }}>
                     {c.name}
                   </AppText>
-                  <AppText style={{ color: palette.muted, fontSize: 10 }}>
+                  <AppText style={{ color: palette.muted, fontSize: 12 }}>
                     {c.brand || c.barcode}
                   </AppText>
                   {c.reviewerNote ? (
-                    <AppText style={{ color: palette.muted, fontSize: 10 }}>
+                    <AppText style={{ color: palette.muted, fontSize: 12 }}>
                       {c.reviewerNote}
                     </AppText>
                   ) : null}
@@ -418,7 +418,7 @@ function Field({
   const palette = usePalette();
   return (
     <View style={{ gap: 5 }}>
-      <AppText weight="semibold" style={{ fontSize: 11 }}>
+      <AppText weight="semibold" style={{ fontSize: 12 }}>
         {label}
       </AppText>
       <TextInput
@@ -494,7 +494,7 @@ function PhotoSlot({
           >
             <AppText
               weight="semibold"
-              style={{ color: palette.green, fontSize: 10 }}
+              style={{ color: palette.green, fontSize: 12 }}
             >
               {action}
             </AppText>
@@ -510,7 +510,7 @@ function PhotoSlot({
           <AppText weight="semibold" style={{ fontSize: 12, marginTop: 7 }}>
             {action}
           </AppText>
-          <AppText style={{ fontSize: 10, color: palette.muted, marginTop: 2 }}>
+          <AppText style={{ fontSize: 12, color: palette.muted, marginTop: 2 }}>
             {label}
           </AppText>
         </>

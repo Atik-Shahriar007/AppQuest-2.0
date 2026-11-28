@@ -275,7 +275,7 @@ export default function PremiumScreen() {
             color={palette.onGreen}
           />
           <AppText
-            weight="bold"
+            weight="semibold"
             style={{ fontSize: 18, color: palette.onGreen }}
           >
             {signedIn
@@ -351,7 +351,7 @@ export default function PremiumScreen() {
 
       {signedIn && a?.trialAvailable && !a.premium ? (
         <Card style={{ gap: 10 }}>
-          <AppText weight="bold" style={{ fontSize: 15 }}>
+          <AppText weight="semibold" style={{ fontSize: 15 }}>
             {en
               ? `${offers.data?.trialDays ?? 30}-day free trial`
               : `${offers.data?.trialDays ?? 30} দিনের ফ্রি ট্রায়াল`}
@@ -400,7 +400,7 @@ export default function PremiumScreen() {
             alignItems: "center",
           }}
         >
-          <AppText weight="bold" style={{ fontSize: 15 }}>
+          <AppText weight="semibold" style={{ fontSize: 15 }}>
             {en ? "Premium" : "প্রিমিয়াম"}
           </AppText>
           <Pill tone="green">{en ? "৳29 / month" : "৳২৯ / মাস"}</Pill>
@@ -439,7 +439,7 @@ export default function PremiumScreen() {
               alignItems: "center",
             }}
           >
-            <AppText weight="bold" style={{ fontSize: 14 }}>
+            <AppText weight="semibold" style={{ fontSize: 14 }}>
               {p.name}
             </AppText>
             <Pill tone="amber">{`৳${Number(p.amountBdt).toFixed(0)}`}</Pill>
@@ -461,7 +461,7 @@ export default function PremiumScreen() {
 
       {flow.kind === "number" ? (
         <Card style={{ gap: 10, borderColor: palette.green, borderWidth: 2 }}>
-          <AppText weight="bold" style={{ fontSize: 14 }}>
+          <AppText weight="semibold" style={{ fontSize: 14 }}>
             {en ? "Your Banglalink number" : "আপনার বাংলালিংক নম্বর"}
           </AppText>
           <TextInput
@@ -501,7 +501,7 @@ export default function PremiumScreen() {
 
       {flow.kind === "sub_code" || flow.kind === "pay_code" ? (
         <Card style={{ gap: 10, borderColor: palette.green, borderWidth: 2 }}>
-          <AppText weight="bold" style={{ fontSize: 14 }}>
+          <AppText weight="semibold" style={{ fontSize: 14 }}>
             {flow.kind === "pay_code"
               ? en
                 ? "Enter the payment code from the SMS"

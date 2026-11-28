@@ -18,7 +18,7 @@ function FactCard({ item, icon }: { item: SourcedFact; icon: "white-balance-sunn
   const { language } = useNutriScan();
   return <Card style={{ gap: 9 }}>
     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}><View style={{ width: 34, height: 34, borderRadius: 12, backgroundColor: palette.greenSoft, alignItems: "center", justifyContent: "center" }}><MaterialCommunityIcons name={icon} size={18} color={palette.green} /></View><AppText weight="semibold" style={{ flex: 1, fontSize: 13 }}>{item.title[language]}</AppText></View>
-    <AppText style={{ color: palette.muted, fontSize: 11, lineHeight: 18 }}>{item.body[language]}</AppText>
+    <AppText style={{ color: palette.muted, fontSize: 12, lineHeight: 18 }}>{item.body[language]}</AppText>
     <SourceLink title={item.sourceTitle} url={item.sourceUrl} />
   </Card>;
 }
@@ -36,7 +36,7 @@ export default function NutriFactsScreen() {
       <View style={{ gap: 7 }}><SectionHeading title={t(language, "ingredientInsight")} /><FactCard item={ingredientInsight} icon="flask-outline" /></View>
       <View style={{ gap: 7 }}><SectionHeading title={t(language, "mythVsFact")} />{mythFacts.map((item) => <FactCard key={item.title.en} item={item} icon="check-decagram-outline" />)}</View>
       <View style={{ gap: 7 }}><SectionHeading title={t(language, "interestingFact")} />{interestingFacts.map((item) => <FactCard key={item.title.en} item={item} icon="lightbulb-outline" />)}</View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, padding: 12, borderRadius: 14, backgroundColor: palette.neutralSoft }}><MaterialCommunityIcons name="calendar-today" size={15} color={palette.muted} /><AppText style={{ color: palette.muted, fontSize: 10 }}>{new Date().toLocaleDateString(language === "bn" ? "bn-BD" : "en-BD", { dateStyle: "long" })}</AppText></View>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, padding: 12, borderRadius: 14, backgroundColor: palette.neutralSoft }}><MaterialCommunityIcons name="calendar-today" size={15} color={palette.muted} /><AppText style={{ color: palette.muted, fontSize: 12 }}>{new Date().toLocaleDateString(language === "bn" ? "bn-BD" : "en-BD", { dateStyle: "long" })}</AppText></View>
     </Screen>
   );
 }

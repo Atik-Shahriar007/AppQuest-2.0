@@ -246,7 +246,7 @@ export default function NutritionGoalsScreen() {
                 <AppText weight="semibold" style={{ fontSize: 14 }}>
                   {goal.title[language]}
                 </AppText>
-                <AppText style={{ color: palette.muted, fontSize: 11, lineHeight: 16 }}>
+                <AppText style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}>
                   {goal.body[language]}
                 </AppText>
               </View>

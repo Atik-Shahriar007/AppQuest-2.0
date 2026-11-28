@@ -242,7 +242,7 @@ export default function ExpiryRemindersScreen() {
         </View>
 
         {error ? (
-          <AppText style={{ color: palette.clay, fontSize: 11 }}>
+          <AppText style={{ color: palette.clay, fontSize: 12 }}>
             {error}
           </AppText>
         ) : null}
@@ -350,10 +350,10 @@ export default function ExpiryRemindersScreen() {
                   />
                 </View>
                 <View style={{ flex: 1, gap: 4 }}>
-                  <AppText weight="bold" style={{ fontSize: 14 }}>
+                  <AppText weight="semibold" style={{ fontSize: 14 }}>
                     {item.productName}
                   </AppText>
-                  <AppText style={{ color: palette.muted, fontSize: 11 }}>
+                  <AppText style={{ color: palette.muted, fontSize: 12 }}>
                     {formattedDate} · {daysText}
                   </AppText>
                   <Pill tone={badge.tone}>{badge.label}</Pill>

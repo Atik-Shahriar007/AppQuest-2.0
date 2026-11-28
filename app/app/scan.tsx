@@ -438,7 +438,7 @@ export default function ScanScreen() {
                     position: "absolute",
                     bottom: 17,
                     color: palette.cameraText,
-                    fontSize: 11,
+                    fontSize: 12,
                   }}
                 >
                   {language === "en"
@@ -473,7 +473,7 @@ export default function ScanScreen() {
                     color="#B8E6C4"
                   />
                   <AppText
-                    style={{ color: "#DDF6E3", fontSize: 10, marginTop: 8 }}
+                    style={{ color: "#DDF6E3", fontSize: 12, marginTop: 8 }}
                   >
                     {language === "en"
                       ? "Mock camera preview"
@@ -506,12 +506,9 @@ export default function ScanScreen() {
                     style={{
                       position: "absolute",
                       width: "72%",
-                      height: 3,
+                      height: 2,
                       borderRadius: 2,
                       backgroundColor: palette.amber,
-                      shadowColor: palette.amber,
-                      shadowOpacity: 0.95,
-                      shadowRadius: 8,
                       transform: [
                         {
                           translateY: scanBeam.interpolate({
@@ -528,7 +525,7 @@ export default function ScanScreen() {
                       position: "absolute",
                       bottom: 17,
                       color: palette.cameraText,
-                      fontSize: 11,
+                      fontSize: 12,
                     }}
                   >
                     {language === "en"
@@ -624,7 +621,7 @@ export default function ScanScreen() {
                 <AppText
                   style={{
                     color: palette.clay,
-                    fontSize: 11,
+                    fontSize: 12,
                     textAlign: "center",
                   }}
                 >
@@ -700,7 +697,7 @@ export default function ScanScreen() {
             {inputMessage ? (
               <AppText
                 accessibilityLiveRegion="polite"
-                style={{ color: palette.clay, fontSize: 11, lineHeight: 16 }}
+                style={{ color: palette.clay, fontSize: 12, lineHeight: 16 }}
               >
                 {inputMessage}
               </AppText>
@@ -811,7 +808,7 @@ export default function ScanScreen() {
                   <AppText
                     style={{
                       color: palette.muted,
-                      fontSize: 10,
+                      fontSize: 12,
                       textAlign: "center",
                     }}
                   >
@@ -856,7 +853,7 @@ export default function ScanScreen() {
               <AppText
                 style={{
                   color: "#DDF6E3",
-                  fontSize: 11,
+                  fontSize: 12,
                   marginTop: 8,
                   textAlign: "center",
                 }}
@@ -894,7 +891,7 @@ export default function ScanScreen() {
                   position: "absolute",
                   bottom: 16,
                   color: palette.cameraText,
-                  fontSize: 11,
+                  fontSize: 12,
                   textAlign: "center",
                   paddingHorizontal: 16,
                 }}
@@ -932,7 +929,7 @@ export default function ScanScreen() {
               <AppText
                 style={{
                   color: palette.muted,
-                  fontSize: 11,
+                  fontSize: 12,
                   textAlign: "center",
                 }}
               >
@@ -952,7 +949,7 @@ export default function ScanScreen() {
                   justifyContent: "space-between",
                 }}
               >
-                <AppText weight="bold" style={{ fontSize: 14 }}>
+                <AppText weight="semibold" style={{ fontSize: 14 }}>
                   {language === "en"
                     ? "Extracted Nutrition Values"
                     : "প্রাপ্ত পুষ্টিমান"}
@@ -1064,7 +1061,7 @@ export default function ScanScreen() {
                 size={24}
                 color={palette.green}
               />
-              <AppText weight="bold" style={{ fontSize: 16, flex: 1 }}>
+              <AppText weight="semibold" style={{ fontSize: 16, flex: 1 }}>
                 {language === "en"
                   ? "Estimated NQSS Score"
                   : "আনুমানিক NQSS স্কোর"}

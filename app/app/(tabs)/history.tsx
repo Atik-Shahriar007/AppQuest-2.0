@@ -25,7 +25,7 @@ export default function HistoryScreen() {
           <SecondaryButton accessibilityLabel={t(language, "clearHistory")} title={t(language, "clearHistory")} icon="delete-outline" onPress={() => setConfirmClear(true)} style={{ alignSelf: "flex-end", minHeight: 44, paddingHorizontal: 12 }} />
           {confirmClear ? <Card style={{ gap: 10, backgroundColor: palette.claySoft, borderColor: palette.line }}>
             <AppText weight="semibold" style={{ fontSize: 13 }}>{language === "en" ? "Clear all scan history?" : "সব স্ক্যানের ইতিহাস মুছবেন?"}</AppText>
-            <AppText style={{ color: palette.muted, fontSize: 11, lineHeight: 16 }}>{language === "en" ? "This removes the saved history from this device only." : "এতে শুধু এই ডিভাইসে সংরক্ষিত ইতিহাস মুছে যাবে।"}</AppText>
+            <AppText style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}>{language === "en" ? "This removes the saved history from this device only." : "এতে শুধু এই ডিভাইসে সংরক্ষিত ইতিহাস মুছে যাবে।"}</AppText>
             <View style={{ flexDirection: "row", gap: 8 }}>
               <PrimaryButton title={language === "en" ? "Clear history" : "ইতিহাস মুছুন"} icon="delete-outline" onPress={() => { clearHistory(); setConfirmClear(false); }} style={{ flex: 1, minHeight: 42, backgroundColor: palette.clay }} />
               <SecondaryButton title={language === "en" ? "Cancel" : "বাতিল"} onPress={() => setConfirmClear(false)} style={{ flex: 1, minHeight: 42 }} />
@@ -34,7 +34,7 @@ export default function HistoryScreen() {
           <Card style={{ paddingHorizontal: 14, paddingVertical: 2, gap: 0 }}>
             {entries.map(({ entry, product }, index) => product ? <View key={`${entry.productId}-${entry.scannedAt}`}>
               {index ? <View style={{ height: 1, backgroundColor: palette.line }} /> : null}
-              <ProductRow product={product} onPress={() => router.push({ pathname: "/product/[id]", params: { id: product.id } })} aside={<View style={{ alignItems: "flex-end", gap: 4 }}><MaterialCommunityIcons name="chevron-right" size={18} color={palette.muted} /><AppText style={{ fontSize: 9, color: palette.muted }}>{dateLabel(entry.scannedAt)}</AppText></View>} />
+              <ProductRow product={product} onPress={() => router.push({ pathname: "/product/[id]", params: { id: product.id } })} aside={<View style={{ alignItems: "flex-end", gap: 4 }}><MaterialCommunityIcons name="chevron-right" size={18} color={palette.muted} /><AppText style={{ fontSize: 12, color: palette.muted }}>{dateLabel(entry.scannedAt)}</AppText></View>} />
             </View> : null)}
           </Card>
         </View>
@@ -42,7 +42,7 @@ export default function HistoryScreen() {
         <Card style={{ alignItems: "center", paddingVertical: 28, gap: 8 }}>
           <MaterialCommunityIcons name="shield-off-outline" size={30} color={palette.muted} />
           <AppText weight="semibold" style={{ fontSize: 14, textAlign: "center" }}>{t(language, "halalEmptyTitle")}</AppText>
-          <AppText style={{ color: palette.muted, fontSize: 11, textAlign: "center", lineHeight: 17 }}>{t(language, "halalEmptyBody")}</AppText>
+          <AppText style={{ color: palette.muted, fontSize: 12, textAlign: "center", lineHeight: 17 }}>{t(language, "halalEmptyBody")}</AppText>
           <SecondaryButton title={t(language, "turnOffHalalMode")} onPress={() => router.push("/(tabs)/more")} style={{ minHeight: 40 }} />
         </Card>
       ) : (

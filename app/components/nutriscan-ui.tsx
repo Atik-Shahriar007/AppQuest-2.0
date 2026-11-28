@@ -106,8 +106,8 @@ const createStyles = (colors: Palette) =>
       maxWidth: 520,
       alignSelf: "center",
       paddingHorizontal: 20,
-      paddingTop: 10,
-      paddingBottom: 28,
+      paddingTop: 12,
+      paddingBottom: 32,
       gap: 20,
     },
     staticContent: {
@@ -115,15 +115,15 @@ const createStyles = (colors: Palette) =>
       maxWidth: 520,
       alignSelf: "center",
       paddingHorizontal: 20,
-      paddingTop: 10,
-      paddingBottom: 28,
+      paddingTop: 12,
+      paddingBottom: 32,
     },
-    header: { gap: 18 },
+    header: { gap: 16 },
     brandRow: { flexDirection: "row", alignItems: "center", gap: 8 },
     brandMark: {
       height: 40,
       width: 40,
-      borderRadius: 13,
+      borderRadius: 12,
       backgroundColor: colors.brandMark,
       alignItems: "center",
       justifyContent: "center",
@@ -133,12 +133,12 @@ const createStyles = (colors: Palette) =>
       position: "absolute",
       width: 40,
       height: 40,
-      borderRadius: 13,
+      borderRadius: 12,
     },
     backButton: {
-      width: 34,
-      height: 34,
-      borderRadius: 12,
+      width: 36,
+      height: 36,
+      borderRadius: 10,
       backgroundColor: colors.card,
       borderWidth: 1,
       borderColor: colors.line,
@@ -146,20 +146,20 @@ const createStyles = (colors: Palette) =>
       justifyContent: "center",
     },
     leafDot: {
-      height: 7,
-      width: 7,
+      height: 8,
+      width: 8,
       borderRadius: 4,
       backgroundColor: colors.amber,
       position: "absolute",
-      right: 7,
-      top: 7,
+      right: 6,
+      top: 6,
       borderWidth: 1,
       borderColor: colors.card,
     },
     smallHeaderButton: {
-      width: 34,
-      height: 34,
-      borderRadius: 12,
+      width: 36,
+      height: 36,
+      borderRadius: 10,
       backgroundColor: colors.card,
       borderWidth: 1,
       borderColor: colors.line,
@@ -167,21 +167,21 @@ const createStyles = (colors: Palette) =>
       justifyContent: "center",
     },
     languageToggle: {
-      minWidth: 38,
-      height: 34,
-      paddingHorizontal: 7,
-      borderRadius: 12,
+      minWidth: 40,
+      height: 36,
+      paddingHorizontal: 8,
+      borderRadius: 10,
       backgroundColor: colors.card,
       borderWidth: 1,
       borderColor: colors.line,
       alignItems: "center",
       justifyContent: "center",
     },
-    pageHeading: { gap: 6, marginTop: 4 },
+    pageHeading: { gap: 4, marginTop: 4 },
     pageTitle: {
-      fontSize: 25,
-      lineHeight: 33,
-      letterSpacing: -0.4,
+      fontSize: 28,
+      lineHeight: 32,
+      letterSpacing: 0,
       color: colors.ink,
     },
     pageSubtitle: { color: colors.muted, fontSize: 13, lineHeight: 20 },
@@ -190,31 +190,31 @@ const createStyles = (colors: Palette) =>
       borderWidth: 1,
       borderColor: colors.line,
       backgroundColor: colors.card,
-      borderRadius: 20,
+      borderRadius: 16,
       padding: 16,
-      gap: 13,
+      gap: 12,
     },
     pill: {
       alignSelf: "flex-start",
       flexDirection: "row",
       alignItems: "center",
       paddingHorizontal: 10,
-      paddingVertical: 6,
+      paddingVertical: 4,
       borderRadius: 100,
     },
     primaryButton: {
-      minHeight: 50,
-      borderRadius: 15,
+      minHeight: 48,
+      borderRadius: 10,
       backgroundColor: colors.green,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: 9,
+      gap: 8,
       paddingHorizontal: 16,
     },
     secondaryButton: {
-      minHeight: 46,
-      borderRadius: 15,
+      minHeight: 44,
+      borderRadius: 10,
       borderWidth: 1,
       borderColor: colors.line,
       backgroundColor: colors.card,
@@ -222,37 +222,37 @@ const createStyles = (colors: Palette) =>
       alignItems: "center",
       justifyContent: "center",
       gap: 8,
-      paddingHorizontal: 14,
+      paddingHorizontal: 16,
     },
     productRow: {
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
-      paddingVertical: 10,
+      paddingVertical: 12,
       borderTopWidth: 1,
       borderTopColor: colors.line,
     },
     productPhotoFrame: {
-      width: 62,
-      height: 62,
-      borderRadius: 16,
+      width: 60,
+      height: 60,
+      borderRadius: 12,
       alignItems: "center",
       justifyContent: "center",
       overflow: "hidden",
     },
-    productPhoto: { width: 58, height: 58 },
+    productPhoto: { width: 52, height: 52 },
     demoNotice: {
       flexDirection: "row",
       alignItems: "flex-start",
       gap: 8,
       padding: 12,
-      borderRadius: 14,
+      borderRadius: 12,
       backgroundColor: colors.amberSoft,
     },
     iconTile: {
-      width: 42,
-      height: 42,
-      borderRadius: 14,
+      width: 40,
+      height: 40,
+      borderRadius: 12,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -386,10 +386,10 @@ export function PageHeader({
           />
         </View>
         <View style={{ flex: 1, minWidth: 44 }}>
-          <AppText weight="bold" style={{ fontSize: 18, letterSpacing: 0.2 }}>
+          <AppText weight="semibold" style={{ fontSize: 18 }}>
             {t(language, "brand")}
           </AppText>
-          <AppText style={{ color: colors.muted, fontSize: 9 }}>
+          <AppText style={{ color: colors.muted, fontSize: 12 }}>
             {t(language, "tagline")}
           </AppText>
         </View>
@@ -407,7 +407,7 @@ export function PageHeader({
         >
           <AppText
             weight="semibold"
-            style={{ fontSize: 11, color: colors.green }}
+            style={{ fontSize: 12, color: colors.green }}
           >
             {language === "en" ? "বাংলা" : "EN"}
           </AppText>
@@ -433,7 +433,7 @@ export function PageHeader({
       </View>
       {title ? (
         <View style={styles.pageHeading}>
-          <AppText weight="bold" style={styles.pageTitle}>
+          <AppText weight="semibold" style={styles.pageTitle}>
             {title}
           </AppText>
           {subtitle ? (
@@ -522,8 +522,8 @@ export function Pill({
       ]}
     >
       <AppText
-        weight="semibold"
-        style={{ color: tones[tone].color, fontSize: 10 }}
+        weight="medium"
+        style={{ color: tones[tone].color, fontSize: 12 }}
       >
         {children}
       </AppText>
@@ -652,7 +652,7 @@ export function ProductRow({
         >
           {productName(product, language)}
         </AppText>
-        <AppText style={{ color: colors.muted, fontSize: 10, lineHeight: 15 }}>
+        <AppText style={{ color: colors.muted, fontSize: 12, lineHeight: 16 }}>
           {productBrand(product, language)} ·{" "}
           {categoryLabel(product.category, language)}
         </AppText>
@@ -683,7 +683,7 @@ export function DemoNotice({ children }: { children?: React.ReactNode }) {
         style={{
           flex: 1,
           color: colors.amberInk,
-          fontSize: 11,
+          fontSize: 12,
           lineHeight: 16,
         }}
       >
@@ -804,7 +804,7 @@ export function ToggleCard({
         <AppText weight="semibold" style={{ fontSize: 14 }}>
           {title}
         </AppText>
-        <AppText style={{ color: colors.muted, fontSize: 11, lineHeight: 16 }}>
+        <AppText style={{ color: colors.muted, fontSize: 12, lineHeight: 16 }}>
           {subtitle}
         </AppText>
       </View>
@@ -856,16 +856,25 @@ export function ScoreRing({
         }}
       >
         <AppText
-          weight="bold"
+          weight="semibold"
           style={{
             fontSize: Math.round(size * 0.28),
             lineHeight: Math.round(size * 0.34),
             color: ringColor,
+            fontVariant: ["tabular-nums"],
           }}
         >
           {score}
         </AppText>
-        <AppText style={{ fontSize: 10, color: colors.muted }}>/100</AppText>
+        <AppText
+          style={{
+            fontSize: 12,
+            color: colors.muted,
+            fontVariant: ["tabular-nums"],
+          }}
+        >
+          /100
+        </AppText>
       </View>
       {showLabel ? (
         <AppText weight="semibold" style={{ fontSize: 12, color: ringColor }}>
@@ -893,7 +902,7 @@ export function TabSwitcher({
       style={{
         flexDirection: "row",
         backgroundColor: colors.neutralSoft,
-        borderRadius: 14,
+        borderRadius: 12,
         padding: 4,
         gap: 4,
       }}
@@ -910,20 +919,17 @@ export function TabSwitcher({
               {
                 flex: 1,
                 minHeight: 40,
-                borderRadius: 11,
+                borderRadius: 8,
                 alignItems: "center",
                 justifyContent: "center",
-                paddingHorizontal: 10,
+                paddingHorizontal: 12,
                 opacity: pressed ? 0.85 : 1,
               },
               active
                 ? {
                     backgroundColor: activeBg,
-                    shadowColor: "#000000",
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.08,
-                    shadowRadius: 3,
-                    elevation: 2,
+                    borderWidth: 1,
+                    borderColor: colors.line,
                   }
                 : null,
             ]}
@@ -963,20 +969,20 @@ export function EmptyState({
         justifyContent: "center",
         paddingVertical: 20,
         paddingHorizontal: 16,
-        gap: 10,
+        gap: 12,
       }}
     >
       <View
         style={{
-          width: 52,
-          height: 52,
-          borderRadius: 26,
+          width: 48,
+          height: 48,
+          borderRadius: 24,
           backgroundColor: colors.greenSoft,
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <MaterialCommunityIcons name={icon} size={25} color={colors.green} />
+        <MaterialCommunityIcons name={icon} size={24} color={colors.green} />
       </View>
       <AppText weight="semibold" style={{ fontSize: 14, textAlign: "center" }}>
         {title}

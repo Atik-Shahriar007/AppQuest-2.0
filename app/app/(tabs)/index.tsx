@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { scoreTone } from "@/lib/nutrition-utils";
 import {
-  Animated,
   Image,
   Linking,
   Pressable,
@@ -47,7 +46,7 @@ export default function HomeScreen() {
     enabled: Boolean(auth.session),
     refetchInterval: 60_000,
   });
-  const { language, halalMode, childSafeMode, profile, history } =
+  const { language, halalMode, childSafeMode, history } =
     useNutriScan();
   const palette = usePalette();
 
@@ -88,21 +87,6 @@ export default function HomeScreen() {
     [history],
   );
 
-  const greetingText = useMemo(() => {
-    const trimmedName = profile.displayName.trim();
-    if (!trimmedName) {
-      return language === "en" ? "Welcome to NutriScan" : "NutriScan-এ স্বাগতম";
-    }
-    const hour = new Date().getHours();
-    const greeting =
-      hour < 12
-        ? t(language, "goodMorning")
-        : hour < 17
-          ? t(language, "goodAfternoon")
-          : t(language, "goodEvening");
-    return `${greeting}, ${trimmedName}`;
-  }, [language, profile.displayName]);
-
   const tip = dailyTips[0];
 
   const openProduct = (productId: string) => {
@@ -116,7 +100,8 @@ export default function HomeScreen() {
   return (
     <Screen contentStyle={{ gap: 20 }}>
       <PageHeader
-        title=""
+        title={language === "en" ? "Product guide" : "পণ্য নির্দেশিকা"}
+        subtitle={t(language, "tagline")}
         right={
           <Pressable
             accessibilityRole="button"
@@ -126,9 +111,9 @@ export default function HomeScreen() {
             onPress={() => router.push("/account/notifications" as never)}
             hitSlop={6}
             style={({ pressed }) => ({
-              width: 34,
-              height: 34,
-              borderRadius: 12,
+              width: 36,
+              height: 36,
+              borderRadius: 10,
               backgroundColor: palette.card,
               borderWidth: 1,
               borderColor: palette.line,
@@ -146,33 +131,15 @@ export default function HomeScreen() {
         }
       />
 
-      <Card
-        style={{
-          backgroundColor: palette.greenSoft,
-          borderColor: palette.line,
-          gap: 4,
-        }}
-      >
-        <AppText weight="bold" style={{ fontSize: 19, lineHeight: 26 }}>
-          {greetingText}
-        </AppText>
-        <AppText style={{ color: palette.muted, fontSize: 12, lineHeight: 18 }}>
-          {t(language, "tagline")}
-        </AppText>
-      </Card>
-
-      <Card style={{ padding: 14, gap: 14, overflow: "hidden" }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 13 }}>
+      <Card style={{ padding: 16, gap: 16, overflow: "hidden" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
           <BarcodeScanIllustration />
-          <View style={{ flex: 1, gap: 6 }}>
-            <Pill tone="green">
-              {language === "en" ? "SCAN A PRODUCT" : "পণ্য স্ক্যান করুন"}
-            </Pill>
+          <View style={{ flex: 1, gap: 4 }}>
             <AppText weight="semibold" style={{ fontSize: 16, lineHeight: 22 }}>
               {t(language, "scannerTitle")}
             </AppText>
             <AppText
-              style={{ color: palette.muted, fontSize: 11, lineHeight: 16 }}
+              style={{ color: palette.muted, fontSize: 12, lineHeight: 18 }}
             >
               {t(language, "scannerHint")}
             </AppText>
@@ -193,34 +160,34 @@ export default function HomeScreen() {
         onPress={() => router.push("/(tabs)/discover")}
         style={({ pressed }) => ({
           minHeight: 48,
-          borderRadius: 15,
+          borderRadius: 12,
           backgroundColor: palette.card,
           borderWidth: 1,
           borderColor: palette.line,
-          paddingHorizontal: 14,
+          paddingHorizontal: 16,
           flexDirection: "row",
           alignItems: "center",
-          gap: 10,
+          gap: 12,
           opacity: pressed ? 0.85 : 1,
         })}
       >
         <MaterialCommunityIcons
           name="magnify"
-          size={20}
+          size={18}
           color={palette.muted}
         />
-        <AppText style={{ color: palette.muted, fontSize: 13 }}>
-          {language === "en" ? "Search products..." : "পণ্য খুঁজুন..."}
+        <AppText style={{ color: palette.muted, fontSize: 14 }}>
+          {language === "en" ? "Search" : "খুঁজুন"}
         </AppText>
       </Pressable>
 
-      <View style={{ gap: 11 }}>
+      <View style={{ gap: 12 }}>
         <SectionHeading
           title={t(language, "categories")}
           action={t(language, "seeAll")}
           onAction={() => router.push("/(tabs)/discover")}
         />
-        <View style={{ flexDirection: "row", gap: 9 }}>
+        <View style={{ flexDirection: "row", gap: 8 }}>
           {categories.map((category) => {
             const item = categoryStyles[category];
             const count = visibleProducts.filter(
@@ -249,9 +216,9 @@ export default function HomeScreen() {
                 style={({ pressed }) => [
                   {
                     flex: 1,
-                    minHeight: 104,
-                    borderRadius: 18,
-                    padding: 10,
+                    minHeight: 100,
+                    borderRadius: 16,
+                    padding: 12,
                     backgroundColor: palette.card,
                     borderColor: palette.line,
                     borderWidth: 1,
@@ -262,9 +229,9 @@ export default function HomeScreen() {
               >
                 <View
                   style={{
-                    width: 35,
-                    height: 35,
-                    borderRadius: 12,
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
                     backgroundColor: item.tint,
                     alignItems: "center",
                     justifyContent: "center",
@@ -272,15 +239,21 @@ export default function HomeScreen() {
                 >
                   <MaterialCommunityIcons
                     name={item.icon}
-                    size={19}
+                    size={18}
                     color={palette.green}
                   />
                 </View>
-                <View style={{ gap: 3 }}>
-                  <AppText weight="semibold" style={{ fontSize: 10 }}>
+                <View style={{ gap: 4 }}>
+                  <AppText weight="semibold" style={{ fontSize: 12 }}>
                     {label}
                   </AppText>
-                  <AppText style={{ color: palette.muted, fontSize: 9 }}>
+                  <AppText
+                    style={{
+                      color: palette.muted,
+                      fontSize: 12,
+                      fontVariant: ["tabular-nums"],
+                    }}
+                  >
                     {count} {language === "en" ? "products" : "পণ্য"}
                   </AppText>
                 </View>
@@ -298,18 +271,16 @@ export default function HomeScreen() {
         />
         <Card
           style={{
-            backgroundColor: palette.greenSoft,
-            borderColor: palette.line,
             gap: 8,
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 9 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <View
               style={{
                 width: 32,
                 height: 32,
-                borderRadius: 10,
-                backgroundColor: palette.card,
+                borderRadius: 8,
+                backgroundColor: palette.greenSoft,
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -320,12 +291,12 @@ export default function HomeScreen() {
                 color={palette.green}
               />
             </View>
-            <AppText weight="bold" style={{ flex: 1, fontSize: 13 }}>
+            <AppText weight="semibold" style={{ flex: 1, fontSize: 14 }}>
               {tip.title[language]}
             </AppText>
           </View>
           <AppText
-            style={{ color: palette.muted, fontSize: 12, lineHeight: 18 }}
+            style={{ color: palette.muted, fontSize: 13, lineHeight: 20 }}
           >
             {tip.body[language]}
           </AppText>
@@ -338,7 +309,7 @@ export default function HomeScreen() {
               minHeight: 36,
               flexDirection: "row",
               alignItems: "center",
-              gap: 5,
+              gap: 4,
               alignSelf: "flex-start",
               opacity: pressed ? 0.72 : 1,
             })}
@@ -349,8 +320,8 @@ export default function HomeScreen() {
               color={palette.green}
             />
             <AppText
-              weight="semibold"
-              style={{ color: palette.green, fontSize: 11 }}
+              weight="medium"
+              style={{ color: palette.green, fontSize: 12 }}
             >
               {t(language, "readSource")}: {tip.sourceTitle}
             </AppText>
@@ -416,7 +387,7 @@ export default function HomeScreen() {
                 <AppText
                   weight="semibold"
                   numberOfLines={2}
-                  style={{ fontSize: 11, lineHeight: 15, textAlign: "center" }}
+                  style={{ fontSize: 12, lineHeight: 16, textAlign: "center" }}
                 >
                   {productName(product, language)}
                 </AppText>
@@ -470,7 +441,7 @@ export default function HomeScreen() {
               <AppText
                 style={{
                   color: palette.muted,
-                  fontSize: 10,
+                  fontSize: 12,
                   textAlign: "center",
                 }}
               >
@@ -494,108 +465,27 @@ export default function HomeScreen() {
 
 function BarcodeScanIllustration() {
   const palette = usePalette();
-  const [scanProgress] = useState(() => new Animated.Value(0));
-  useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(scanProgress, {
-          toValue: 1,
-          duration: 850,
-          useNativeDriver: true,
-          isInteraction: false,
-        }),
-        Animated.delay(500),
-        Animated.timing(scanProgress, {
-          toValue: 0,
-          duration: 1,
-          useNativeDriver: true,
-          isInteraction: false,
-        }),
-      ]),
-    );
-    animation.start();
-    return () => animation.stop();
-  }, [scanProgress]);
-  const beamY = scanProgress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-38, 38],
-  });
-  const beamOpacity = scanProgress.interpolate({
-    inputRange: [0, 0.5, 1],
-    outputRange: [0.62, 1, 0.62],
-  });
   return (
     <View
       accessible
-      accessibilityLabel="NutriScan mark with continuous scanning animation"
+      accessibilityLabel="NutriScan barcode mark"
       style={{
-        width: 92,
-        height: 94,
-        borderRadius: 20,
+        width: 80,
+        height: 80,
+        borderRadius: 12,
         backgroundColor: palette.greenSoft,
+        borderWidth: 1,
+        borderColor: palette.line,
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
       }}
     >
-      <View
-        pointerEvents="none"
-        style={{
-          width: 72,
-          height: 72,
-          borderRadius: 22,
-          backgroundColor: palette.card,
-          borderWidth: 1,
-          borderColor: palette.line,
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-        }}
-      >
-        <Image
-          source={nutriScanMark}
-          resizeMode="contain"
-          style={{ width: 70, height: 70, borderRadius: 20 }}
-        />
-        <Animated.View
-          pointerEvents="none"
-          style={{
-            position: "absolute",
-            left: 7,
-            right: 7,
-            height: 2,
-            backgroundColor: palette.green,
-            shadowColor: palette.green,
-            shadowOpacity: 0.95,
-            shadowRadius: 7,
-            opacity: beamOpacity,
-            transform: [{ translateY: beamY }],
-          }}
-        />
-      </View>
-      <View
-        style={{
-          position: "absolute",
-          bottom: 8,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 4,
-          paddingHorizontal: 7,
-          paddingVertical: 3,
-          borderRadius: 99,
-          backgroundColor: palette.card,
-          borderWidth: 1,
-          borderColor: palette.line,
-        }}
-      >
-        <MaterialCommunityIcons name="radar" size={10} color={palette.green} />
-        <AppText
-          weight="semibold"
-          style={{ color: palette.green, fontSize: 7, letterSpacing: 0.45 }}
-        >
-          SCANNING
-        </AppText>
-      </View>
+      <Image
+        source={nutriScanMark}
+        resizeMode="contain"
+        style={{ width: 64, height: 64, borderRadius: 8 }}
+      />
     </View>
   );
 }

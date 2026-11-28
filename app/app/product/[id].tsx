@@ -99,7 +99,7 @@ function NutritionRow({
           <AppText weight="semibold" style={{ fontSize: 13 }}>
             {item.label[language]}
           </AppText>
-          <AppText style={{ color: palette.muted, fontSize: 10 }}>
+          <AppText style={{ color: palette.muted, fontSize: 12 }}>
             {item.note[language]}
           </AppText>
         </View>
@@ -143,7 +143,7 @@ function NutritionRow({
                 />
                 <AppText
                   weight="semibold"
-                  style={{ fontSize: 10, color: toneColor }}
+                  style={{ fontSize: 12, color: toneColor }}
                 >
                   {tspLabel}
                 </AppText>
@@ -177,13 +177,13 @@ function NutritionRow({
           }}
         >
           <AppText
-            style={{ color: palette.muted, fontSize: 10, lineHeight: 16 }}
+            style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
           >
             {item.detail[language]}
           </AppText>
           {tspLabel ? (
             <AppText
-              style={{ color: palette.muted, fontSize: 10, lineHeight: 15 }}
+              style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
             >
               {language === "en"
                 ? "Sugar guide: 4 g sugar = 1 teaspoon"
@@ -267,7 +267,7 @@ function ReactionButtons({
                 ? palette.green
                 : palette.clay
               : palette.ink,
-            fontSize: 11,
+            fontSize: 12,
           }}
         >
           {count.toLocaleString(language === "bn" ? "bn-BD" : "en-US")} {label}
@@ -277,7 +277,7 @@ function ReactionButtons({
   };
   return (
     <Card style={{ gap: 9, paddingVertical: 12, paddingHorizontal: 13 }}>
-      <AppText weight="medium" style={{ color: palette.muted, fontSize: 10 }}>
+      <AppText weight="medium" style={{ color: palette.muted, fontSize: 12 }}>
         {t(language, "reactionPrompt")}
       </AppText>
       <View style={{ flexDirection: "row", gap: 8 }}>
@@ -289,7 +289,7 @@ function ReactionButtons({
           t(language, "dislikes"),
         )}
       </View>
-      <AppText style={{ color: palette.muted, fontSize: 9, lineHeight: 14 }}>
+      <AppText style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}>
         {t(language, "sampleReactions")}
       </AppText>
     </Card>
@@ -368,7 +368,7 @@ export default function ProductDetailScreen() {
           <AppText
             style={{
               color: palette.muted,
-              fontSize: 11,
+              fontSize: 12,
               lineHeight: 17,
               textAlign: "center",
             }}
@@ -422,10 +422,10 @@ export default function ProductDetailScreen() {
         paddingVertical: 8,
       }}
     >
-      <AppText weight="semibold" style={{ fontSize: 10, color: palette.muted }}>
+      <AppText weight="semibold" style={{ fontSize: 12, color: palette.muted }}>
         {language === "en" ? "NUTRIENT" : "পুষ্টি উপাদান"}
       </AppText>
-      <AppText weight="semibold" style={{ fontSize: 10, color: palette.muted }}>
+      <AppText weight="semibold" style={{ fontSize: 12, color: palette.muted }}>
         {nutritionTab === "100g"
           ? product.catalog?.nutrition?.basis === "per_100ml"
             ? language === "en"
@@ -505,19 +505,19 @@ export default function ProductDetailScreen() {
           />
         </View>
         <View style={{ flex: 1, gap: 6 }}>
-          <AppText style={{ color: palette.muted, fontSize: 11 }}>
+          <AppText style={{ color: palette.muted, fontSize: 12 }}>
             {productBrand(product, language)}
           </AppText>
-          <AppText weight="bold" style={{ fontSize: 18, lineHeight: 24 }}>
+          <AppText weight="semibold" style={{ fontSize: 18, lineHeight: 24 }}>
             {productName(product, language)}
           </AppText>
-          <AppText style={{ color: palette.muted, fontSize: 11 }}>
+          <AppText style={{ color: palette.muted, fontSize: 12 }}>
             {product.size[language]}
           </AppText>
           {product.description ? (
             <AppText
               numberOfLines={2}
-              style={{ color: palette.muted, fontSize: 10, lineHeight: 14 }}
+              style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
             >
               {product.description[language]}
             </AppText>
@@ -528,7 +528,7 @@ export default function ProductDetailScreen() {
               size={13}
               color={palette.muted}
             />
-            <AppText style={{ color: palette.muted, fontSize: 10 }}>
+            <AppText style={{ color: palette.muted, fontSize: 12 }}>
               {product.barcode}
             </AppText>
           </View>
@@ -582,11 +582,11 @@ export default function ProductDetailScreen() {
               {t(language, "halalEvidenceLabel")}
             </AppText>
             <AppText
-              style={{ color: palette.muted, fontSize: 10, lineHeight: 15 }}
+              style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
             >
               {product.halalEvidence.label[language]}
             </AppText>
-            <AppText style={{ color: palette.green, fontSize: 9 }}>
+            <AppText style={{ color: palette.green, fontSize: 12 }}>
               {product.halalEvidence.sourceTitle}
             </AppText>
           </View>
@@ -598,14 +598,14 @@ export default function ProductDetailScreen() {
           <View style={{ flexDirection: "row", alignItems: "center", gap: 15 }}>
             <ScoreRing score={product.score} size={88} />
             <View style={{ flex: 1, gap: 4 }}>
-              <AppText style={{ color: palette.muted, fontSize: 11 }}>
+              <AppText style={{ color: palette.muted, fontSize: 12 }}>
                 {language === "en" ? "NQSS Score" : "NQSS স্কোর"}
               </AppText>
-              <AppText weight="bold" style={{ fontSize: 18 }}>
+              <AppText weight="semibold" style={{ fontSize: 18 }}>
                 {scoreCategoryLabel(product.score, language)}
               </AppText>
               <AppText
-                style={{ color: palette.muted, fontSize: 10, lineHeight: 15 }}
+                style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
               >
                 {t(language, "methodNote")}
               </AppText>
@@ -637,17 +637,17 @@ export default function ProductDetailScreen() {
                       alignItems: "center",
                     }}
                   >
-                    <AppText weight="medium" style={{ fontSize: 11 }}>
+                    <AppText weight="medium" style={{ fontSize: 12 }}>
                       {factor.label[language]}{" "}
                       {factor.weight ? (
-                        <AppText style={{ color: palette.muted, fontSize: 10 }}>
+                        <AppText style={{ color: palette.muted, fontSize: 12 }}>
                           ({factor.weight})
                         </AppText>
                       ) : null}
                     </AppText>
                     <AppText
                       weight="semibold"
-                      style={{ fontSize: 11, color: barColor }}
+                      style={{ fontSize: 12, color: barColor }}
                     >
                       {factor.value ?? "—"}
                     </AppText>
@@ -723,20 +723,20 @@ export default function ProductDetailScreen() {
               }}
             >
               <AppText
-                style={{ color: palette.muted, fontSize: 10, lineHeight: 16 }}
+                style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
               >
                 {t(language, "methodNote")}
               </AppText>
               {product.factors.map((factor) => (
                 <View key={factor.label.en} style={{ gap: 2 }}>
-                  <AppText weight="semibold" style={{ fontSize: 11 }}>
+                  <AppText weight="semibold" style={{ fontSize: 12 }}>
                     {factor.label[language]} · {factor.weight}
                   </AppText>
                   <AppText
                     style={{
                       color: palette.muted,
-                      fontSize: 10,
-                      lineHeight: 14,
+                      fontSize: 12,
+                      lineHeight: 16,
                     }}
                   >
                     {factor.note[language]}
@@ -781,7 +781,7 @@ export default function ProductDetailScreen() {
               {t(language, "noGrade")}
             </AppText>
             <AppText
-              style={{ color: palette.muted, fontSize: 10, lineHeight: 15 }}
+              style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
             >
               {product.gradeLabel?.[language]}
             </AppText>
@@ -863,7 +863,7 @@ export default function ProductDetailScreen() {
                   <AppText
                     style={{
                       color: palette.muted,
-                      fontSize: 11,
+                      fontSize: 12,
                       paddingVertical: 13,
                     }}
                   >
@@ -905,7 +905,7 @@ export default function ProductDetailScreen() {
                   <AppText
                     style={{
                       color: palette.muted,
-                      fontSize: 11,
+                      fontSize: 12,
                       paddingVertical: 13,
                     }}
                   >
@@ -963,7 +963,7 @@ export default function ProductDetailScreen() {
                   {factor.label[language]}
                 </AppText>
                 <AppText
-                  style={{ color: palette.muted, fontSize: 10, lineHeight: 15 }}
+                  style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
                 >
                   {factor.note[language]}
                 </AppText>
@@ -1045,7 +1045,7 @@ export default function ProductDetailScreen() {
                     <AppText
                       style={{
                         color: palette.muted,
-                        fontSize: 10,
+                        fontSize: 12,
                         lineHeight: 16,
                       }}
                     >
@@ -1058,8 +1058,8 @@ export default function ProductDetailScreen() {
                       <AppText
                         style={{
                           color: palette.amberInk,
-                          fontSize: 10,
-                          lineHeight: 15,
+                          fontSize: 12,
+                          lineHeight: 16,
                         }}
                       >
                         {language === "en"
@@ -1186,7 +1186,7 @@ export default function ProductDetailScreen() {
           })}
         >
           <MaterialCommunityIcons
-            name="robot-outline"
+            name="message-text-outline"
             size={20}
             color={palette.green}
           />
@@ -1263,11 +1263,11 @@ export default function ProductDetailScreen() {
                 }
               />
               <View style={{ flex: 1, gap: 3 }}>
-                <AppText weight="semibold" style={{ fontSize: 11 }}>
+                <AppText weight="semibold" style={{ fontSize: 12 }}>
                   {item.label[language]}
                 </AppText>
                 <AppText
-                  style={{ color: palette.muted, fontSize: 10, lineHeight: 15 }}
+                  style={{ color: palette.muted, fontSize: 12, lineHeight: 16 }}
                 >
                   {item.value[language]}
                 </AppText>

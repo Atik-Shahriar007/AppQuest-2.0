@@ -123,7 +123,7 @@ export default function AdminScreen() {
             </Pill>
           </Pressable>
           <AppText
-            style={{ fontSize: 11, color: palette.muted }}
+            style={{ fontSize: 12, color: palette.muted }}
           >{`${c.brand ?? ""} · ${c.barcode}`}</AppText>
           {openId === c.id ? (
             <View style={{ gap: 8 }}>
@@ -317,7 +317,7 @@ export default function AdminScreen() {
               {r.status}
             </Pill>
           </View>
-          <AppText style={{ fontSize: 11, color: palette.muted }}>
+          <AppText style={{ fontSize: 12, color: palette.muted }}>
             {r.sourceUrl}
           </AppText>
           {r.status === "draft" ? (

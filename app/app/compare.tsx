@@ -115,7 +115,7 @@ function ProductSlotCard({
           {label}
         </AppText>
         <AppText
-          style={{ fontSize: 10, color: palette.muted, textAlign: "center" }}
+          style={{ fontSize: 12, color: palette.muted, textAlign: "center" }}
         >
           {language === "en"
             ? "Tap to search & pick"
@@ -199,7 +199,7 @@ function ProductSlotCard({
           />
         </View>
         <AppText
-          style={{ fontSize: 10, color: palette.muted }}
+          style={{ fontSize: 12, color: palette.muted }}
           numberOfLines={1}
         >
           {productBrand(product, language)}
@@ -227,7 +227,7 @@ function ProductSlotCard({
           opacity: pressed ? 0.75 : 1,
         })}
       >
-        <AppText weight="medium" style={{ fontSize: 10, color: palette.green }}>
+        <AppText weight="medium" style={{ fontSize: 12, color: palette.green }}>
           {language === "en" ? "Change" : "পরিবর্তন"}
         </AppText>
       </Pressable>
@@ -438,7 +438,7 @@ export default function CompareProductsScreen() {
           ) : null}
         </View>
 
-        <AppText style={{ fontSize: 11, color: palette.muted }}>
+        <AppText style={{ fontSize: 12, color: palette.muted }}>
           {language === "en"
             ? `${filteredCatalog.length} food products available`
             : `${formatLocalizedNumber(filteredCatalog.length, "bn", 0)}টি খাবার পণ্য পাওয়া গেছে`}
@@ -476,13 +476,13 @@ export default function CompareProductsScreen() {
                         {isSelectedHere ? (
                           <AppText
                             weight="semibold"
-                            style={{ fontSize: 10, color: palette.green }}
+                            style={{ fontSize: 12, color: palette.green }}
                           >
                             {language === "en" ? "Selected" : "নির্বাচিত"}
                           </AppText>
                         ) : isSelectedOther ? (
                           <AppText
-                            style={{ fontSize: 10, color: palette.muted }}
+                            style={{ fontSize: 12, color: palette.muted }}
                           >
                             {language === "en" ? "Other slot" : "অন্য স্লট"}
                           </AppText>
@@ -557,7 +557,7 @@ export default function CompareProductsScreen() {
             >
               <AppText
                 weight="medium"
-                style={{ fontSize: 11, color: palette.muted }}
+                style={{ fontSize: 12, color: palette.muted }}
               >
                 {language === "en" ? "Clear" : "মুছুন"}
               </AppText>
@@ -683,7 +683,7 @@ export default function CompareProductsScreen() {
                         {productName(pairA, language)} vs{" "}
                         {productName(pairB, language)}
                       </AppText>
-                      <AppText style={{ fontSize: 10, color: palette.muted }}>
+                      <AppText style={{ fontSize: 12, color: palette.muted }}>
                         {language === "en"
                           ? `NQSS ${pairA.score ?? "—"} vs ${pairB.score ?? "—"}`
                           : `NQSS ${pairA.score ?? "—"} বনাম ${pairB.score ?? "—"}`}
@@ -750,14 +750,14 @@ export default function CompareProductsScreen() {
                         <ScoreRing score={score} size={76} />
                       ) : null}
                       <AppText
-                        weight="bold"
+                        weight="semibold"
                         style={{ fontSize: 12, textAlign: "center" }}
                         numberOfLines={2}
                       >
                         {productName(prod, language)}
                       </AppText>
                       {score !== null ? (
-                        <AppText style={{ fontSize: 11, color: palette.muted }}>
+                        <AppText style={{ fontSize: 12, color: palette.muted }}>
                           {scoreCategoryLabel(score, language)}
                         </AppText>
                       ) : null}
@@ -802,23 +802,23 @@ export default function CompareProductsScreen() {
                             alignItems: "center",
                           }}
                         >
-                          <AppText weight="medium" style={{ fontSize: 11 }}>
+                          <AppText weight="medium" style={{ fontSize: 12 }}>
                             {factor.label[language]}{" "}
                             {factor.weight ? (
                               <AppText
-                                style={{ fontSize: 10, color: palette.muted }}
+                                style={{ fontSize: 12, color: palette.muted }}
                               >
                                 ({factor.weight})
                               </AppText>
                             ) : null}
                           </AppText>
                           <AppText
-                            style={{ fontSize: 11, color: palette.muted }}
+                            style={{ fontSize: 12, color: palette.muted }}
                           >
                             <AppText
                               weight={factor.winner === "A" ? "bold" : "medium"}
                               style={{
-                                fontSize: 11,
+                                fontSize: 12,
                                 color:
                                   factor.winner === "A"
                                     ? palette.green
@@ -831,7 +831,7 @@ export default function CompareProductsScreen() {
                             <AppText
                               weight={factor.winner === "B" ? "bold" : "medium"}
                               style={{
-                                fontSize: 11,
+                                fontSize: 12,
                                 color:
                                   factor.winner === "B"
                                     ? palette.green
@@ -899,7 +899,7 @@ export default function CompareProductsScreen() {
             <Card
               style={{ gap: 10, borderColor: palette.amber, borderWidth: 1 }}
             >
-              <AppText weight="bold" style={{ fontSize: 14 }}>
+              <AppText weight="semibold" style={{ fontSize: 14 }}>
                 {language === "en" ? "Advanced comparison" : "উন্নত তুলনা"}
               </AppText>
               <AppText style={{ fontSize: 12, color: palette.muted }}>
@@ -984,16 +984,16 @@ export default function CompareProductsScreen() {
                     }}
                   >
                     <MaterialCommunityIcons
-                      name="robot-outline"
+                      name="message-text-outline"
                       size={20}
                       color={palette.green}
                     />
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <AppText weight="bold" style={{ fontSize: 14 }}>
+                    <AppText weight="semibold" style={{ fontSize: 14 }}>
                       {aiSummary.headline}
                     </AppText>
-                    <AppText style={{ fontSize: 10, color: palette.green }}>
+                    <AppText style={{ fontSize: 12, color: palette.green }}>
                       {language === "en"
                         ? "Rule-based summary · from catalog scores and labels"
                         : "নিয়মভিত্তিক সারাংশ · ক্যাটালগের স্কোর ও লেবেল থেকে"}
@@ -1060,7 +1060,7 @@ export default function CompareProductsScreen() {
                       weight="medium"
                       style={{
                         flex: 1,
-                        fontSize: 11,
+                        fontSize: 12,
                         lineHeight: 16,
                         color: palette.ink,
                       }}
@@ -1080,7 +1080,7 @@ export default function CompareProductsScreen() {
                   }}
                 >
                   <AppText
-                    style={{ flex: 1, fontSize: 10, color: palette.muted }}
+                    style={{ flex: 1, fontSize: 12, color: palette.muted }}
                   >
                     {language === "en"
                       ? "Informational summary only, not medical advice."
@@ -1109,7 +1109,7 @@ export default function CompareProductsScreen() {
                     />
                     <AppText
                       weight="semibold"
-                      style={{ fontSize: 11, color: palette.green }}
+                      style={{ fontSize: 12, color: palette.green }}
                     >
                       {language === "en" ? "Ask Nouri" : "নৌরিকে জিজ্ঞাসা"}
                     </AppText>
@@ -1141,24 +1141,24 @@ export default function CompareProductsScreen() {
                 <View style={{ flex: 1, gap: 2 }}>
                   <AppText
                     weight="semibold"
-                    style={{ fontSize: 11 }}
+                    style={{ fontSize: 12 }}
                     numberOfLines={1}
                   >
                     {productName(productA, language)}
                   </AppText>
-                  <AppText style={{ fontSize: 10, color: palette.muted }}>
+                  <AppText style={{ fontSize: 12, color: palette.muted }}>
                     {productA.nutrition?.serving[language]}
                   </AppText>
                 </View>
                 <View style={{ flex: 1, gap: 2 }}>
                   <AppText
                     weight="semibold"
-                    style={{ fontSize: 11 }}
+                    style={{ fontSize: 12 }}
                     numberOfLines={1}
                   >
                     {productName(productB, language)}
                   </AppText>
-                  <AppText style={{ fontSize: 10, color: palette.muted }}>
+                  <AppText style={{ fontSize: 12, color: palette.muted }}>
                     {productB.nutrition?.serving[language]}
                   </AppText>
                 </View>
@@ -1226,7 +1226,7 @@ export default function CompareProductsScreen() {
                         <AppText
                           weight="medium"
                           style={{
-                            fontSize: 10,
+                            fontSize: 12,
                             color: isWinner ? palette.green : palette.amberInk,
                           }}
                         >
@@ -1275,13 +1275,13 @@ export default function CompareProductsScreen() {
                           {language === "en" ? "Equal" : "সমান"}
                         </Pill>
                       ) : row.winner === "na" ? (
-                        <AppText style={{ fontSize: 10, color: palette.muted }}>
+                        <AppText style={{ fontSize: 12, color: palette.muted }}>
                           {language === "en"
                             ? "Partial label data"
                             : "আংশিক তথ্য"}
                         </AppText>
                       ) : (
-                        <AppText style={{ fontSize: 10, color: palette.green }}>
+                        <AppText style={{ fontSize: 12, color: palette.green }}>
                           {row.higherIsBetter
                             ? language === "en"
                               ? "Higher is better"
@@ -1300,7 +1300,7 @@ export default function CompareProductsScreen() {
                 );
               })}
 
-              <AppText style={{ fontSize: 10, color: palette.muted }}>
+              <AppText style={{ fontSize: 12, color: palette.muted }}>
                 {language === "en"
                   ? "Sugar conversion guide: 4 g sugar = 1 teaspoon."
                   : "চিনির হিসাব: ৪ গ্রাম চিনি = ১ চা-চামচ।"}
@@ -1351,7 +1351,7 @@ export default function CompareProductsScreen() {
                       }}
                     >
                       <AppText
-                        weight="bold"
+                        weight="semibold"
                         style={{ fontSize: 12 }}
                         numberOfLines={2}
                       >
@@ -1433,7 +1433,7 @@ export default function CompareProductsScreen() {
                               <AppText
                                 style={{
                                   flex: 1,
-                                  fontSize: 11,
+                                  fontSize: 12,
                                   color: palette.ink,
                                 }}
                               >
@@ -1458,7 +1458,7 @@ export default function CompareProductsScreen() {
                   >
                     <AppText
                       weight="semibold"
-                      style={{ fontSize: 11, color: palette.muted }}
+                      style={{ fontSize: 12, color: palette.muted }}
                     >
                       {language === "en"
                         ? `Shared ingredients: ${ingredientSummary.sharedIngredients.join(", ")}`

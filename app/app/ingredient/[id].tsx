@@ -403,7 +403,7 @@ export default function IngredientDetailScreen() {
                 <AppText weight="semibold" style={{ fontSize: 13 }}>
                   {item.name[language]}
                 </AppText>
-                <AppText style={{ color: palette.muted, fontSize: 11 }}>
+                <AppText style={{ color: palette.muted, fontSize: 12 }}>
                   {item.purpose[language]}
                 </AppText>
               </View>
@@ -522,7 +522,7 @@ export default function IngredientDetailScreen() {
 
       <Card style={{ gap: 12 }}>
         <View style={{ gap: 4 }}>
-          <AppText weight="bold" style={{ fontSize: 20 }}>
+          <AppText weight="semibold" style={{ fontSize: 20 }}>
             {ingredient.name[language]}
           </AppText>
           <AppText style={{ color: palette.muted, fontSize: 13 }}>
@@ -562,7 +562,7 @@ export default function IngredientDetailScreen() {
             size={14}
             color={palette.muted}
           />
-          <AppText style={{ color: palette.muted, fontSize: 10 }}>
+          <AppText style={{ color: palette.muted, fontSize: 12 }}>
             {ingredient.source}
           </AppText>
         </View>
@@ -590,7 +590,7 @@ export default function IngredientDetailScreen() {
               {language === "en" ? "Allergen Notice" : "অ্যালার্জেন সতর্কতা"}
             </AppText>
             <AppText
-              style={{ fontSize: 11, lineHeight: 16, color: palette.amberInk }}
+              style={{ fontSize: 12, lineHeight: 16, color: palette.amberInk }}
             >
               {ingredient.allergenNote?.[language] ??
                 (language === "en"
